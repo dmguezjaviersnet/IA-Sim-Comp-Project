@@ -1,4 +1,6 @@
-# IA-Sim-Comp-Project
+![orbit](https://user-images.githubusercontent.com/54940830/141042383-f40bf936-15c7-449b-9629-09bda42226fd.jpg)
+
+# IA-Sim-Comp-Project (El peligro en la órbita)
 Proyecto Integrador (Inteligencia Artifcial, Compilación y Simulación)
 
 ## Integrantes
@@ -14,3 +16,5 @@ En el repositorio por ahora pretendemos tener 3 carpetas:
 
 También tendremos un peligro-en-la-orbita.md donde iremos modificando según sea conveniente, para poco a poco tener una propuesta
 más precisa de lo que deseamos hacer.
+
+
