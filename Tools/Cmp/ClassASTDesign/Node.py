@@ -16,7 +16,8 @@ class Node:
     
     symbol: Symbol
     children: List['Node']
-    
+    syntethic = []
+    inherited = [] 
 
     def __init__(self):
         pass
