@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Token_Type(Enum):
     num = 1
     plus = 2
