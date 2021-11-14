@@ -1,9 +1,10 @@
+from typing import List
 from non_terminal import *
 from own_symbol import Symbol
 
 
 class Production:
-    def __init__(self, head: Non_terminal, tails: list[list[Symbol]]):
+    def __init__(self, head: Non_terminal, tails: List[List[Symbol]]):
         self.head = head
         self.tails = tails
         
