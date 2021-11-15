@@ -1,4 +1,3 @@
-from types import FunctionType
 from typing import Callable
 from non_terminal import *
 from own_symbol import Symbol
