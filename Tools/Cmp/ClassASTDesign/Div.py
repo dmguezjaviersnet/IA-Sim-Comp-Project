@@ -1,4 +1,4 @@
-from BinaryExpression import *
+from ClassASTDesign.BinaryExpression import *
 
 class Div(BinaryExpression):
     
@@ -7,6 +7,7 @@ class Div(BinaryExpression):
     
     def eval(self):
         self.left.eval() // self.right.eval()
+
     
         
 

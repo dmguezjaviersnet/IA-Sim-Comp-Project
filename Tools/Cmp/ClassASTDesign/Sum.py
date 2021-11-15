@@ -1,4 +1,4 @@
-from BinaryExpression import *
+from ClassASTDesign.BinaryExpression import *
 
 class Sum(BinaryExpression):
     

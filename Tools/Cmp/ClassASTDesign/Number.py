@@ -1,4 +1,4 @@
-from Expression import *
+from ClassASTDesign.Expression import *
 
 class Number(Expression):
 
@@ -7,6 +7,9 @@ class Number(Expression):
     
     def eval(self):
         return self.val;
+
+    def __str__(self) -> str:
+        return str(self.val)
 
     
   
