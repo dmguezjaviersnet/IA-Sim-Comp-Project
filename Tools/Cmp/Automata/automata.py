@@ -62,8 +62,9 @@ class NFA:
        NFA.addEpsilonTransition(start, second.start)
 
        end = NFA.createState(True)
-       first.end.isEnd = False
        NFA.addEpsilonTransition(first.end, end)
+       first.end.isEnd = False
+       NFA.addEpsilonTransition(second.end, end)
        second.end.isEnd = False
        return NFA(start=start, end = end)
     
@@ -101,14 +102,31 @@ class NFA:
             else:
                 stack.append(NFA.fromSymbol(token))
         
-        return stack.pop()
+        nfa = stack.pop()
+        return nfa
+
+    def zeroOrOne(nfa: 'NFA'):
+        start = NFA.createState(False)
+        end = NFA.createState(False)
+
+        NFA.addEpsilonTransition(start, end)
+        NFA.addEpsilonTransition(start, nfa.start)
+
+        NFA.addEpsilonTransition(nfa.end, end)
+        nfa.end.isEnd = False
+
+        return NFA(start, end)
+
+    def zeroOrMore(nfa):
+        
 
     @staticmethod
     def addNextState(state: 'State', nextStates: List['State'], visited)-> None:
         if len(state.epsilonTransitions):
             for st in state.epsilonTransitions:
-                visited.append(st)
-                NFA.addNextState(st, nextStates, visited)
+                if not visited.find(lambda vs: vs == st):
+                    visited.append(st)
+                    NFA.addNextState(st, nextStates, visited)
         else:
             nextStates.append(state)
     
