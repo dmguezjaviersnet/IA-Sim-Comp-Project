@@ -1,5 +1,7 @@
 from typing import Dict, List, Set
 
+from regexTestParser import *
+
 
 
 
@@ -91,6 +93,10 @@ class NFA:
         for token in postfixExp:
             if token == '*':
                 stack.append(NFA.closure(stack.pop()))
+            elif token == '?':
+                stack.append(NFA.zeroOrOne(stack.pop()))
+            elif token == '+':
+                stack.append(NFA.oneOrMore(stack.pop()))
             elif token == '|':
                 right = stack.pop()
                 left = stack.pop()
@@ -104,7 +110,8 @@ class NFA:
         
         nfa = stack.pop()
         return nfa
-
+# 
+    @staticmethod
     def zeroOrOne(nfa: 'NFA'):
         start = NFA.createState(False)
         end = NFA.createState(False)
@@ -117,14 +124,24 @@ class NFA:
 
         return NFA(start, end)
 
-    def zeroOrMore(nfa):
+    @staticmethod
+    def oneOrMore(nfa: 'NFA'):
+        start = NFA.createState(False)
+        end = NFA.createState(True)
+
+        NFA.addEpsilonTransition(nfa, nfa.start)
+        NFA.addEpsilonTransition(nfa.end, end)
+        NFA.addEpsilonTransition(nfa.end, nfa.start)
+        nfa.end.isEnd = False
+
+        return NFA(start, end)
         
 
     @staticmethod
     def addNextState(state: 'State', nextStates: List['State'], visited)-> None:
         if len(state.epsilonTransitions):
             for st in state.epsilonTransitions:
-                if not visited.find(lambda vs: vs == st):
+                if not any( vs == st for vs in visited):
                     visited.append(st)
                     NFA.addNextState(st, nextStates, visited)
         else:
@@ -139,14 +156,51 @@ class NFA:
             nextStates = []
 
             for state in currentStates:
-                nextState = state.transitions[symbol]
-                if nextState:
+                if symbol in state.transitions.keys():
+                    nextState = state.transitions[symbol]
                     NFA.addNextState(nextState, nextStates, [])
+                
+                    
             currentStates = nextStates
     
         return any ( state.isEnd for state in  currentStates)
 
     @staticmethod
     def createMatcher(exp: str):
-        nfa = NFA.toNFA(exp)
+        ast = toParseTree(exp)
+        nfa = NFA.toNFAfromAST(ast)
         return lambda word: NFA.search(nfa, word)
+    
+    @staticmethod
+    def toNFAfromAST(ast: NodeTree)-> 'NFA':
+        if ast.symbol == 'E':
+            t = NFA.toNFAfromAST(ast.children[0])
+            if len(ast.children) == 3: # E -> T | E 
+                return NFA.union(t, NFA.toNFAfromAST(ast.children[2]))
+            return t
+        if ast.symbol == 'T':
+            f = NFA.toNFAfromAST(ast.children[0])
+            if len(ast.children) == 2: # T -> F  T
+                return NFA.concat(f, NFA.toNFAfromAST(ast.children[1]))
+            return f
+        if ast.symbol == 'F':
+            atom = NFA.toNFAfromAST(ast.children[0])
+            if len(ast.children) == 2: # F -> Atom SpecialCharacter
+                special = ast.children[1].symbol
+                if special == '*':
+                    return NFA.closure(atom)
+                if special == '+':
+                    return NFA.oneOrMore(atom)
+                if special == '?':
+                    return NFA.zeroOrOne(atom)
+            return atom # F-> Atom
+        if ast.symbol == 'Atom':
+            if len(ast.children) == 3: # Atom -> (E)
+                return NFA.toNFAfromAST(ast.children[1])
+            return NFA.toNFAfromAST(ast.children[0])
+        if ast.symbol == 'Char':
+            if len(ast.children) == 2: # Char-> '\' AnyCharacter
+                return NFA.fromSymbol(ast.children[1].symbol)
+            return NFA.fromSymbol(ast.children[0].symbol) # Char-> AnyCharNotEspecial
+        assert(f'Unrecognized symbol {ast.symbol}') 
+    
