@@ -11,6 +11,7 @@ class Production:
         self.__map_nt_amount()
 
         self.rules = rules
+
     
     def __map_nt_amount(self):
         for i in range(len(self.tails)):
