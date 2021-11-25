@@ -185,7 +185,7 @@ class StatesContainer:
         return iter(self.set)
     
 
-def AutomatonUnion(a1: Automaton, a2: Automaton):
+def AutomatonUnion(a1: NFA, a2: NFA):
 
     newTransitions = {}
     newq0 = 0
@@ -215,6 +215,29 @@ def AutomatonUnion(a1: Automaton, a2: Automaton):
            newTransitions[(fs+newa2start, EPSILON)].append(newFinalState)
 
     new_number_of_states = a1.number_of_states + a2.number_of_states + 2
+    
+    return NFA(new_number_of_states, newq0, [newFinalState], newTransitions)
+
+
+def AutomatonConcat(a1: NFA, a2: NFA):
+    newTransitions = {}
+    newq0 = 0
+    newa1start = 0
+    newa2start = a1.number_of_states
+    newFinalState = a2.number_of_states + newa2start - 1
+
+    for i, j in a1.transitions.items():
+            for k,l in j.items():
+                newTransitions[(i,k)] = l
+
+    for sf in a1.finals:
+        newTransitions[ sf, EPSILON] = [newa2start]
+
+    for i, j in a2.transitions.items():
+           for k,l in j.items():
+               newTransitions[(i+newa2start,k)] = [x+newa2start for x in l]
+    
+    new_number_of_states = a1.number_of_states + a2.number_of_states
     
     return NFA(new_number_of_states, newq0, [newFinalState], newTransitions)
 

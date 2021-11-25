@@ -22,8 +22,28 @@ def main():
     # for i in nfa.states:
     #     print(i)
     # print(dfa.number_of_states)
-    test_union()
+    # test_union()
+    test_concat()
 
+def test_concat():
+    a1 = NFA(2, 0, [1], {
+        (0,'a') : [1]
+    })
+
+    a2 = NFA(2, 0, [1], {
+        (0,'b') : [1]
+    })
+
+    concat = AutomatonConcat(a1, a2)
+
+    print(concat)
+
+    match = NFAtoDFA(concat).match
+
+    print(match('b'))
+    print(match('a'))
+    print(match('aa'))
+    print(match('ab'))
 
 def test_union():
     a1 = NFA(2, 0, [1], {
