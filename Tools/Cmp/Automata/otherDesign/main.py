@@ -14,7 +14,7 @@ def main():
     # print(epsilonClosure(nfa, [0]))
     # print(goTo(nfa,[2] , 'a'))
     # dfa = NFAtoDFA(nfa)
-    print(nfa)
+    # print(nfa)
     # print(dfa)
 
     # for i in dfa.states:
@@ -22,7 +22,7 @@ def main():
     # for i in nfa.states:
     #     print(i)
     # print(dfa.number_of_states)
-    # test_union()
+    test_union()
 
 
 def test_union():
@@ -37,6 +37,13 @@ def test_union():
     union = AutomatonUnion(a1, a2)
 
     print(union)
+
+    match = NFAtoDFA(union).match
+
+    print(match('b'))
+    print(match('a'))
+    print(match('aa'))
+    print(match('abb'))
     
 if __name__ == '__main__':
     main()

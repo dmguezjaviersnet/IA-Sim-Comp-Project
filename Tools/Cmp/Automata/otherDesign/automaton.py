@@ -144,14 +144,29 @@ class DFA(Automaton):
             for k,l in j.items():
                 temp[(i,k)] = l
         
-        
+        self.currentState = q0
         super().__init__(nStates, q0, finalStates, temp, statesList)
     
 
     def __str__(self) -> str:
         return f"States: {self.states}\n q0:{self.q0} \n Final States: {self.finals} \n Transitions: {self.transitions} \n Vocabulary: {self.vocabulary} "
 
+    def _move_next_state(self, symbol):
+        self.currentState = self.transitions[self.currentState][symbol]
+
+    def _reset_current_state(self):
+        self.currentState = self.q0
     
+    def match(self, word):
+        self._reset_current_state()
+
+        for s in word:
+            try:
+                self._move_next_state(s)
+            except KeyError:
+                return False
+
+        return self.currentState in self.finals
 
 class StatesContainer:
 
