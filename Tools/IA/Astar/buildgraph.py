@@ -7,7 +7,13 @@ dirc = [-1,0,1,1,1,0,-1,-1]
 
 # esto representa los obstaculos, en que coordenadas 
 #estan los obstaculos (fila , columna) 
-rocks = [(1,2), (2,2), (3,0), (3,1), (3,4), (2,1)]
+rocks = [(1,2), (2,2), (3,0), (3,1), (2,1),
+         (3,4), (2,4), (2,5), (2,6), (1,6),
+         (1,8), (2,8), (3,8), (3,9),
+         (5,1), (5,2), (5,3), (6,2),
+         (7,0), (8,0),
+         (8,2), (8,3), (8,4), (9,4),
+         (5,6), (5,8), (5,9), (6,5), (6,6), (6,7), (6,8), (7,7), (8,6), (8,7), (8,8)]
 
 # determian si la nueva direcciones es una direccion correcta en el tablero
 def positionOk (nr,nc ,rows ,columns):
@@ -17,7 +23,7 @@ def positionOk (nr,nc ,rows ,columns):
 # construye un grafo que representa un tablero de 
 # rows filas y columns columnas y con los obstaculos de 
 # los que s epasan en la lista de tuplas rokcs
-# al final devuelve el grafo que es una instancia  de defaultdict 
+# al final devuelve el grafo que es una instancia  de defaultdict
 def buildgraph (rows,columns,rocks):
   G = defaultdict(set)
   n = rows *columns  #amount of nodes

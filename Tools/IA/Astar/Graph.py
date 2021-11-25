@@ -1,12 +1,64 @@
 from collections import defaultdict
+from heapq import heappop, heappush
+from math import fabs, inf
+from pprint import pprint
+from buildgraph import  buildgraph , rocks
+import enum
 
+class State (enum.Enum):
+  WITHE =1
+  GRAY = 2 
+  BLACK = 3 
 
 class Graph (object):
 
   def __init__(self, connections , directed = False):
     self._graph = defaultdict(set) 
     self._directed = directed
-    self.add_connections(connections) 
+    self.add_connections(connections)
+    self._mask = [False] * len(self._graph)
+    self._parent = [-1] * len (self._graph)
+    self._visited = [State.WITHE] * len(self._graph)
+    self._g = [inf] * len(self._graph)
+    self._h = [inf] * len(self._graph)
+
+  def heuristic(self, src , dest , aux = None):
+    x1, y1 = src // aux.columns , src % aux.columns
+    x2, y2 = src // aux.columns , src % aux.columns
+    self._h[dest] = int(fabs(x1 - x2) + fabs(y1 - y2)) 
+
+
+  def relax (self, src, dest , width):
+    if self._g[src] + width < self._g[dest]:
+      self._g[dest] = self._g[src] + width
+      self._parent[dest] = src
+      return True 
+    return False
+
+  def astar(self,src, dest):
+    q = [] 
+    self._visited[src] = True
+    self._g[src] = 0 
+    self._h[src] = self.heuristic(src , dest)
+    heappush(q, (0,src))
+
+    while len(q) > 0:
+      _, current = heappop(q)
+      
+      if current == dest:
+        return 
+      
+      for adyacent in self._graph[current]:
+        neighbour , neigbourwidth = adyacent
+        isless = self.relax(current,neighbour, neigbourwidth)
+
+        if (self._visited[neighbour] != State.BLACK) and isless:
+          heappush(q, (self._h[neighbour]+ self._g[neighbour] , neighbour))
+          self._visited[neighbour] = State.GRAY
+          self._parent[neighbour] = current
+      
+      self._visited = State.BLACK
+
 
   def add_connections (self, connections): 
     for node1 , node2 in connections: 
@@ -60,3 +112,17 @@ class Node:
   
   def H (self): 
     return self.heuristic + self.realcost
+
+
+def getconnections (G): 
+  conections = set()
+  for n,cxns in G.items():
+    for ady , width in cxns:
+      conections.add((n,ady,width))
+  return conections
+
+
+if __name__ == '__main__': 
+  G = buildgraph(10,10,rocks)
+  conn = getconnections(G)
+  pprint(conn)
