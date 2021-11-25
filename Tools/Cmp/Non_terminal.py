@@ -1,5 +1,5 @@
 from typing import overload
-from own_symbol import Symbol
+from Own_symbol import Symbol
 
 
 class Non_terminal(Symbol):

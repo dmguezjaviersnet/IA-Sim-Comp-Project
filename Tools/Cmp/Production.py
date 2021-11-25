@@ -1,6 +1,6 @@
 from typing import Callable
-from non_terminal import *
-from own_symbol import Symbol
+from Non_terminal import *
+from Own_symbol import Symbol
 
 class Production:
     def __init__(self, head: Non_terminal, tails: list[list[Symbol]], rules: list[list[tuple[Callable, bool]]]):

@@ -1,7 +1,7 @@
 from typing import List
-from non_terminal import *
-from terminal import *
-from production import *
+from Non_terminal import *
+from Terminal import *
+from Production import *
 
 
 class Grammar:

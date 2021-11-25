@@ -1,4 +1,4 @@
-from own_symbol import Symbol
+from Own_symbol import Symbol
 from ClassASTDesign.Number import Number
 from ClassASTDesign.Sum import Sum
 from ClassASTDesign.Sub import Sub

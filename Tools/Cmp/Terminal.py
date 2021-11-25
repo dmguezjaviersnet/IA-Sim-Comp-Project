@@ -1,10 +1,10 @@
 from typing import overload
-from own_symbol import Symbol
+from Own_symbol import Symbol
 
 
 class Terminal(Symbol):
 
-    def __init__(self, identifier: str, *args):  # Falta agregarle las propiedades fila y columna
+    def __init__(self, identifier: str, *args):
         super().__init__(identifier, *args)
 
 class EOF(Terminal):
