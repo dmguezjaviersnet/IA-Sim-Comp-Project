@@ -1,6 +1,6 @@
 # Regex Grammatica
 # E -> T 
-#    | T '|' E
+#    | '|' T E
 # T -> F 
 #    | F T
 # F -> Atom | Atom SpecialChar

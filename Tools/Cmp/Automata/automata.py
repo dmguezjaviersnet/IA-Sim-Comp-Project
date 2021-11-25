@@ -110,7 +110,7 @@ class NFA:
         
         nfa = stack.pop()
         return nfa
-# 
+ 
     @staticmethod
     def zeroOrOne(nfa: 'NFA'):
         start = NFA.createState(False)
