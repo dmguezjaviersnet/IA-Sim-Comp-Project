@@ -5,7 +5,7 @@ from terminal import *
 from non_terminal import *
 from production import *
 from ll1_table_builder import build_LL1_table
-
+from rules import *
 
 line = input().split()
 line.append('$')
@@ -40,7 +40,7 @@ for i in range(len(line)):
             number = int(line[i])
 
         except: print('Invalid syntax')
-        tokens.append(Number(number, tkn_type=Token_Type.num))
+        tokens.append(Num(number, tkn_type=Token_Type.num))
 
 # No terminales
 E = Non_terminal('E', 'ast')
@@ -66,17 +66,36 @@ terminals = [add, sub, mul, div, openb, closedb, integer, empty, eof]
 
 
 # Producciones
-p1 = Production(E, [[T, X]])
-p2 = Production(X, [[add, T, X], [sub, T, X], [empty]])
-p3 = Production(T, [[F, Y]])
-p4 = Production(Y, [[mul, F, Y], [div, F, Y], [empty]])
-p5 = Production(F, [[openb, E, closedb], [integer]])
+p1 = Production(E, 
+                [[T, X]],
+                [[(E_rule, True), (X_rule, False)]]
+                )
+
+p2 = Production(X, 
+                [[add, T, X], [sub, T, X], [empty]],
+                [[(X0_rule_plus, True), (X1_rule_plus, False)], [(X0_rule_minus, True), (X1_rule_minus, False)], [(X0_rule_eps, True)]]
+                )
+
+p3 = Production(T, 
+                [[F, Y]], 
+                [[(T_rule, True), (Y_rule, False)]]
+                )
+
+p4 = Production(Y, 
+                [[mul, F, Y], [div, F, Y], [empty]], 
+                [[(Y0_rule_mul, True), (Y1_rule_mul, False)], [(Y0_rule_div, True), (Y1_rule_div, False)], [(Y0_rule_eps, True)]]
+                )
+
+p5 = Production(F, 
+                [[openb, E, closedb], [integer]],
+                [[(F_rule_brackets, True)], [(F_rule_i, True)]]
+                )
 
 prods = [p1, p2, p3, p4, p5]
 
 
 
-arth_grammar = Grammar(terminals, nts, E, prods)
+arth_grammar = Grammar(terminals, nts, E, prods,)
 # terminals = ['+', '-', '*', '/', '(', ')', 'integer', 'epsilon', '$']
 # non_terminals = ['E', 'X', 'T', 'Y', 'F']
 # initial_nt = 'E'
@@ -92,13 +111,15 @@ arth_grammar = Grammar(terminals, nts, E, prods)
 # parsed1 = parser.Parse()
 
 # arth_grammar = Grammar(terminals, non_terminals, initial_nt, prod)
-is_ll1, table = build_LL1_table(arth_grammar)
+# is_ll1, table = build_LL1_table(arth_grammar)
 # 
 # for ter, dict1 in table.items():
     # print(f'\'{ter}\' column -------------------------- //')
     # for nt, prod in dict1.items():
         # print(f'{nt} row -----> {prod}')
-parsed2 = non_recursive_parse(arth_grammar, tokens)
+ast, parsed2 = non_recursive_parse(arth_grammar, tokens)
+
+print(ast)
 
 # print('finished')
 # print(parsed2)

@@ -119,7 +119,7 @@ def build_LL1_table(G: Grammar) -> tuple[bool, dict[str, dict[str, list[str]]]]:
                 if head.identifier not in table[ter.identifier].keys(): ### Inicializar list
                         table[ter.identifier][head.identifier] = []
 
-                if 'eps' in prod and ter.identifier in follows[head.identifier] or ter.identifier in current_first: ### Si X → e y t ∈ Follow (X) entonces T [X , t] = X → e. o Si X → W y t ∈ First(W) entonces T [X , t] = X → W .
+                if 'eps' in prod[0].identifier and ter.identifier in follows[head.identifier] or ter.identifier in current_first: ### Si X → e y t ∈ Follow (X) entonces T [X , t] = X → e. o Si X → W y t ∈ First(W) entonces T [X , t] = X → W .
                     if len(table[ter.identifier][head.identifier]) == 0:
                         table[ter.identifier][head.identifier] = prod
                     

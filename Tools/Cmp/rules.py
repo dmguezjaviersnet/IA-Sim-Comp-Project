@@ -1,64 +1,71 @@
-from symbol import Symbol
+from Own_symbol import Symbol
+from ClassASTDesign.Number import Number
+from ClassASTDesign.Sum import Sum
+from ClassASTDesign.Sub import Sub
+from ClassASTDesign.Mul import Mul
+from ClassASTDesign.Div import Div
+
+eval_rule = lambda rule, head, tail : rule(head, tail)
 
 ################################ E -> T X
-def E_TX_up(head: Symbol, tail: list[Symbol]):
+def E_rule(head: Symbol, tail: list[Symbol]): 
     head.ast = tail[1].ast
 
-def E_TX_down(head: Symbol, tail: list[Symbol]):
+def X_rule(head: Symbol, tail: list[Symbol]):
     tail[1].tmp = tail[0].ast
 
 ################################ X 
 # -> + T X
-def X_PlusTX_up(head: Symbol, tail: list[Symbol]):
+def X0_rule_plus(head: Symbol, tail: list[Symbol]):
     head.ast = tail[2].ast
 
-def X_PlusTX_down(head: Symbol, tail: list[Symbol]):
-    tail[2].tmp = head.tmp + tail[1].ast
+def X1_rule_plus(head: Symbol, tail: list[Symbol]):
+    tail[2].tmp = Sum(head.tmp, tail[1].ast)
 
 
 # -> - T X
-def X_PlusTX_up(head: Symbol, tail: list[Symbol]):
+def X0_rule_minus(head: Symbol, tail: list[Symbol]):
     head.ast = tail[2].ast
 
-def X_PlusTX_down(head: Symbol, tail: list[Symbol]):
-    tail[2].tmp = head.tmp - tail[1].ast
+def X1_rule_minus(head: Symbol, tail: list[Symbol]):
+    tail[2].tmp = Sub(head.tmp, tail[1].ast)
 
 # -> eps
-def X_eps_up(head: Symbol, tail: list[Symbol]):
+def X0_rule_eps(head: Symbol, tail: list[Symbol]):
     head.ast = head.tmp
 
 
 ############################### T -> F Y
-def T_FY_up(head: Symbol, tail: list[Symbol]):
+def T_rule(head: Symbol, tail: list[Symbol]):
     head.ast = tail[1].ast
 
-def T_FY_down(head: Symbol, tail: list[Symbol]):
+def Y_rule(head: Symbol, tail: list[Symbol]):
     tail[1].tmp = tail[0].ast
 
 ############################### Y
 # -> * F Y
-def Y_TimesFY_up(head: Symbol, tail: list[Symbol]):
+def Y0_rule_mul(head: Symbol, tail: list[Symbol]):
     head.ast = tail[2].ast
 
-def Y_TimesFY_down(head: Symbol, tail: list[Symbol]):
-    tail[2].tmp = head.tmp * tail[1].ast
+def Y1_rule_mul(head: Symbol, tail: list[Symbol]):
+    tail[2].tmp = Mul(head.tmp, tail[1].ast)
 
 # -> / F Y
-def Y_DivFY_up(head: Symbol, tail: list[Symbol]):
+def Y0_rule_div(head: Symbol, tail: list[Symbol]):
     head.ast = tail[2].ast
 
-def Y_DivFY_down(head: Symbol, tail: list[Symbol]):
-    tail[2].tmp = head.tmp / tail[1].ast
+def Y1_rule_div(head: Symbol, tail: list[Symbol]):
+    tail[2].tmp = Div(head.tmp, tail[1].ast)
 
 # -> eps
-def Y_eps_up(head: Symbol, tail: list[Symbol]):
+def Y0_rule_eps(head: Symbol, tail: list[Symbol]):
     head.ast = head.tmp
 
 ############################### F
 # -> ( E )
-def F_openEclosed_up(head: Symbol, tail: list[Symbol]):
+def F_rule_brackets(head: Symbol, tail: list[Symbol]):
     head.ast = tail[1].ast
 
 # -> i
-def F_i_up(head: Symbol, tail: list[Symbol], i):
-    head.ast = Num(i)
+def F_rule_i(head: Symbol, tail: list[Symbol]):
+    head.ast = Number(tail[0].val)
