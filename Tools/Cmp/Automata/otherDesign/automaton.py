@@ -48,14 +48,6 @@ class Automaton:
         self.vocabulary.discard(EPSILON) # remove epsilon from vacabulary 
         
 
-    
-    
-       
-    
-        
-
-
-
 class NFA(Automaton):
 
     def __init__ (self, nStates, q0, finalStates, transitions, statesList = []):
@@ -155,7 +147,7 @@ class DFA(Automaton):
     
 
     def __str__(self) -> str:
-        return f"States: {self.states}\n q0:{self.q0} \n Final States: {self.finals} \n Transitions: {self.transitions} \n Vocabulary: {self.vocabulary}"
+        return f"States: {self.states}\n q0:{self.q0} \n Final States: {self.finals} \n Transitions: {self.transitions} \n Vocabulary: {self.vocabulary} "
 
     
 
@@ -176,6 +168,36 @@ class StatesContainer:
         return iter(self.set)
     
 
+def AutomatonUnion(a1: Automaton, a2: Automaton):
+
+    newTransitions = {}
+    newq0 = 0
+    qk = a1.number_of_states
+    newFinalState = a2.number_of_states + qk
+     
+    for i, j in a1.transitions.items():
+           for k,l in j.items():
+               newTransitions[(i,k)] = l
+
+    for i, j in a2.transitions.items():
+           for k,l in j.items():
+               newTransitions[(i,k)] = l
+
+    for fs in a1.finals:
+        if (fs, EPSILON) not in a1.transitions.keys():
+            newTransitions[(fs, EPSILON)] = [qk]
+        else:
+            newTransitions[(fs, EPSILON)].append(qk)
+    
+    for fs in a2.finals:
+       if (fs, EPSILON) not in a2.transitions.keys():
+           newTransitions[(fs, EPSILON)] = [newFinalState]
+       else:
+           newTransitions[(fs, EPSILON)].append(newFinalState)
+
+    new_number_of_states = a1.number_of_states + a2.number_of_states
+    
+    return NFA(new_number_of_states, newq0, [newFinalState], newTransitions, 0)
 
 
 

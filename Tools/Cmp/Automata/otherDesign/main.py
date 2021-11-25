@@ -19,7 +19,9 @@ def main():
 
     for i in dfa.states:
         print(i)
-    # print(dfa.number_of_states)
+    for i in nfa.states:
+        print(i)
+    print(dfa.number_of_states)
 
 if __name__ == '__main__':
     main()
