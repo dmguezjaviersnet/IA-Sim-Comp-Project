@@ -13,15 +13,30 @@ def main():
     # print(nfa.transitions)
     # print(epsilonClosure(nfa, [0]))
     # print(goTo(nfa,[2] , 'a'))
-    dfa = NFAtoDFA(nfa)
+    # dfa = NFAtoDFA(nfa)
+    print(nfa)
+    # print(dfa)
 
-    print(dfa)
+    # for i in dfa.states:
+    #     print(i)
+    # for i in nfa.states:
+    #     print(i)
+    # print(dfa.number_of_states)
+    # test_union()
 
-    for i in dfa.states:
-        print(i)
-    for i in nfa.states:
-        print(i)
-    print(dfa.number_of_states)
 
+def test_union():
+    a1 = NFA(2, 0, [1], {
+        (0,'a') : [1]
+    })
+
+    a2 = NFA(2, 0, [1], {
+        (0,'b') : [1]
+    })
+
+    union = AutomatonUnion(a1, a2)
+
+    print(union)
+    
 if __name__ == '__main__':
     main()

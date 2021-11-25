@@ -61,6 +61,8 @@ class NFA(Automaton):
             return []
     
 
+    def __str__(self) -> str:
+        return f" Number of States:{self.number_of_states}\n q0:{self.q0}\nTransitions:{self.transitions}\n finalStates={self.finals}"
 
 
 
@@ -172,32 +174,34 @@ def AutomatonUnion(a1: Automaton, a2: Automaton):
 
     newTransitions = {}
     newq0 = 0
-    qk = a1.number_of_states
-    newFinalState = a2.number_of_states + qk
+    newa1start = 1
+    newa2start = a1.number_of_states + 1
+    newFinalState = a2.number_of_states + newa2start
      
     for i, j in a1.transitions.items():
            for k,l in j.items():
-               newTransitions[(i,k)] = l
+               newTransitions[(i+newa1start,k)] = [x+newa1start for x in l]
 
     for i, j in a2.transitions.items():
            for k,l in j.items():
-               newTransitions[(i,k)] = l
+               newTransitions[(i+newa2start,k)] = [x+newa2start for x in l]
 
+    newTransitions[(newq0, EPSILON)] = [newa1start, newa2start]
     for fs in a1.finals:
         if (fs, EPSILON) not in a1.transitions.keys():
-            newTransitions[(fs, EPSILON)] = [qk]
+            newTransitions[(fs+newa1start, EPSILON)] = [newFinalState]
         else:
-            newTransitions[(fs, EPSILON)].append(qk)
+            newTransitions[(fs+newa1start, EPSILON)].append(newFinalState)
     
     for fs in a2.finals:
        if (fs, EPSILON) not in a2.transitions.keys():
-           newTransitions[(fs, EPSILON)] = [newFinalState]
+           newTransitions[(fs+newa2start, EPSILON)] = [newFinalState]
        else:
-           newTransitions[(fs, EPSILON)].append(newFinalState)
+           newTransitions[(fs+newa2start, EPSILON)].append(newFinalState)
 
-    new_number_of_states = a1.number_of_states + a2.number_of_states
+    new_number_of_states = a1.number_of_states + a2.number_of_states + 2
     
-    return NFA(new_number_of_states, newq0, [newFinalState], newTransitions, 0)
+    return NFA(new_number_of_states, newq0, [newFinalState], newTransitions)
 
 
 
