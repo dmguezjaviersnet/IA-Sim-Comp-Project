@@ -17,14 +17,15 @@ class Token:
         self.tkn_type = tkn_type
         self.value = value
 
-class Number(Token):
+class Num(Token):
 
     def __init__(self, value, tkn_type):
         super().__init__(value, tkn_type)
 
-class Symbol(Token):
+class Op(Token):
 
     def __init__(self, value, tkn_type, priority):
-        self.priority = priority
         super().__init__(value, tkn_type)
+        self.priority = priority
+        
         
