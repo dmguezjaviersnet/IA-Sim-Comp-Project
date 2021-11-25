@@ -1,4 +1,5 @@
 from automaton import *
+import pytest
 
 def main():
     nfa = NFA( nStates =4, q0 = 0,finalStates=[3], transitions={
@@ -23,9 +24,10 @@ def main():
     #     print(i)
     # print(dfa.number_of_states)
     # test_union()
-    test_concat()
+    test_closure()
 
 def test_concat():
+    
     a1 = NFA(2, 0, [1], {
         (0,'a') : [1]
     })
@@ -64,6 +66,31 @@ def test_union():
     print(match('a'))
     print(match('aa'))
     print(match('abb'))
-    
+
+def test_closure():
+    a1 = NFA(2, 0, [1], {
+        (0,'a') : [1]
+    })
+
+    a2 = NFA(2, 0, [1], {
+        (0,'b') : [1]
+    })
+
+    "(a|b)*"
+    closure = AutomatonClosure(AutomatonUnion(a1, a2))
+
+    print(closure)
+
+    match = NFAtoDFA(closure).match
+
+    print(match(''))
+    print(match('b'))
+    print(match('a'))
+    print(match('aa'))
+    print(match('ab'))
+    print(match('aaaaaa'))
+    print(match('c'))
+
+
 if __name__ == '__main__':
     main()

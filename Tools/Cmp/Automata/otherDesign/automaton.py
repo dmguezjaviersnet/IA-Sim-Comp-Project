@@ -242,6 +242,31 @@ def AutomatonConcat(a1: NFA, a2: NFA):
     return NFA(new_number_of_states, newq0, [newFinalState], newTransitions)
 
 
+def AutomatonClosure(a1: NFA):
+    
+    newTransitions = {}
+    newq0 = 0
+    newa1start = 1
+    newFinalState = a1.number_of_states + 2 - 1
+     
+    for i, j in a1.transitions.items():
+           for k,l in j.items():
+               newTransitions[(i+newa1start,k)] = [x+newa1start for x in l]
+
+    newTransitions[(newq0, EPSILON)] = [newa1start, newFinalState]
+    
+    for fs in a1.finals:
+        if (fs, EPSILON) not in a1.transitions.keys():
+            newTransitions[(fs+newa1start, EPSILON)] = [newFinalState]
+        else:
+            newTransitions[(fs+newa1start, EPSILON)].append(newFinalState)
+    
+    newTransitions[(newFinalState, EPSILON)] = [newq0]
+    new_number_of_states = a1.number_of_states  + 2
+    
+    return NFA(new_number_of_states, newq0, [newFinalState], newTransitions)
+
+
 
 
 
