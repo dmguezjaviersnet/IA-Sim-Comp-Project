@@ -12,44 +12,60 @@ class State (enum.Enum):
 
 class Graph (object):
 
-  def __init__(self, connections , directed = False):
-    self._graph = defaultdict(set) 
+  def __init__(self, connections , graph: defaultdict , rows : int ,columns : int ,directed = False):
+    self._graph = graph 
     self._directed = directed
     self.add_connections(connections)
-    self._mask = [False] * len(self._graph)
-    self._parent = [-1] * len (self._graph)
-    self._visited = [State.WITHE] * len(self._graph)
-    self._g = [inf] * len(self._graph)
-    self._h = [inf] * len(self._graph)
+    self._mask = [False] * (rows * columns + 1)
+    self._parent = [-1] * (rows * columns + 1)
+    self._visited = [State.WITHE] * (rows * columns + 1)
+    self._g = [inf] * (rows * columns +1)
+    self._h = [inf] * (rows * columns +1) 
+    self._rows = rows
+    self._columns = columns
 
-  def heuristic(self, src , dest , aux = None):
-    x1, y1 = src // aux.columns , src % aux.columns
-    x2, y2 = src // aux.columns , src % aux.columns
-    self._h[dest] = int(fabs(x1 - x2) + fabs(y1 - y2)) 
+  # pone en el src el valor de la heuristica calculada
+  def heuristic(self, src : int , dest: int , columns: int):
+    x1, y1 = src // columns , src % columns
+    x2, y2 = dest // columns , dest % columns
+    self._h[src] = int(fabs(x1 - x2) + fabs(y1 - y2)) 
 
+  def __str__(self) -> str:
+      return str(self._graph)
 
-  def relax (self, src, dest , width):
+  # pone hace relax a partir de un nodo src a otro dest con un peso width
+  def relax (self, src: int , dest: int , width: int):
     if self._g[src] + width < self._g[dest]:
       self._g[dest] = self._g[src] + width
       self._parent[dest] = src
       return True 
     return False
 
+  def clearall(self):
+    for i in range (self._rows * self._columns +1):
+      self._parent[i] = -1
+      self._mask[i] = False
+      self._visited[i] = State.WITHE
+      self._g[i] = inf
+      self._h[i] = inf
+
   def astar(self,src, dest):
+    self.clearall()
     q = [] 
     self._visited[src] = True
     self._g[src] = 0 
-    self._h[src] = self.heuristic(src , dest)
+    self.heuristic(src , dest , self._columns)
     heappush(q, (0,src))
 
     while len(q) > 0:
       _, current = heappop(q)
       
       if current == dest:
-        return 
+        break
       
       for adyacent in self._graph[current]:
         neighbour , neigbourwidth = adyacent
+        self.heuristic(neighbour, dest, self._columns)
         isless = self.relax(current,neighbour, neigbourwidth)
 
         if (self._visited[neighbour] != State.BLACK) and isless:
@@ -57,8 +73,15 @@ class Graph (object):
           self._visited[neighbour] = State.GRAY
           self._parent[neighbour] = current
       
-      self._visited = State.BLACK
+      self._visited[current] = State.BLACK
 
+    path = [dest]
+    while dest != src:
+      dest = self._parent[dest]
+      path.append(dest)
+    path.reverse()
+    return path
+    
 
   def add_connections (self, connections): 
     for node1 , node2 in connections: 
@@ -104,6 +127,8 @@ class Graph (object):
     return '{}({})'.format(self.__class__.__name__, dict(self._graph))
 
 
+
+
 class Node:
   def __init__(self, ):
     self.visited = False
@@ -124,5 +149,7 @@ def getconnections (G):
 
 if __name__ == '__main__': 
   G = buildgraph(10,10,rocks)
-  conn = getconnections(G)
-  pprint(conn)
+  # pprint(conn)
+  graph = Graph([], G,10,10)
+  walk = graph.astar(21,79)
+  pprint(walk)
