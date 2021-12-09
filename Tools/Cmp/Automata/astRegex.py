@@ -21,7 +21,7 @@ class UnaryNode(Node):
     
     
     @abstractmethod
-    def operate(value):
+    def operate(self, value):
         ...
 
 class BinaryNode(Node):
@@ -36,8 +36,8 @@ class BinaryNode(Node):
     
     
     @abstractmethod
-    def operate(lvalue, rvalue):
-        ...
+    def operate(self, lvalue, rvalue):
+        raise NotImplementedError
 
 
 class EpsilonNode(AtomicNode):
@@ -48,21 +48,21 @@ class EpsilonNode(AtomicNode):
 class SymbolNode(AtomicNode):
     def eval(self):
         symbol = self.value
-        return DFA(nStates=2, q0 = 0, finalStates=[1], transitions={(0,symbol):1})
+        return NFA(nStates=2, q0 = 0, finalStates=[1], transitions={(0,symbol):[1]})
 
 class ClosureNode(UnaryNode):
     
-    def operate(value):
+    def operate(self, value):
          return AutomatonClosure(value)
 
 class UnionNode(BinaryNode):
 
-    def operate(lvalue, rvalue):
+    def operate(self, lvalue, rvalue):
         return AutomatonUnion(lvalue, rvalue)
 
 class ConcatNode(BinaryNode):
 
-    def operate(lvalue, rvalue):
+    def operate(self, lvalue, rvalue):
         return AutomatonConcat(lvalue, rvalue)
 
         
