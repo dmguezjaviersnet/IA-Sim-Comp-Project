@@ -1,9 +1,9 @@
-from grammar import *
+from Grammar import *
 from own_token import *
 from nonr_parser import non_recursive_parse
-from terminal import *
-from non_terminal import *
-from production import *
+from Terminal import *
+from Non_terminal import *
+from Production import *
 from ll1_table_builder import build_LL1_table
 from rules import *
 
