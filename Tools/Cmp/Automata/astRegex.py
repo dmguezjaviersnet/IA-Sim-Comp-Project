@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from automaton import *
+from Automata.automaton import *
 
 class Node:
     @abstractmethod
@@ -51,7 +51,10 @@ class SymbolNode(AtomicNode):
         return NFA(nStates=2, q0 = 0, finalStates=[1], transitions={(0,symbol):[1]})
 
 class ClosureNode(UnaryNode):
-    
+    def eval(self):
+        node = self.node
+        self.operate(node)
+        
     def operate(self, value):
          return AutomatonClosure(value)
 

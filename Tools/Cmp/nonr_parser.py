@@ -3,7 +3,7 @@ from Grammar import Grammar
 from ll1_table_builder import build_LL1_table
 from Non_terminal import Non_terminal
 from Own_symbol import Symbol
-from own_token import *
+from Own_token import *
 from Terminal import Terminal
 from rules import eval_rule
 
@@ -65,7 +65,7 @@ def non_recursive_parse(G: Grammar, tokens: list[Token]) -> bool:
 
             # Si el símbolo es un terminal
             elif isinstance(current_symbol, Terminal) or current_symbol == 'eps':
-                if current_symbol.identifier == 'i':
+                if current_symbol.identifier == 'character':
                     current_symbol.val = current_token.value
 
                 stack.pop()
@@ -75,7 +75,7 @@ def non_recursive_parse(G: Grammar, tokens: list[Token]) -> bool:
                     continue
 
                 current_token_index += 1  # Consumir el Token
-                if (isinstance(current_token, Num) and current_symbol.identifier != 'i') or (isinstance(current_token, Op) and current_symbol.identifier != current_token.value):
+                if (isinstance(current_token, Character) and current_symbol.identifier != 'character') or (isinstance(current_token, Op) and current_symbol.identifier != current_token.value):
                     return False
 
             # Si es último no-terminal de la producción y ya está computado
@@ -90,9 +90,9 @@ def non_recursive_parse(G: Grammar, tokens: list[Token]) -> bool:
                     continue
 
                 prod = []
-                if isinstance(current_token, Num):  # Si el token es un número
+                if isinstance(current_token, Character):  # Si el token es un número
                     prod = __new_nodes(
-                        ll_table['i'][current_symbol.identifier])
+                        ll_table['character'][current_symbol.identifier])
                     rule_key = __append_ids(rule_key, prod)
 
                 elif isinstance(current_token, Op):  # Si el token es un operador

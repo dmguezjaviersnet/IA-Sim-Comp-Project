@@ -1,46 +1,51 @@
-from grammar import *
-from own_token import *
+from Grammar import *
+from Own_token import *
 from nonr_parser import non_recursive_parse
-from terminal import *
-from non_terminal import *
-from production import *
+from Terminal import *
+from Non_terminal import *
+from Production import *
 from ll1_table_builder import build_LL1_table
-from rules import *
 
-line = input().split()
-line.append('$')
+from rules import *
+from regex_rules import *
+
 tokens = []
 
-#### Lexer para ir probando ####
-for i in range(len(line)):
-    if line[i] == '+':
-        tokens.append(Op('+', Token_Type.plus, 1))
+arth_token_builder: dict[str, Callable] = {
+    '+': lambda : tokens.append(Op('+', Token_Type.plus, 1)),
+    '-': lambda : tokens.append(Op('-', Token_Type.minus, 1)),
+    '*': lambda : tokens.append(Op('*', Token_Type.times, 2)),
+    '/': lambda : tokens.append(Op('/', Token_Type.div, 2)),
+    '(': lambda : tokens.append(Op('(', Token_Type.open_parenthesis, 3)),
+    ')': lambda : tokens.append(Op(')', Token_Type.closed_parenthesis, 3)),
+    '$': lambda : tokens.append(Op('$' ,Token_Type.eof, 1))
+}
 
-    elif line[i] == '-':
-        tokens.append(Op('-', Token_Type.minus, 1))
+regex_token_builder: dict[str, Callable] = {
+    '*': lambda : tokens.append(Op('*', Token_Type.closure, 3)),
+    '(': lambda : tokens.append(Op('(', Token_Type.open_parenthesis, 3)),
+    ')': lambda : tokens.append(Op(')', Token_Type.closed_parenthesis, 3)),
+    '|': lambda : tokens.append(Op('|', Token_Type.union, 1)),
+    '$': lambda : tokens.append(Op('$' ,Token_Type.eof, 1))
+}
 
-    elif line[i] == '*':
-        tokens.append(Op('*', Token_Type.times, 2))
+# arth_line = input().split()
+# arth_line.append('$')
 
-    elif line[i] == '/':
-        tokens.append(Op('/', Token_Type.div, 2))
-
-    elif line[i] == '(':
-        tokens.append(Op('(', Token_Type.open_parenthesis, 3))
-
-    elif line[i] == ')':
-        tokens.append(Op(')', Token_Type.closed_parenthesis, 3))
-
-    elif line[i] == '$':
-        tokens.append(Op('$' ,Token_Type.eof, 1))
+# #### Lexer para ir probando ####
+# for i in range(len(arth_line)):
+#     if arth_line[i] in arth_token_builder.keys():
+#         arth_token_builder[arth_line[i]]()
     
-    else:
-        number = 0
-        try:
-            number = int(line[i])
+#     else:
+#         number = 0
+#         try:
+#             number = int(arth_line[i])
 
-        except: print('Invalid syntax')
-        tokens.append(Num(number, tkn_type=Token_Type.num))
+#         except: print('Invalid syntax')
+#         tokens.append(Character(number, tkn_type=Token_Type.character))
+
+############################### Gramática de prueba (aritmética) ###########################################
 
 # No terminales
 E = Non_terminal('E', 'ast')
@@ -57,13 +62,10 @@ add = Terminal('+')
 sub = Terminal('-')
 openb = Terminal('(')
 closedb = Terminal(')')
-integer = Terminal('i')
+character = Terminal('character')
 empty = Terminal('eps')
 eof = Terminal('$')
-terminals = [add, sub, mul, div, openb, closedb, integer, empty, eof]
-
-# Reglas
-
+terminals = [add, sub, mul, div, openb, closedb, character, empty, eof]
 
 # Producciones
 p1 = Production(E, 
@@ -87,15 +89,13 @@ p4 = Production(Y,
                 )
 
 p5 = Production(F, 
-                [[openb, E, closedb], [integer]],
+                [[openb, E, closedb], [character]],
                 [[(F_rule_brackets, True)], [(F_rule_i, True)]]
                 )
 
 prods = [p1, p2, p3, p4, p5]
 
-
-
-arth_grammar = Grammar(terminals, nts, E, prods,)
+arth_grammar = Grammar(terminals, nts, E, prods)
 # terminals = ['+', '-', '*', '/', '(', ')', 'integer', 'epsilon', '$']
 # non_terminals = ['E', 'X', 'T', 'Y', 'F']
 # initial_nt = 'E'
@@ -117,9 +117,100 @@ arth_grammar = Grammar(terminals, nts, E, prods,)
     # print(f'\'{ter}\' column -------------------------- //')
     # for nt, prod in dict1.items():
         # print(f'{nt} row -----> {prod}')
-ast, parsed2 = non_recursive_parse(arth_grammar, tokens)
+        
+# ast, parsed2 = non_recursive_parse(arth_grammar, tokens)
+# print(ast)
 
-print(ast)
+############################### Gramática de Regex ###########################################
+
+# tokens.clear()
+regex_line = input().split()
+regex_line.append('$')
+
+for i in range(len(regex_line)):
+    if regex_line[i] in regex_token_builder.keys():
+        regex_token_builder[regex_line[i]]()
+    
+    else:
+        tokens.append(Character(regex_line[i], tkn_type=Token_Type.character))
+
+# No terminales
+E = Non_terminal('E', 'ast')
+X = Non_terminal('X', 'ast', 'tmp')
+T = Non_terminal('T', 'ast', 'tmp')
+Y = Non_terminal('Y', 'ast', 'tmp')
+F = Non_terminal('F', 'ast')
+P = Non_terminal('P', 'ast')
+M = Non_terminal('M', 'ast', 'tmp')
+A = Non_terminal('A', 'ast', 'val')
+nts = [E, X, T, Y, F, P, M, A]
+
+# Terminales
+clousure = Terminal('*')
+openb = Terminal('(')
+closedb = Terminal(')')
+bar = Terminal('|')
+character = Terminal('character')
+ccat = Terminal('ccat')
+empty = Terminal('eps')
+regex_empty = Terminal('ε')
+eof = Terminal('$')
+terminals = [clousure, bar, openb, closedb, character, regex_empty, empty, eof]
+
+# Producciones
+p1 = Production(E, 
+                [[T, X]],
+                [[(E_rule_rgx, True), (X_rule_rgx, False)]]
+                )
+
+p2 = Production(X, 
+                [[bar, T, X], [empty]],
+                [[(X0_rule_bar_rgx, True), (X1_rule_bar_rgx, False)], [(X0_rule_eps_rgx, True)]]
+                )
+
+p3 = Production(T, 
+                [[F, Y]], 
+                [[(T_rule_rgx, True), (Y_rule_rgx, False)]]
+                )
+
+p4 = Production(Y, 
+                [[F, Y], [empty]],
+                [[(Y0_rule_rgx, True), (Y1_rule_rgx, False)], [(Y0_rule_eps_rgx, True)]]
+                )
+
+p5 = Production(F, 
+                [[A, P]],
+                [[(F_rule_rgx, True), (P_rule_AP_rgx, False)]]
+                )
+
+p6 = Production(P, 
+                [[M], [empty]],
+                [[(P_rule_M_rgx, True)], [(P_rule_eps_rgx, True)]]
+                )
+
+p7 = Production(M, 
+                [[clousure]],
+                [[(M_rule_rgx, True)]]
+                )
+
+p8 = Production(A, 
+                [[character], [openb, E, closedb], [regex_empty]],
+                [[(A_rule_symbol_rgx, True)], [(A_rule_brackets_rgx, True)], [(A_rule_eps_rgx, True)]]
+                )
+
+prods = [p1, p2, p3, p4, p5, p6, p7, p8]
+
+regex_grammar = Grammar(terminals, nts, E, prods)
+
+ast, parsed2 = non_recursive_parse(regex_grammar, tokens)
+print(parsed2)
+nfa = ast.eval()
+dfa = NFAtoDFA(nfa)
+print(dfa.match('a'))
+print(dfa.match('ab'))
+print(dfa.match('ac'))
+print(dfa.match(''))
+print(dfa.match('bc'))
 
 # print('finished')
 # print(parsed2)

@@ -1,6 +1,6 @@
-from own_symbol import Symbol
-from grammar import Grammar
-from own_token import Op
+from Own_symbol import Symbol
+from Grammar import Grammar
+from Own_token import Op
 
 
 def __belongs (lit: str, prod: list[Symbol]) -> bool:
@@ -113,17 +113,18 @@ def build_LL1_table(G: Grammar) -> tuple[bool, dict[str, dict[str, list[str]]]]:
         for prod in coll.tails: ### Por cada producción X -> W
             current_first = __find_first(prod, firsts)
             for ter in G.terminals:
-                if ter.identifier not in table.keys(): ### Iniializar dict
-                    table[ter.identifier] = {}
-
-                if head.identifier not in table[ter.identifier].keys(): ### Inicializar list
-                        table[ter.identifier][head.identifier] = []
-
-                if 'eps' in prod[0].identifier and ter.identifier in follows[head.identifier] or ter.identifier in current_first: ### Si X → e y t ∈ Follow (X) entonces T [X , t] = X → e. o Si X → W y t ∈ First(W) entonces T [X , t] = X → W .
-                    if len(table[ter.identifier][head.identifier]) == 0:
-                        table[ter.identifier][head.identifier] = prod
-                    
-                    else : return False, None
+                if ter.identifier != 'eps':
+                    if ter.identifier not in table.keys(): ### Iniializar dict
+                        table[ter.identifier] = {}
+    
+                    if head.identifier not in table[ter.identifier].keys(): ### Inicializar list
+                            table[ter.identifier][head.identifier] = []
+    
+                    if 'eps' in prod[0].identifier and ter.identifier in follows[head.identifier] or ter.identifier in current_first: ### Si X → e y t ∈ Follow (X) entonces T [X , t] = X → e. o Si X → W y t ∈ First(W) entonces T [X , t] = X → W .
+                        if len(table[ter.identifier][head.identifier]) == 0:
+                            table[ter.identifier][head.identifier] = prod
+                        
+                        else : return False, None
     return True, table
                         
                     
