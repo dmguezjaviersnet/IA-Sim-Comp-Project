@@ -11,7 +11,7 @@ from regex_rules import *
 
 tokens = []
 
-arth_token_builder: dict[str, Callable] = {
+arth_token_builder: Dict[str, Callable] = {
     '+': lambda : tokens.append(Op('+', Token_Type.plus, 1)),
     '-': lambda : tokens.append(Op('-', Token_Type.minus, 1)),
     '*': lambda : tokens.append(Op('*', Token_Type.times, 2)),
@@ -21,7 +21,7 @@ arth_token_builder: dict[str, Callable] = {
     '$': lambda : tokens.append(Op('$' ,Token_Type.eof, 1))
 }
 
-regex_token_builder: dict[str, Callable] = {
+regex_token_builder: Dict[str, Callable] = {
     '*': lambda : tokens.append(Op('*', Token_Type.closure, 3)),
     '(': lambda : tokens.append(Op('(', Token_Type.open_parenthesis, 3)),
     ')': lambda : tokens.append(Op(')', Token_Type.closed_parenthesis, 3)),

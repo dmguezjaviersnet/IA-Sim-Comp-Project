@@ -1,15 +1,16 @@
+from typing import Dict, List, Set, Tuple
 from Own_symbol import Symbol
 from Grammar import Grammar
 from Own_token import Op
 
 
-def __belongs (lit: str, prod: list[Symbol]) -> bool:
+def __belongs (lit: str, prod: List[Symbol]) -> bool:
     for elem in prod:
         if elem.identifier == lit:
             return True
     return False
 
-def __find_firsts(G: Grammar) -> dict[str, set]: ### Para calcular los firsts de cada no-terminal
+def __find_firsts(G: Grammar) -> Dict[str, set]: ### Para calcular los firsts de cada no-terminal
     firsts: dict[str, set] = {}
     for ter in G.terminals: ### Calculando los first de cada terminal
         firsts[ter.identifier] = set()
@@ -50,7 +51,7 @@ def __find_firsts(G: Grammar) -> dict[str, set]: ### Para calcular los firsts de
                             changed = True
     return firsts
         
-def __find_first (symbols: list[Symbol], firsts: list[str]) -> set[str]: ### Para calcular el first de cualquier forma oracional
+def __find_first (symbols: List[Symbol], firsts: List[str]) -> Set[str]: ### Para calcular el first de cualquier forma oracional
     result = set()
     all_eps = True
     for elem in symbols:
@@ -64,7 +65,7 @@ def __find_first (symbols: list[Symbol], firsts: list[str]) -> set[str]: ### Par
     
     return result
 
-def __find_follows(G, firsts) -> dict[str, set]: ### Para calcular los follow
+def __find_follows(G, firsts) -> Dict[str, set]: ### Para calcular los follow
     follows: dict[str, set] = {}
 
     for nt in G.non_terminals:
@@ -102,7 +103,7 @@ def __find_follows(G, firsts) -> dict[str, set]: ### Para calcular los follow
                             changed = True
     return follows
 
-def build_LL1_table(G: Grammar) -> tuple[bool, dict[str, dict[str, list[str]]]]: ### Intenta construir la tabla LL (la salida depende de si la grámatica es LL(1))
+def build_LL1_table(G: Grammar) -> Tuple[bool, Dict[str, Dict[str, List[str]]]]: ### Intenta construir la tabla LL (la salida depende de si la grámatica es LL(1))
     
     table: dict[str, dict[str, list[str]]] = {}
     firsts: dict[str, set] = __find_firsts(G)

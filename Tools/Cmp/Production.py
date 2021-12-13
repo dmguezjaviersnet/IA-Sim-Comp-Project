@@ -1,9 +1,9 @@
-from typing import Callable
+from typing import Callable, List, Tuple
 from Non_terminal import *
 from Own_symbol import Symbol
 
 class Production:
-    def __init__(self, head: Non_terminal, tails: list[list[Symbol]], rules: list[list[tuple[Callable, bool]]]):
+    def __init__(self, head: Non_terminal, tails: List[List[Symbol]], rules: List[List[Tuple[Callable, bool]]]):
         self.head = head
         self.tails = tails
         
