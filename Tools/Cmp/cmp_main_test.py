@@ -185,7 +185,7 @@ p5 = Production(F,
 
 p6 = Production(P, 
                 [[M], [empty]],
-                [[(P_rule_M_rgx, True)], [(P_rule_eps_rgx, True)]]
+                [[(P_rule_M_1_rgx, True), (P_rule_M_2_rgx, False)], [(P_rule_eps_rgx, True)]]
                 )
 
 p7 = Production(M, 

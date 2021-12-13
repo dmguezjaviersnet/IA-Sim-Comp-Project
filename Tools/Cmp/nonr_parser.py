@@ -89,6 +89,9 @@ def non_recursive_parse(G: Grammar, tokens: list[Token]) -> bool:
                     stack.pop()
                     continue
 
+                elif head != None:
+                    __eval_rules(head, prod, G.map_prodstr_rules[prod_id], False)
+
                 prod = []
                 if isinstance(current_token, Character):  # Si el token es un número
                     prod = __new_nodes(

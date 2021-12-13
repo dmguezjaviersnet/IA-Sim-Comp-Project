@@ -52,8 +52,12 @@ def P_rule_AP_rgx(head: Symbol, tail: list[Symbol]):
 
 ############################### P
 # -> M
-def P_rule_M_rgx(head: Symbol, tail: list[Symbol]):
+def P_rule_M_1_rgx(head: Symbol, tail: list[Symbol]):
     head.ast = tail[0].ast
+
+def P_rule_M_2_rgx(head: Symbol, tail: list[Symbol]):
+    tail[0].tmp = head.tmp
+
 
 # -> eps
 def P_rule_eps_rgx(head: Symbol, tail: list[Symbol]):
