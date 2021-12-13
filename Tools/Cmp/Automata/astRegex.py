@@ -56,7 +56,7 @@ class ClosureNode(UnaryNode):
         self.operate(node)
         
     def operate(self, value):
-         return AutomatonClosure(value)
+        return AutomatonClosure(value)
 
 class UnionNode(BinaryNode):
 

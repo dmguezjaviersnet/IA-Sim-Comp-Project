@@ -9,7 +9,6 @@ from ll1_table_builder import build_LL1_table
 from rules import *
 from regex_rules import *
 
-tokens = []
 
 arth_token_builder: Dict[str, Callable] = {
     '+': lambda : tokens.append(Op('+', Token_Type.plus, 1)),
@@ -22,11 +21,12 @@ arth_token_builder: Dict[str, Callable] = {
 }
 
 regex_token_builder: Dict[str, Callable] = {
-    '*': lambda : tokens.append(Op('*', Token_Type.closure, 3)),
-    '(': lambda : tokens.append(Op('(', Token_Type.open_parenthesis, 3)),
-    ')': lambda : tokens.append(Op(')', Token_Type.closed_parenthesis, 3)),
-    '|': lambda : tokens.append(Op('|', Token_Type.union, 1)),
-    '$': lambda : tokens.append(Op('$' ,Token_Type.eof, 1))
+    '*': Op('*', Token_Type.closure, 3),
+    '(': Op('(', Token_Type.open_parenthesis, 3),
+    ')': Op(')', Token_Type.closed_parenthesis, 3),
+    '|': Op('|', Token_Type.union, 1),
+    'ε': Op('ε', Token_Type.repsilon, 2),
+    '$': Op('$' ,Token_Type.eof, 1)
 }
 
 # arth_line = input().split()
@@ -124,15 +124,24 @@ arth_grammar = Grammar(terminals, nts, E, prods)
 ############################### Gramática de Regex ###########################################
 
 # tokens.clear()
-regex_line = input().split()
-regex_line.append('$')
+# regex_line = input().split()
+# regex_line.append('$')
 
-for i in range(len(regex_line)):
-    if regex_line[i] in regex_token_builder.keys():
-        regex_token_builder[regex_line[i]]()
+
+def regexTokenizer(regex_line: str):
+    tokens = []
+    line = regex_line.split()
+    line.append('$')
+
+    for token in line:
+        for symbol in token:
+            if symbol in regex_token_builder.keys():
+                tokens.append(regex_token_builder[symbol])
     
-    else:
-        tokens.append(Character(regex_line[i], tkn_type=Token_Type.character))
+            else:
+                tokens.append(Character(symbol, tkn_type=Token_Type.character))
+    
+    return tokens
 
 # No terminales
 E = Non_terminal('E', 'ast')
@@ -201,7 +210,7 @@ p8 = Production(A,
 prods = [p1, p2, p3, p4, p5, p6, p7, p8]
 
 regex_grammar = Grammar(terminals, nts, E, prods)
-
+tokens = regexTokenizer('(a)')
 ast, parsed2 = non_recursive_parse(regex_grammar, tokens)
 print(parsed2)
 nfa = ast.eval()
