@@ -12,6 +12,7 @@ class Token_Type(Enum):
     # Regex
     closure = 6
     union = 7
+    repsilon = 11
 
     open_parenthesis = 8
     closed_parenthesis = 9

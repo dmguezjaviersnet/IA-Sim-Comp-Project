@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, List, Tuple
 from Grammar import Grammar
 from ll1_table_builder import build_LL1_table
 from Non_terminal import Non_terminal
@@ -8,7 +8,7 @@ from Terminal import Terminal
 from rules import eval_rule
 
 
-def __eval_rules(head: Symbol, tail: list[Symbol], rules: list[tuple[Callable, bool]], eval_sintetized: bool):
+def __eval_rules(head: Symbol, tail: List[Symbol], rules: List[Tuple[Callable, bool]], eval_sintetized: bool):
     for rule, is_sintetized in rules:
         if eval_sintetized:
             if is_sintetized:
@@ -19,16 +19,16 @@ def __eval_rules(head: Symbol, tail: list[Symbol], rules: list[tuple[Callable, b
                 eval_rule(rule, head, tail)
 
 
-def __append_ids(rule_key, ids: list[Symbol]):
+def __append_ids(rule_key, ids: List[Symbol]):
     for elem in ids:
         rule_key += elem.identifier + ' '
     return rule_key
 
 
 # Crear nuevos nodos para el árbol de derivación
-def __new_nodes(prod: list[Symbol]) -> list[Symbol]:
+def __new_nodes(prod: List[Symbol]) -> List[Symbol]:
     # cst_nodes: nodos de árbol de sintaxis concreta (o de derivación)
-    new_cst_nodes: list[Symbol] = []
+    new_cst_nodes: List[Symbol] = []
     for elem in prod:
         if isinstance(elem, Terminal):
             new_cst_nodes.append(Terminal(elem.identifier, *elem.attrs))
@@ -39,9 +39,9 @@ def __new_nodes(prod: list[Symbol]) -> list[Symbol]:
     return new_cst_nodes
 
 
-def non_recursive_parse(G: Grammar, tokens: list[Token]) -> bool:
+def non_recursive_parse(G: Grammar, tokens: List[Token]) -> bool:
     eof_appended = False
-    stack: list[tuple[Symbol, Symbol, str, list[Symbol]]] = []
+    stack: List[tuple[Symbol, Symbol, str, List[Symbol]]] = []
     stack.append((None, G.initial_nt, '', None))
     current_token_index = 0
     is_ll1, ll_table = build_LL1_table(G)
