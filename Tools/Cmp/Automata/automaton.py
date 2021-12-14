@@ -231,7 +231,10 @@ def AutomatonConcat(a1: NFA, a2: NFA):
                 newTransitions[(i,k)] = l
 
     for sf in a1.finals:
-        newTransitions[ sf, EPSILON] = [newa2start]
+        if (sf, EPSILON) in newTransitions.keys():
+            newTransitions[sf, EPSILON].append(newa2start)
+        else:
+            newTransitions[ sf, EPSILON] = [newa2start]
 
     for i, j in a2.transitions.items():
            for k,l in j.items():

@@ -10,15 +10,15 @@ from rules import *
 from regex_rules import *
 
 
-arth_token_builder: Dict[str, Callable] = {
-    '+': lambda : tokens.append(Op('+', Token_Type.plus, 1)),
-    '-': lambda : tokens.append(Op('-', Token_Type.minus, 1)),
-    '*': lambda : tokens.append(Op('*', Token_Type.times, 2)),
-    '/': lambda : tokens.append(Op('/', Token_Type.div, 2)),
-    '(': lambda : tokens.append(Op('(', Token_Type.open_parenthesis, 3)),
-    ')': lambda : tokens.append(Op(')', Token_Type.closed_parenthesis, 3)),
-    '$': lambda : tokens.append(Op('$' ,Token_Type.eof, 1))
-}
+# arth_token_builder: Dict[str, Callable] = {
+#     '+': lambda : tokens.append(Op('+', Token_Type.plus, 1)),
+#     '-': lambda : tokens.append(Op('-', Token_Type.minus, 1)),
+#     '*': lambda : tokens.append(Op('*', Token_Type.times, 2)),
+#     '/': lambda : tokens.append(Op('/', Token_Type.div, 2)),
+#     '(': lambda : tokens.append(Op('(', Token_Type.open_parenthesis, 3)),
+#     ')': lambda : tokens.append(Op(')', Token_Type.closed_parenthesis, 3)),
+#     '$': lambda : tokens.append(Op('$' ,Token_Type.eof, 1))
+# }
 
 regex_token_builder: Dict[str, Callable] = {
     '*': Op('*', Token_Type.closure, 3),
@@ -210,18 +210,21 @@ p8 = Production(A,
 prods = [p1, p2, p3, p4, p5, p6, p7, p8]
 
 regex_grammar = Grammar(terminals, nts, E, prods)
-tokens = regexTokenizer('a|ε')
+
+tokens = regexTokenizer('(a|b)*(e)(d)')
 ast, parsed2 = non_recursive_parse(regex_grammar, tokens)
 print(parsed2)
 nfa = ast.eval()
 dfa = NFAtoDFA(nfa)
-print(dfa.match('a'))
-print(dfa.match('ab'))
-print(dfa.match('ac'))
+print(dfa.match('aed'))
+print(dfa.match('abbbbed'))
+print(dfa.match('aaed'))
+print(dfa.match('ed'))
+print(dfa.match('aaaaabbbbaaed'))
+print(dfa.match('aaaaabbbba'))
 print(dfa.match(''))
-print(dfa.match('aaaaabbbb'))
 
-# print('finished')
+print('finished')
 # print(parsed2)
 # print(parsed)
 

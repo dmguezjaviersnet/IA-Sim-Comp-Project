@@ -26,9 +26,9 @@ def main():
     #     print(i)
     # print(dfa.number_of_states)
     # test_union()
-    # test_closure()
+    test_closure()
     #test_concat()
-    test_ast()
+    # test_ast()
 
 def test_ast():
     concat  = ConcatNode(SymbolNode('a'), SymbolNode('b'))
