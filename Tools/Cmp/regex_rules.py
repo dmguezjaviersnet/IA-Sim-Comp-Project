@@ -1,8 +1,6 @@
 from Own_symbol import Symbol
 from Automata.astRegex import *
 
-eval_rule = lambda rule, head, tail : rule(head, tail)
-
 ################################ E
 # -> T X
 def E_rule_rgx(head: Symbol, tail: List[Symbol]): 

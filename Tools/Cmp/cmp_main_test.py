@@ -4,20 +4,19 @@ from nonr_parser import non_recursive_parse
 from Terminal import *
 from Non_terminal import *
 from Production import *
-from ll1_table_builder import build_LL1_table
 
 from rules import *
 from regex_rules import *
 
 
 arth_token_builder: Dict[str, Callable] = {
-    '+': lambda : tokens.append(Op('+', Token_Type.plus, 1)),
-    '-': lambda : tokens.append(Op('-', Token_Type.minus, 1)),
-    '*': lambda : tokens.append(Op('*', Token_Type.times, 2)),
-    '/': lambda : tokens.append(Op('/', Token_Type.div, 2)),
-    '(': lambda : tokens.append(Op('(', Token_Type.open_parenthesis, 3)),
-    ')': lambda : tokens.append(Op(')', Token_Type.closed_parenthesis, 3)),
-    '$': lambda : tokens.append(Op('$' ,Token_Type.eof, 1))
+    '+': Op('+', Token_Type.plus, 1),
+    '-': Op('-', Token_Type.minus, 1),
+    '*': Op('*', Token_Type.times, 2),
+    '/': Op('/', Token_Type.div, 2),
+    '(': Op('(', Token_Type.open_parenthesis, 3),
+    ')': Op(')', Token_Type.closed_parenthesis, 3),
+    '$': Op('$' ,Token_Type.eof, 1)
 }
 
 regex_token_builder: Dict[str, Callable] = {
@@ -121,7 +120,7 @@ arth_grammar = Grammar(terminals, nts, E, prods)
 # ast, parsed2 = non_recursive_parse(arth_grammar, tokens)
 # print(ast)
 
-############################### Gramática de Regex ###########################################
+############################### Gramática de Regex #################################
 
 # tokens.clear()
 # regex_line = input().split()
@@ -151,7 +150,7 @@ Y = Non_terminal('Y', 'ast', 'tmp')
 F = Non_terminal('F', 'ast')
 P = Non_terminal('P', 'ast')
 M = Non_terminal('M', 'ast', 'tmp')
-A = Non_terminal('A', 'ast', 'val')
+A = Non_terminal('A', 'ast')
 nts = [E, X, T, Y, F, P, M, A]
 
 # Terminales
@@ -159,8 +158,7 @@ clousure = Terminal('*')
 openb = Terminal('(')
 closedb = Terminal(')')
 bar = Terminal('|')
-character = Terminal('character')
-ccat = Terminal('ccat')
+character = Terminal('character', 'val')
 empty = Terminal('eps')
 regex_empty = Terminal('ε')
 eof = Terminal('$')
@@ -210,7 +208,7 @@ p8 = Production(A,
 prods = [p1, p2, p3, p4, p5, p6, p7, p8]
 
 regex_grammar = Grammar(terminals, nts, E, prods)
-tokens = regexTokenizer('a|ε')
+tokens = regexTokenizer('(a|b)*')
 ast, parsed2 = non_recursive_parse(regex_grammar, tokens)
 print(parsed2)
 nfa = ast.eval()

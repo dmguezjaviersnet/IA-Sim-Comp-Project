@@ -19,20 +19,20 @@ class Token_Type(Enum):
     eof = 10
 
 
-class Token:
+class Token: # Clase para representar los tokens
 
-    def __init__(self, value, tkn_type):
+    def __init__(self, value, tkn_type): # Ctor
         self.tkn_type = tkn_type
         self.value = value
 
-class Character(Token):
+class Character(Token): # Clase para representar los caracteres
 
-    def __init__(self, value, tkn_type):
+    def __init__(self, value, tkn_type): # Ctor
         super().__init__(value, tkn_type)
 
-class Op(Token):
+class Op(Token): # Clase para representar los Operadores
 
-    def __init__(self, value, tkn_type, priority):
+    def __init__(self, value, tkn_type, priority): # Ctor
         super().__init__(value, tkn_type)
         self.priority = priority
         
