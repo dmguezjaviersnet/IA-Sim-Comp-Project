@@ -210,7 +210,7 @@ p8 = Production(A,
 prods = [p1, p2, p3, p4, p5, p6, p7, p8]
 
 regex_grammar = Grammar(terminals, nts, E, prods)
-tokens = regexTokenizer('(a)')
+tokens = regexTokenizer('a|ε')
 ast, parsed2 = non_recursive_parse(regex_grammar, tokens)
 print(parsed2)
 nfa = ast.eval()
@@ -219,7 +219,7 @@ print(dfa.match('a'))
 print(dfa.match('ab'))
 print(dfa.match('ac'))
 print(dfa.match(''))
-print(dfa.match('bc'))
+print(dfa.match('aaaaabbbb'))
 
 # print('finished')
 # print(parsed2)

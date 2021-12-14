@@ -79,4 +79,4 @@ def A_rule_brackets_rgx(head: Symbol, tail: List[Symbol]):
 
 # -> ε
 def A_rule_eps_rgx(head: Symbol, tail: List[Symbol]):
-    head.ast = EpsilonNode()
+    head.ast = EpsilonNode(tail[0].identifier)
