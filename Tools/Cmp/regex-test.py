@@ -8,6 +8,7 @@ def testregex1():
     ast, _= non_recursive_parse(regex_grammar, tokens)
     nfa = ast.eval()
     dfa = NFAtoDFA(nfa)
+    print(dfa.match('a'))
     assert dfa.match('a') == True
     assert dfa.match('ab') == False
     assert dfa.match('ac') == False
@@ -20,7 +21,7 @@ def testregex2():
     ast, _= non_recursive_parse(regex_grammar, tokens)
     nfa = ast.eval()
     dfa = NFAtoDFA(nfa)
-    a = dfa.match('aa') == True
+    a = dfa.match('ab')
     print(a)
     # assert a == True
     # assert dfa.match('ccc') == True
@@ -28,4 +29,4 @@ def testregex2():
     # assert dfa.match('abc') == True
 
 
-# testregex2()
+testregex2()

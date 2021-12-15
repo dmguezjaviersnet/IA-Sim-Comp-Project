@@ -209,12 +209,12 @@ prods = [p1, p2, p3, p4, p5, p6, p7, p8]
 
 regex_grammar = Grammar(terminals, nts, E, prods)
 
-tokens = regexTokenizer('(a|b)*(e)(d)')
+tokens = regexTokenizer('(a|ε)*')
 ast, parsed2 = non_recursive_parse(regex_grammar, tokens)
-print(parsed2)
+# print(parsed2)
 nfa = ast.eval()
 dfa = NFAtoDFA(nfa)
-print(dfa.match('aed'))
+print(dfa.match('aaaaa'))
 print(dfa.match('abbbbed'))
 print(dfa.match('aaed'))
 print(dfa.match('ed'))
