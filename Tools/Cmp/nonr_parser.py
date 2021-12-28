@@ -49,7 +49,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> bool: # Parser predi
     if is_ll1: # Si la gramática es LL(1) es que se puede parsear con este algoritmo
         while len(stack) > 0 and current_token_index < len(tokens): # Mientras la pila no esté vacía
 
-            head, current_symbol, prod_id, prod = stack[len(stack) - 1] # Obtengamos el elemento que está en el tope de la pila
+            head, current_symbol, prod_id, prod = stack[-1] # Obtengamos el elemento que está en el tope de la pila
             rule_key = current_symbol.identifier + ' -> ' # Asignamos la llave para la regla de la producción que se vaya a aplicar, inicialmente como X ->, donde X es el el id del elemento actual
             current_token = tokens[current_token_index] # Guardemos el token que estamos analizando
 

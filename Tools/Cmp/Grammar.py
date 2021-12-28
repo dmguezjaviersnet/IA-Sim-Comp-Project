@@ -3,8 +3,9 @@ from Non_terminal import *
 from Terminal import *
 from Production import *
 
-
 class Grammar: # Clase para representar una gramática
+
+    '''Clase para representar una gramática con todas sus características'''
 
     def __init__(self, terminals, non_terminals: List[Terminal], initial_nt: List[Non_terminal], productions: List[Production]): # Ctor
         self.terminals = terminals # terminales
@@ -17,9 +18,9 @@ class Grammar: # Clase para representar una gramática
     def __map_rules(self): # Método para mapear el string que identifica a una producción con las reglas que le corresponden
         ans: dict[str, tuple[Callable, bool]] = {}
         
-        for i in range(len(self.productions)): # Por cada no-terminal
-            head_id = self.productions[i].head.identifier + ' -> ' # id de la cabeza de la producción
-            for j in range(len(self.productions[i].tails)): # Por cada producción de este no terminal
+        for i, elem in enumerate(self.productions): # Por cada no-terminal
+            head_id = elem.head.identifier + ' -> ' # id de la cabeza de la producción
+            for j, _ in enumerate(self.productions[i].tails): # Por cada producción de este no terminal
                 tail_id = ''
                 for elem in self.productions[i].tails[j]: # Por cada elemento en esta producción
                     tail_id += elem.identifier + ' ' # Añadirlo al id de la cola de la producción

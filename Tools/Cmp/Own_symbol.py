@@ -2,7 +2,9 @@ from typing import overload
 
 
 class Symbol: # Clase para símbolo de una gramática
-    """docstring for Symbol."""
+    
+    '''Representa un símbolo en una gramática, sea terminal o no terminal'''
+    
     def __init__(self, id: str, *args): # Ctor
         self.identifier = id
         self.attrs = []

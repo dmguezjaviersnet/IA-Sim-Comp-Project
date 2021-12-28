@@ -2,6 +2,9 @@ from abc import abstractmethod
 from Automata.automaton import *
 
 class Node:
+
+    '''Objeto para representar nodos de AST para REGEX'''
+
     @abstractmethod
     def eval(self):
         ...
