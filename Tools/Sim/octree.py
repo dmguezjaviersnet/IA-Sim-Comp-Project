@@ -8,12 +8,19 @@ class Region:
   def __init__(self, center: Vector3 , radio : int) -> None:
     self.center = center
     self.radio = radio
+  
+  def __str__(self) -> str:
+    return 'center :' + str(self.center)  + '  radio: ' + str(self.radio)
 
 class Objects:
-  def __init__(self, position, mass=1, radius=1):
+  def __init__(self, position, mass=1, radius=1,name=None):
     self.mass = mass
     self.position = position
     self.radius = radius
+    self.name = name
+
+  def __str__(self) -> str:
+    return 'name: ' + str(self.name) + ' mass: ' + str(self.mass) + ' position: ' + str(self.position) + '  radius: ' + str(self.radius)
 
 class Node:
   def __init__(self, region : Region, objects : List[Objects] ,parent:None):
@@ -32,6 +39,8 @@ def giveMeOctant (center : Vector3 , position: Vector3):
   zz = newpos.z if newpos.z > 0 else 0
   return xx * 4 | yy * 2 | zz
 
+def ObjectInside (region: Region , vector: Vector3):
+  if region.center.x < vector.x and region.center.y < vector.y n
 
 def clasifyObjects (objects: List [Objects] , center: Vector3):
   #building list for clasify objects
@@ -48,6 +57,8 @@ def clasifyObjects (objects: List [Objects] , center: Vector3):
 dirx= [-1,-1,-1,-1,1,1,1,1]
 diry =[-1,-1,1,1,-1,-1,1,1]
 dirz =[-1,1,-1,1,-1,1,-1,1]
+
+
 class Octree:
   def __init__(self, region: Region, objects: List[Objects]):
     self.root = self.BuildTree(parent= None, region=region, objects=objects)
@@ -68,24 +79,35 @@ class Octree:
       newRegion = Region(center= newCenter,radio= newRadio)
       newNode.childs[i] = self.BuildTree(parent=newNode , region= newRegion, objects=objs[i])
     return newNode
+  
+  def preorden (self, node: Node):
+    for child in node.childs:
+      if child != None:
+        self.preorden(child)
+    if len(node.objects) > 0:
+      print('object:' , [str(item) for item in node.objects ] , 'Region: ' , node.region)
 
 
-o1 = Objects(position=Vector3(2,6,7))
-o2 = Objects(position=Vector3(1,7,2))
-o3 = Objects(position=Vector3(-1,-6,7))
-o4 = Objects(position=Vector3(4,-1,-8))
-o5 = Objects(position=Vector3(3,-6,7))
-o6 = Objects(position=Vector3(2,4,-2))
+# o1 = Objects(position=Vector3(2,6,7), name= "object1")
+# o2 = Objects(position=Vector3(1,7,2), name= "object2")
+# o3 = Objects(position=Vector3(-1,-6,7), name= "object3")
+# o4 = Objects(position=Vector3(4,-1,-8), name= "object4")
+# o5 = Objects(position=Vector3(3,-6,7), name= "object5")
+# o6 = Objects(position=Vector3(2,4,-2), name= "object6")
 
-lstObj = [o1,o2,o3,o4,o5,o6]
+# lstObj = [o1,o2,o3,o4,o5,o6]
 # objecs = clasifyObjects(lstObj,Vector3(0,0,0))
 
 # for i in range(len(objecs)):
 #   for item in objecs[i]:
 #     print(item.position)
 
-region = Region(Vector3(0,0,0),4)
-octree = Octree(region,lstObj)
+# region = Region(Vector3(0,0,0),8)
+# octree = Octree(region,lstObj)
 
-lst1 = octree.root
-print(type(lst1))
+# octree.preorden(octree.root)
+
+# center = Vector3(0,0,0)
+# for item in lstObj:
+#   octant = giveMeOctant(center,item.position)
+#   print(octant)
