@@ -1,5 +1,5 @@
 
-from typing import List
+from typing import *
 from Vector3 import *
 
 MINRADIUS =1
@@ -19,15 +19,21 @@ class Objects:
     self.radius = radius
     self.name = name
 
+  def move (self , newPosition)-> None:
+    self.position = newPosition
+
+
   def __str__(self) -> str:
     return 'name: ' + str(self.name) + ' mass: ' + str(self.mass) + ' position: ' + str(self.position) + '  radius: ' + str(self.radius)
 
 class Node:
-  def __init__(self, region : Region, objects : List[Objects] ,parent:None):
+  def __init__(self, region : Region, objects : List[Objects] ,parent , depth:int=0 ):
     self.objects = objects
     self.region = region
     self.childs = [None for i in range(8)]
     self.parent = parent
+    self.depth = depth
+    self.isLeafNode = True 
 
 def giveMeOctant (center : Vector3 , position: Vector3):
   newpos = position - center
@@ -39,8 +45,17 @@ def giveMeOctant (center : Vector3 , position: Vector3):
   zz = newpos.z if newpos.z > 0 else 0
   return xx * 4 | yy * 2 | zz
 
+
+def checkRange (c:int , r:int ,p:int):
+  return (p <= (c + r)) and (p >= (c - r)) 
+
 def ObjectInside (region: Region , vector: Vector3):
-  if region.center.x < vector.x and region.center.y < vector.y n
+  inside = True 
+  inside = inside and checkRange(region.center.x,region.radio,vector.x)
+  inside = inside and checkRange(region.center.y,region.radio,vector.y)
+  inside = inside and checkRange(region.center.z,region.radio,vector.z)
+  return inside 
+
 
 def clasifyObjects (objects: List [Objects] , center: Vector3):
   #building list for clasify objects
@@ -79,35 +94,48 @@ class Octree:
       newRegion = Region(center= newCenter,radio= newRadio)
       newNode.childs[i] = self.BuildTree(parent=newNode , region= newRegion, objects=objs[i])
     return newNode
-  
+
+  def insertObject (self, object: Objects):
+    self.root = self._insertObject(node=self.root, object=object)
+
+  def _insertObject (self , node: Node , object: Objects):
+    if not ObjectInside(node.region,object):
+      pass 
+    newRadio = node.region.radio // 2
+    if newRadio < MINRADIUS:
+      node.objects.append(object)
+      return node
+    octant = giveMeOctant(node.region.center, object.position)
+    if node.childs[octant] is None:
+      oldCenter = node.region.center
+      newCenter = Vector3(oldCenter.x + dirx[octant], oldCenter.y +diry[octant] , oldCenter.z + dirz[octant])
+      newRegion = Region(center=newCenter,radio=newRadio)
+      node.childs[octant] = Node(newRegion,[],parent=node)
+    node.childs[octant] = self.insertObject(node.childs[octant],object)
+    return node
+
   def preorden (self, node: Node):
     for child in node.childs:
       if child != None:
         self.preorden(child)
     if len(node.objects) > 0:
-      print('object:' , [str(item) for item in node.objects ] , 'Region: ' , node.region)
+      print('object:' , [str(item) for item in node.objects] , 'Region: ' , node.region)
+  
+  def updateNode(self, node: Node):
+    for obj in node.objects:
+      if not ObjectInside(node.region,obj.position):
+        pass 
 
 
-# o1 = Objects(position=Vector3(2,6,7), name= "object1")
-# o2 = Objects(position=Vector3(1,7,2), name= "object2")
-# o3 = Objects(position=Vector3(-1,-6,7), name= "object3")
-# o4 = Objects(position=Vector3(4,-1,-8), name= "object4")
-# o5 = Objects(position=Vector3(3,-6,7), name= "object5")
-# o6 = Objects(position=Vector3(2,4,-2), name= "object6")
 
-# lstObj = [o1,o2,o3,o4,o5,o6]
-# objecs = clasifyObjects(lstObj,Vector3(0,0,0))
+o1 = Objects(position=Vector3(2,3,1), name= "object1")
+o2 = Objects(position=Vector3(1,1,2), name= "object2")
+o3 = Objects(position=Vector3(-1,-4,2), name= "object3")
 
-# for i in range(len(objecs)):
-#   for item in objecs[i]:
-#     print(item.position)
 
-# region = Region(Vector3(0,0,0),8)
-# octree = Octree(region,lstObj)
+# lstObj = [o1,o2,o3]
 
+# r = Region(Vector3(0,0,0),4) 
+
+# octree = Octree(r,lstObj)
 # octree.preorden(octree.root)
-
-# center = Vector3(0,0,0)
-# for item in lstObj:
-#   octant = giveMeOctant(center,item.position)
-#   print(octant)
