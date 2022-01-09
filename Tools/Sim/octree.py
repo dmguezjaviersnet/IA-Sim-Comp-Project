@@ -1,4 +1,3 @@
-
 from typing import *
 from Vector3 import *
 
@@ -121,10 +120,34 @@ class Octree:
     if len(node.objects) > 0:
       print('object:' , [str(item) for item in node.objects] , 'Region: ' , node.region)
   
+  def moveObject(self, node: Node, object: Objects):
+    if not ObjectInside(node.region,object.position):
+      if node.parent is None: pass 
+      else: self.moveObject(node.parent,object)
+    octant = giveMeOctant(node.region.center,object.position)
+    if octant == 8: 
+      node.objects.append(object)
+      return None
+    if node.childs[octant] is None:
+      newRadio = node.region.radio
+      oldCenter = node.region.center
+      newCenter = Vector3(oldCenter.x + dirx[octant], oldCenter.y +diry[octant] , oldCenter.z + dirz[octant])
+      newRegion = Region(center=newCenter,radio=newRadio)
+      node.childs[octant] = Node(newRegion,[],parent=node)
+      self.moveObject(node.childs[octant],object)
+
   def updateNode(self, node: Node):
     for obj in node.objects:
       if not ObjectInside(node.region,obj.position):
-        pass 
+        pass
+
+  def detectColision (self,node: Node):
+    if len(node.objects) > 1 : return True 
+    for child in node.childs:
+      if child != None and not self.detectColision(child):
+        return True
+    return False 
+
 
 
 
@@ -133,9 +156,9 @@ o2 = Objects(position=Vector3(1,1,2), name= "object2")
 o3 = Objects(position=Vector3(-1,-4,2), name= "object3")
 
 
-# lstObj = [o1,o2,o3]
+lstObj = [o1,o2,o3]
 
-# r = Region(Vector3(0,0,0),4) 
+r = Region(Vector3(0,0,0),4) 
 
-# octree = Octree(r,lstObj)
-# octree.preorden(octree.root)
+octree = Octree(r,lstObj)
+octree.preorden(octree.root)
