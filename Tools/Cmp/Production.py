@@ -16,18 +16,18 @@ class Production: # Clase para representar una producción
     def __init__(self, head: Non_terminal, tails: List[List[Symbol]], rules: List[List[Tuple[Callable, bool]]]): # Ctor
         self.head = head
         self.tails = tails
-        
-        self.nt_in_prod = [0 for _ in range(len(self.tails))]
-        self.__map_nt_amount()
-
         self.rules = rules
 
-    
-    def __map_nt_amount(self):
-        for i in range(len(self.tails)):
-            nt_count = 0
-            for elem in self.tails[i]:
-                if isinstance(elem, Non_terminal):
-                    nt_count += 1
-            self.nt_in_prod[i] = nt_count
+    def __str__(self) -> str:
+        ans = f'{self.head.identifier} -> '
+
+        for elem in self.tails[0]:
+            ans += f'{elem.__str__()} '
+
+        for tail in self.tails[1:]:
+            ans += '\n     '
+            for elem in tail:
+                ans += f'{elem.__str__()} '
+
+        return ans
 

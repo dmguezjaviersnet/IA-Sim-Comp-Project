@@ -11,10 +11,10 @@ class Terminal(Symbol): # Clase para terminal de una gramática
 
 class EOF(Terminal): # Caracter especial $
 
-    def __init__(self, identifier: str, *args):
+    def __init__(self, *args):
         super().__init__('$', *args)
 
 class Epsilon(Terminal): # Caracter especial que indica producción epsilon 
 
-    def __init__(self, identifier: str, *args):
-        super().__init__('epsilon', *args)
+    def __init__(self, *args):
+        super().__init__('eps', *args)

@@ -1,4 +1,5 @@
-from typing import Callable, List, Tuple
+from typing import Any, Callable, List, Tuple
+
 from Grammar import Grammar
 from ll1_table_builder import build_LL1_table
 from Non_terminal import Non_terminal
@@ -38,7 +39,7 @@ def __new_nodes(prod: List[Symbol]) -> List[Symbol]: # Crear nuevos nodos para e
     return new_cst_nodes
 
 
-def non_recursive_parse(G: Grammar, tokens: List[Token]) -> bool: # Parser predictivo no recursivo
+def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: # Parser predictivo no recursivo (LL)
     eof_appended = False # Si ya añadimos eof a la pila
     stack: List[tuple[Symbol, Symbol, str, List[Symbol]]] = [] # Una pila para ir guardando tuplas (cabeza de la producción, símbolo que se está analizando, id de la producción, producción)
     stack.append((None, G.initial_nt, '', None)) # Inicialmente en la pila está una tupla con el símbolo inicial de la gramática y el resto de los valores de la tupla tienen valores que no afecten el algoritmo
@@ -50,7 +51,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> bool: # Parser predi
         while len(stack) > 0 and current_token_index < len(tokens): # Mientras la pila no esté vacía
 
             head, current_symbol, prod_id, prod = stack[-1] # Obtengamos el elemento que está en el tope de la pila
-            rule_key = current_symbol.identifier + ' -> ' # Asignamos la llave para la regla de la producción que se vaya a aplicar, inicialmente como X ->, donde X es el el id del elemento actual
+            rule_key = f'{current_symbol.identifier} -> ' # Asignamos la llave para la regla de la producción que se vaya a aplicar, inicialmente como X ->, donde X es el el id del elemento actual
             current_token = tokens[current_token_index] # Guardemos el token que estamos analizando
 
             if current_symbol.identifier == '$':  # Si lo que hay en el tope de la pila es $ (EOF), entonces ya terminé de parsear y después de este token no hay más tokens por analizar
@@ -104,10 +105,10 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> bool: # Parser predi
                     eof_appended = True # Indicar que ya agregamos EOF en la pila
 
                 if len(prod) == 0:  # Si no hay producción válida en la tabla
-                    return False # Imposible de parsear
+                    return False, None # Imposible de parsear
 
                 for elem in reversed(prod): # Agregar a la pila los elementos de la producción (nuevos nodos del árbol de derivación)
                     stack.append((current_symbol, elem, rule_key, prod)) 
 
         return ast_answer, len(stack) == 0 and current_token_index == len(tokens)
-    return False
+    return False, None

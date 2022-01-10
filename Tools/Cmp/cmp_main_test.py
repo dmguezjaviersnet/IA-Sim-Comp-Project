@@ -63,8 +63,8 @@ sub = Terminal('-')
 openb = Terminal('(')
 closedb = Terminal(')')
 character = Terminal('character')
-empty = Terminal('eps')
-eof = Terminal('$')
+empty = Epsilon()
+eof = EOF()
 terminals = [add, sub, mul, div, openb, closedb, character, empty, eof]
 
 # Producciones
@@ -160,9 +160,9 @@ openb = Terminal('(')
 closedb = Terminal(')')
 bar = Terminal('|')
 character = Terminal('character', 'val')
-empty = Terminal('eps')
 regex_empty = Terminal('ε')
-eof = Terminal('$')
+empty = Epsilon()
+eof = EOF()
 terminals = [clousure, bar, openb, closedb, character, regex_empty, empty, eof]
 
 # Producciones
@@ -223,8 +223,8 @@ print(dfa.match('aaaaabbbbaaed'))
 print(dfa.match('aaaaabbbba'))
 print(dfa.match(''))
 
-print('finished')
+print('finished \n\n')
+print(regex_grammar)
 # print(parsed2)
 # print(parsed)
-
 

@@ -12,4 +12,7 @@ class Symbol: # Clase para símbolo de una gramática
         for elem in args: # Crear campos con los nombres empaquetados en *args
             setattr(self, elem, None)
             self.attrs.append(elem)
+
+    def __str__(self) -> str:
+        return self.identifier
             

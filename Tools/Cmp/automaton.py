@@ -45,7 +45,7 @@ class Automaton:
     def number_of_states(self):
         return len(self.states)
 
-    def __init__(self, nStates: int, q0:int , finalStates:List[int], transitions, statesList=[]):
+    def __init__(self, nStates: int, q0: int, finalStates: List[int], transitions, statesList=[]):
         
         if not len(statesList):
             states = []
@@ -72,7 +72,7 @@ class Automaton:
             self.transitions[origin][symbol] = destinations
             self.vocabulary.add(symbol)
 
-        self.vocabulary.discard(EPSILON) # remove epsilon from vacabulary 
+        self.vocabulary.discard(EPSILON) # remove epsilon from vocabulary 
         
 
 class NFA(Automaton):
@@ -84,7 +84,7 @@ class NFA(Automaton):
     
     def epsilonTransitions(self, state):
         print(self.transitions)
-        if state in self.transitions.keys() and EPSILON in self.transitions[state].keys(): 
+        if state in self.transitions and EPSILON in self.transitions[state]: 
             return self.transitions[state][EPSILON]
         else:
             return []
@@ -148,7 +148,7 @@ def goTo(automaton:'NFA', states: List[int], symbol: str):
     goto = set()
 
     for state in states:
-        if state in automaton.transitions.keys() and symbol in automaton.transitions[state].keys():
+        if state in automaton.transitions and symbol in automaton.transitions[state]:
             goto.update(automaton.transitions[state][symbol])
     
     return goto
@@ -177,9 +177,9 @@ def NFAtoDFA(automaton: 'NFA'):
                         qi = state
               
                     
-                if current.id not in transitions.keys(): 
+                if current.id not in transitions: 
                     transitions[current.id] = {}
-                if  symbol in transitions[current.id].keys():
+                if  symbol in transitions[current.id]:
                     Exception('not DFA from NFA')
                 else:
                     transitions[current.id][symbol] = qi.id
@@ -230,13 +230,13 @@ def AutomatonUnion(a1: NFA, a2: NFA):
 
     newTransitions[(newq0, EPSILON)] = [newa1start, newa2start]
     for fs in a1.finals:
-        if (fs, EPSILON) not in a1.transitions.keys():
+        if (fs, EPSILON) not in a1.transitions:
             newTransitions[(fs+newa1start, EPSILON)] = [newFinalState]
         else:
             newTransitions[(fs+newa1start, EPSILON)].append(newFinalState)
     
     for fs in a2.finals:
-       if (fs, EPSILON) not in a2.transitions.keys():
+       if (fs, EPSILON) not in a2.transitions:
            newTransitions[(fs+newa2start, EPSILON)] = [newFinalState]
        else:
            newTransitions[(fs+newa2start, EPSILON)].append(newFinalState)
@@ -258,7 +258,7 @@ def AutomatonConcat(a1: NFA, a2: NFA):
                 newTransitions[(i,k)] = l
 
     for sf in a1.finals:
-        if (sf, EPSILON) in newTransitions.keys():
+        if (sf, EPSILON) in newTransitions:
             newTransitions[sf, EPSILON].append(newa2start)
         else:
             newTransitions[ sf, EPSILON] = [newa2start]
@@ -286,7 +286,7 @@ def AutomatonClosure(a1: NFA):
     newTransitions[(newq0, EPSILON)] = [newa1start, newFinalState]
     
     for fs in a1.finals:
-        if (fs, EPSILON) not in a1.transitions.keys():
+        if (fs, EPSILON) not in a1.transitions:
             newTransitions[(fs+newa1start, EPSILON)] = [newFinalState]
         else:
             newTransitions[(fs+newa1start, EPSILON)].append(newFinalState)
