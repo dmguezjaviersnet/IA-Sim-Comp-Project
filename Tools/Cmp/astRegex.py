@@ -65,4 +65,6 @@ class ConcatNode(BinaryNode):
     def operate(self, lvalue, rvalue):
         return AutomatonConcat(lvalue, rvalue)
 
-        
+
+def regex_tokenizer(text, G, ):
+    

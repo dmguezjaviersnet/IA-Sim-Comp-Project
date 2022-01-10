@@ -5,11 +5,33 @@ EPSILON = ''
 
 class State:
 
-    def __init__(self, id: int, tag: str, isFinal: bool = False):
+    def __init__(self, id: int, tag, isFinal: bool = False):
         self.id = id
         self.tag = tag
         self.isFinal = isFinal
+        self.transitions = {}
+        self.epsilon_transitions  = set()
+    
+    def has_a_transition(self, symbol):
+        return symbol in self.transitions.keys()
+    
+    def add_transition(self, symbol: str, state: 'State'):
+        if symbol in self.transitions.keys():
+            self.transitions[symbol].append(state)
+        else:
+            self.transitions[symbol] = [state]
+        return self
 
+    def add_epsilon_transition(self, state: 'State'):
+        self.epsilon_transitions.add(state)
+        return self
+
+    @staticmethod
+    def move_states(symbol, *states: List['State']):
+        return { s for state in states if state.has_a_transition(symbol) for s in state[symbol]}
+
+
+    
     def __str__(self) -> str:
         return f"Id:{self.id}\n Tag:{self.tag} \n isFinal:{self.isFinal}"
 
@@ -89,7 +111,7 @@ def goTo(automaton:'NFA', states: List[int], symbol: str):
     
     return goto
 
-
+@staticmethod
 def NFAtoDFA(automaton: 'NFA'):
     transitions = {}
 

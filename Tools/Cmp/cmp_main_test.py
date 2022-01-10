@@ -1,3 +1,4 @@
+from typing import Dict
 from Grammar import *
 from Own_token import *
 from nonr_parser import non_recursive_parse

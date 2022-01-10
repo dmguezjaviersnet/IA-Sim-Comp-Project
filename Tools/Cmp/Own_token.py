@@ -24,6 +24,9 @@ class Token: # Clase para representar los tokens
     def __init__(self, value, tkn_type): # Ctor
         self.tkn_type = tkn_type
         self.value = value
+    
+    def __str__(self) -> str:
+        return f"{self.value}:{self.tkn_type}"
 
 class Character(Token): # Clase para representar los caracteres
 

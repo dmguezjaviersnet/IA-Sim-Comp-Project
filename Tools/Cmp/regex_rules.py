@@ -1,5 +1,5 @@
 from Own_symbol import Symbol
-from Automata.astRegex import *
+from astRegex import *
 
 ################################ E
 # -> T X
