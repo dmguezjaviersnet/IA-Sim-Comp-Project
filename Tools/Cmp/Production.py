@@ -17,7 +17,7 @@ class Production: # Clase para representar una producción
         self.head = head
         self.tails = tails
         
-        self.nt_in_prod = [0 for i in range(len(self.tails))]
+        self.nt_in_prod = [0 for _ in range(len(self.tails))]
         self.__map_nt_amount()
 
         self.rules = rules

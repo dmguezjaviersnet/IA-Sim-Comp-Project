@@ -3,7 +3,6 @@ from Own_symbol import Symbol
 from Grammar import Grammar
 from Own_token import Op
 
-
 def __belongs (lit: str, prod: List[Symbol]) -> bool:
     for elem in prod:
         if elem.identifier == lit:
@@ -79,8 +78,7 @@ def __find_follows(G, firsts) -> Dict[str, set]: # Para calcular los Follows
         for coll in G.productions: # Por cada collección de no-terminal y su correspondiente lista de producciones
             head: Symbol = coll.head  # Almacenamos la el no-terminal
             for prod in coll.tails: # Por cada producción X -> W
-                for i in range(len(prod)): # Por cada símbolo en la parte derecha de la producción
-                    elem: Symbol = prod[i] # Almacenamos el elemento actual de la producción
+                for i, elem in enumerate(prod): # Por cada símbolo en la parte derecha de la producción
 
                     if elem in G.terminals: # Si es un terminal
                         continue # Simplemente pasamos a analizar el próximo elemento de la forma oracional W
@@ -115,10 +113,10 @@ def build_LL1_table(G: Grammar) -> Tuple[bool, Dict[str, Dict[str, List[str]]]]:
             current_first = __find_first(prod, firsts) # Computamos el First(W)
             for ter in G.terminals: # Por cada posible token (terminales)
                 if ter.identifier != 'eps': # Ignorar eps en la Tabla, no se pone
-                    if ter.identifier not in table.keys(): # Si aún no hay ningún token t con este identificador en la tabla
+                    if ter.identifier not in table: # Si aún no hay ningún token t con este identificador en la tabla
                         table[ter.identifier] = {} # Inicializar un Dict para él
     
-                    if head.identifier not in table[ter.identifier].keys(): # Si aún no hay ningún no-terminal con este identificador en la tabla
+                    if head.identifier not in table[ter.identifier]: # Si aún no hay ningún no-terminal con este identificador en la tabla
                             table[ter.identifier][head.identifier] = [] # Inicializar una lista para guardar la producción correspondiente a este par [X, t]
     
                     if 'eps' in prod[0].identifier and ter.identifier in follows[head.identifier] or ter.identifier in current_first: # Si t está en el First(X) o t está en el Follow(X) y W = eps => [X, t] = W

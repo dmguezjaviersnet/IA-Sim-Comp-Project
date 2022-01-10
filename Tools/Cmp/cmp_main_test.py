@@ -135,7 +135,7 @@ def regexTokenizer(regex_line: str):
 
     for token in line:
         for symbol in token:
-            if symbol in regex_token_builder.keys():
+            if symbol in regex_token_builder:
                 tokens.append(regex_token_builder[symbol])
     
             else:

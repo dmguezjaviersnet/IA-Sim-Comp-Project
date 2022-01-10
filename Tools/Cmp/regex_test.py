@@ -1,8 +1,5 @@
 from cmp_main_test import *
 
-
-
-
 def testregex1():
     tokens = regexTokenizer('a|ε')
     ast, _= non_recursive_parse(regex_grammar, tokens)
