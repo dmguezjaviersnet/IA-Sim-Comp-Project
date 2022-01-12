@@ -28,8 +28,8 @@ class Regex:
         tokens = regexTokenizer(regex)
         ast, _ = non_recursive_parse(regex_grammar, tokens)
         nfa = ast.eval()
-        dfa = NFA.NFAtoDFA(nfa)
-        return dfa
+        
+        return nfa
 
 
 def regexTokenizer(regex_text: str):
@@ -59,9 +59,9 @@ def regexTokenizer(regex_text: str):
     return tokens
 
 def main():
-    a = regexTokenizer('(\\|)(1)(2)')
-    for t in a:
-        print(t)
+   regex = Regex('(a|b)*')
+   print(regex.automaton)
+
 
 main()
 

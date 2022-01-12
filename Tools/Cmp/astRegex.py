@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from Automata.automaton import *
+from automaton import *
 
 class Node:
 
@@ -69,5 +69,5 @@ class ConcatNode(BinaryNode):
         return AutomatonConcat(lvalue, rvalue)
 
 
-def regex_tokenizer(text, G, ):
+
     

@@ -1,18 +1,22 @@
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 
 
 EPSILON = ''
+'''
+ Automaton representation with State
 
+'''
 class State:
     
     '''Representa un estado de un autómata'''
 
-    def __init__(self, id: int, tag, isFinal: bool = False):
+    def __init__(self, id: str, isFinal: bool = False, substates:Tuple['State'] = ()):
         self.id = id
-        self.tag = tag
-        self.isFinal = isFinal
-        self.transitions = {}
-        self.epsilon_transitions  = set()
+        self.tag = None
+        self.substates: Tuple['State'] = substates
+        self.isFinal: bool = isFinal
+        self.transitions: Dict[str, 'State']= {}
+        self.epsilon_transitions: Set['State']  = set()
     
     def has_a_transition(self, symbol):
         return symbol in self.transitions.keys()
@@ -28,14 +32,98 @@ class State:
         self.epsilon_transitions.add(state)
         return self
 
-    @staticmethod
-    def move_states(symbol, *states: List['State']):
-        return { s for state in states if state.has_a_transition(symbol) for s in state[symbol]}
+    
+    def from_old_model_to_new_model(automaton: 'Automaton'):
+        states = []
+        
+        for n in range(automaton.states):
+            state = State(f"q{n}", n in automaton.finals)
+            states.append(state)
+        
+        for origin, t  in automaton.transitions.items():
+            for symbol, dest in t.items():
+                origin = states[origin]
+                origin[symbol] = [ states[d] for d in dest]
+        
+        return states[0]
 
+    @property
+    def eClosure(self):
+        return epsilonClosure2(self)
+    
+    @property
+    def name(self):
+        return str(self.id)
+    
+    @property
+    def symbols(self):
+        symbols = set()
+        
+        for symbol in self.transitions.keys():
+            symbol.add(symbol)
+        
+        return symbols
+        
+
+
+    def to_DFA(self):
+        eClosure: Set[State] = self.eClosure
+        q0: 'State' = State(''.join([state.id for state in eClosure]), any(state.isFinal for state in eClosure), tuple(eClosure))
+
+        eClosures = list(eClosure)
+        states = [q0]
+        stack_pending: List['State'] = [q0] 
+
+        while len(stack_pending):
+            currentState: 'State' = stack_pending.pop()
+            symbols: Set['State'] = set()
+            
+            for s in currentState.substates:
+                symbols.union(s.symbols)
+
+            for symbol in symbols:
+                goTo = goTo2(symbol, *eClosure)
+                eClosure = epsilonClosure2(*goTo)
+
+                if eClosure not in eClosures:
+                    newState = State(tuple(eClosure), any(state.isFinal for state in eClosure))
+                    eClosures.append(eClosure)
+                    states.append(newState)
+                    stack_pending.append(newState)
+                
+                else:
+                    newState = states[eClosures.index(eClosure)]
+                
+                currentState.add_transition(symbol, newState)
+
+        return q0          
+
+
+        
+        
+    
+
+
+        
 
     
     def __str__(self) -> str:
         return f"Id:{self.id}\n Tag:{self.tag} \n isFinal:{self.isFinal}"
+    
+    def __setitem__(self, symbol, value):
+        if symbol == EPSILON:
+            self.epsilon_transitions.add(value)
+        else:
+            self.transitions[symbol] = value
+    
+    def __getitem__(self, symbol: str):
+        if symbol == EPSILON:
+            return self.epsilon_transitions
+        try:
+            return self.transitions[symbol]
+        except KeyError:
+            return None 
+
 
 class Automaton:
 
@@ -128,7 +216,21 @@ class DFA(Automaton):
 
         return self.currentState in self.finals
 
-
+'''
+Model with State
+'''
+def epsilonClosure2(*states: 'State'): # model with State
+    eClosure = set(states)
+    stack = list(states)
+    
+    while len(stack):
+        state = stack.pop()
+        for eTransition in state.epsilon_transitions:
+            if not eTransition in eClosure:
+                stack.append(eTransition)
+                eClosure.add(eTransition)
+    
+    return eClosure
 
 def epsilonClosure(automaton:'NFA', states: List[int]):
     eClosure = set(states)
@@ -144,6 +246,18 @@ def epsilonClosure(automaton:'NFA', states: List[int]):
 
 #  Dado un conjunto de estados y un simbolo obtener el conjunto de estados a los cuales se puede llegar
 #  si partimos de los estados iniciales
+'''
+Model with State
+'''
+def goTo2(symbol: str, *states: 'State'):
+    goto = set()
+
+    for state in states:
+        if state.has_a_transition(symbol):
+            goto.update(state[symbol])
+    
+    return goto
+
 def goTo(automaton:'NFA', states: List[int], symbol: str):
     goto = set()
 
