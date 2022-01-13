@@ -1,24 +1,7 @@
 from typing import List
-from State import State
-from automaton import NFA, DFA, Automaton, StatesContainer
+from tools import *
+from automaton import *
 
-EPSILON = ''
-
-'''
-Model with State
-'''
-def epsilonClosure2(*states: 'State'): # model with State
-    eClosure = set(states)
-    stack = list(states)
-    
-    while len(stack):
-        state = stack.pop()
-        for eTransition in state.epsilon_transitions:
-            if not eTransition in eClosure:
-                stack.append(eTransition)
-                eClosure.add(eTransition)
-    
-    return eClosure
 
 def epsilonClosure(automaton:'NFA', states: List[int]):
     eClosure = set(states)
@@ -37,14 +20,6 @@ def epsilonClosure(automaton:'NFA', states: List[int]):
 '''
 Model with State
 '''
-def goTo2(symbol: str, *states: 'State'):
-    goto = set()
-
-    for state in states:
-        if state.has_a_transition(symbol):
-            goto.update(state[symbol])
-    
-    return goto
 
 def goTo(automaton:'NFA', states: List[int], symbol: str):
     goto = set()
@@ -55,19 +30,6 @@ def goTo(automaton:'NFA', states: List[int], symbol: str):
     
     return goto
 
-def from_old_model_to_new_model(automaton: 'Automaton', returnStatesList=False):
-    states = []
-    
-    for n in range(automaton.states):
-        state = State(f"q{n}", n in automaton.finals)
-        states.append(state)
-    
-    for origin, t  in automaton.transitions.items():
-        for symbol, dest in t.items():
-            origin = states[origin]
-            origin[symbol] = [ states[d] for d in dest]
-    
-    return states[0] if returnStatesList else states[0], states
 
 def NFAtoDFA(automaton: 'NFA'):
     transitions = {}
@@ -105,9 +67,9 @@ def NFAtoDFA(automaton: 'NFA'):
     
     finals = [ s.id for s in statesforDFA if s.isFinal]
     
-    statesList = [State(i.id, i.tag, i.isFinal) for i in statesforDFA]
+    # statesList = [State(i.id, i.tag, i.isFinal) for i in statesforDFA]
 
-    return DFA(nStates = len(statesforDFA), q0 = 0, finalStates = finals, transitions = transitions, statesList = statesList)
+    return DFA(nStates = len(statesforDFA), q0 = 0, finalStates = finals, transitions = transitions)
 
 # Operciones entre autómatas
 

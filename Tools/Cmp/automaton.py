@@ -1,6 +1,6 @@
 from typing import Dict, List, Set, Tuple
 
-from automaton_tools import*
+from tools import*
 
 class Automaton:
 
@@ -12,17 +12,17 @@ class Automaton:
 
     def __init__(self, nStates: int, q0: int, finalStates: List[int], transitions, statesList=[]):
         
-        if not len(statesList):
-            states = []
+        # if not len(statesList):
+        #     states = []
         
-            for i in range(nStates):
-                state = State(i, f"q{i}", i in finalStates)
-                states.append(state)
+        #     for i in range(nStates):
+        #         state = State(i, f"q{i}", i in finalStates)
+        #         states.append(state)
             
-            self.states = states
+        #     self.states = states
         
-        else:
-            self.states = statesList
+        # else:
+        #     self.states = statesList
         
         
        

@@ -49,7 +49,33 @@ class State:
         
         return symbols
         
+    @staticmethod
+    def epsilon_closure(*states: 'State'): # model with State
+        '''
+        
+        '''
+        eClosure = set(states)
+        stack = list(states)
 
+        while len(stack):
+            state = stack.pop()
+            for eTransition in state.epsilon_transitions:
+                if not eTransition in eClosure:
+                    stack.append(eTransition)
+                    eClosure.add(eTransition)
+
+        return eClosure
+
+
+
+    def go_to(symbol: str, *states: 'State'):
+        goto = set()
+
+        for state in states:
+            if state.has_a_transition(symbol):
+                goto.update(state[symbol])
+
+        return goto
 
     def to_DFA(self):
         eClosure: Set[State] = self.eClosure
@@ -67,8 +93,8 @@ class State:
                 symbols.union(s.symbols)
 
             for symbol in symbols:
-                goTo = goTo2(symbol, *eClosure)
-                eClosure = epsilonClosure2(*goTo)
+                goTo = State.go_to(symbol, *eClosure)
+                eClosure = State.epsilon_closure(*goTo)
 
                 if eClosure not in eClosures:
                     newState = State(tuple(eClosure), any(state.isFinal for state in eClosure))
@@ -84,8 +110,21 @@ class State:
         return q0          
 
 
-        
-        
+    @staticmethod
+    def from_old_model_to_new_model(automaton: 'Automaton', returnStatesList=False):
+        states = []
+
+        for n in range(automaton.states):
+            state = State(f"q{n}", n in automaton.finals)
+            states.append(state)
+
+        for origin, t  in automaton.transitions.items():
+            for symbol, dest in t.items():
+                origin = states[origin]
+                origin[symbol] = [ states[d] for d in dest]
+
+        return states[0] if returnStatesList else states[0], states
+
     
 
 

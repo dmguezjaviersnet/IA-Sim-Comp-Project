@@ -21,9 +21,9 @@ class Token_Type(Enum):
 
 class Token: # Clase para representar los tokens
 
-    def __init__(self, lexem: str, tkn_type: Token_Type): # Ctor
-        self.tkn_type = tkn_type
-        self.lexem = lexem
+    def __init__(self, lexeme: str, token_type: Token_Type): # Ctor
+        self.tkn_type = token_type
+        self.lexem = lexeme
 
     def is_operator(self):
         return self.tkn_type in range(1, 8);
