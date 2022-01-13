@@ -39,7 +39,7 @@ def __new_nodes(prod: List[Symbol]) -> List[Symbol]: # Crear nuevos nodos para e
     return new_cst_nodes
 
 
-def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: # Parser predictivo no recursivo (LL)
+def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [Any, bool]: # Parser predictivo no recursivo (LL)
     eof_appended = False # Si ya añadimos eof a la pila
     stack: List[tuple[Symbol, Symbol, str, List[Symbol]]] = [] # Una pila para ir guardando tuplas (cabeza de la producción, símbolo que se está analizando, id de la producción, producción)
     stack.append((None, G.initial_nt, '', None)) # Inicialmente en la pila está una tupla con el símbolo inicial de la gramática y el resto de los valores de la tupla tienen valores que no afecten el algoritmo
