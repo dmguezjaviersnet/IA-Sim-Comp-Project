@@ -26,7 +26,7 @@ class Token: # Clase para representar los tokens
         self.lexeme = lexeme
 
     def is_operator(self):
-        return self.tkn_type.value in range(2, 11);
+        return self.tkn_type.value in range(2, 12);
     
     def __str__(self) -> str:
         return f"{self.value} : {self.tkn_type}"

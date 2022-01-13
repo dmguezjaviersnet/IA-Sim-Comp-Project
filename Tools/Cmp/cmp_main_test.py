@@ -6,7 +6,7 @@ from regex_grammar import regex_grammar
 
 def main():
     ############################### Gramática de Regex #################################
-    re = Regex_Engine('a|b')
+    re = Regex_Engine('(a|ε)*')
     
 
     
