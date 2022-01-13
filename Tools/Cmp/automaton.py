@@ -33,19 +33,7 @@ class State:
         return self
 
     
-    def from_old_model_to_new_model(automaton: 'Automaton'):
-        states = []
-        
-        for n in range(automaton.states):
-            state = State(f"q{n}", n in automaton.finals)
-            states.append(state)
-        
-        for origin, t  in automaton.transitions.items():
-            for symbol, dest in t.items():
-                origin = states[origin]
-                origin[symbol] = [ states[d] for d in dest]
-        
-        return states[0]
+    
 
     @property
     def eClosure(self):
@@ -266,6 +254,22 @@ def goTo(automaton:'NFA', states: List[int], symbol: str):
             goto.update(automaton.transitions[state][symbol])
     
     return goto
+
+
+def from_old_model_to_new_model(automaton: 'Automaton', returnStatesList=False):
+    states = []
+    
+    for n in range(automaton.states):
+        state = State(f"q{n}", n in automaton.finals)
+        states.append(state)
+    
+    for origin, t  in automaton.transitions.items():
+        for symbol, dest in t.items():
+            origin = states[origin]
+            origin[symbol] = [ states[d] for d in dest]
+    
+    return states[0] if returnStatesList else states[0], states
+
 
 @staticmethod
 def NFAtoDFA(automaton: 'NFA'):
