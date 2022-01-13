@@ -38,7 +38,7 @@ class Regex_Engine:
 
         for symbol in self.regex:
             if literal:
-                tokens.append(Character(symbol, tkn_type=Token_Type.character)) 
+                tokens.append(Token(symbol, tkn_type=Token_Type.character)) 
                 literal = False
 
             elif symbol.isspace():
@@ -54,6 +54,6 @@ class Regex_Engine:
 
                 else:
                     tokens.append(Token(symbol, token_type=Token_Type.character))
-
+        tokens.append(Token('$' ,Token_Type.eof))
         return tokens
 

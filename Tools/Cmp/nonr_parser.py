@@ -48,7 +48,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [Any, bool]: #
     ast_answer = None # Aquí almacenaremos el AST que retornaremos al final
 
     if is_ll1: # Si la gramática es LL(1) es que se puede parsear con este algoritmo
-        while len(stack) > 0 and current_token_index < len(tokens): # Mientras la pila no esté vacía
+        while stack and current_token_index < len(tokens): # Mientras la pila no esté vacía
 
             head, current_symbol, prod_id, prod = stack[-1] # Obtengamos el elemento que está en el tope de la pila
             rule_key = f'{current_symbol.identifier} -> ' # Asignamos la llave para la regla de la producción que se vaya a aplicar, inicialmente como X ->, donde X es el el id del elemento actual
@@ -112,5 +112,5 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [Any, bool]: #
                 for elem in reversed(prod): # Agregar a la pila los elementos de la producción (nuevos nodos del árbol de derivación)
                     stack.append((current_symbol, elem, rule_key, prod)) 
 
-        return ast_answer, len(stack) == 0 and current_token_index == len(tokens)
+        return not stack and current_token_index == len(tokens), ast_answer 
     return False, None
