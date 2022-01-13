@@ -1,8 +1,9 @@
+from State import*
 from typing import Tuple
 from Tools.Cmp.Own_token import Token
 
 from automaton import from_old_model_to_new_model
-from own_regex import *
+from Tools.Cmp.Regex_Engine import *
 
 class Lexer:
 
@@ -25,7 +26,7 @@ class Lexer:
 
         for priority, (regex, token_type) in enumerate(regex_table):
 
-            automaton, states = from_old_model_to_new_model(Regex(regex).automaton, True)
+            automaton, states = from_old_model_to_new_model(Regex_Engine(regex).automaton, True)
 
             for state in states:
                 if state.isFinal:
