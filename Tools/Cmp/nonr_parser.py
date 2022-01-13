@@ -73,7 +73,9 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: #
                     continue # Entonces no se consume ningún token
 
                 current_token_index += 1  # Consumir el Token
-                if (isinstance(current_token, Character) and current_symbol.identifier != 'character') or (isinstance(current_token, Op) and current_symbol.identifier != current_token.value):
+                if  ((current_token.tkn_type == Token_Type.character and current_symbol.identifier != 'character') or
+                     (current_token.is_operator() and current_symbol.identifier != current_token.value)):
+
                     return False
 
             elif prod != None and current_symbol == prod[len(prod) - 1] and current_symbol.ast != None: # Si es el último no-terminal de la producción y ya está computado su AST
@@ -86,16 +88,16 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: #
                     stack.pop() # Sacar de la pila el no-terminal
                     continue # Pasar al próximo elemento de la pila, pues ya se aplicó la producción con este no-terminal y regresó el algoritmo
 
-                elif head != None: # Si el no-terminal cabecera de la producción no es vació
+                elif head != None: # Si el no-terminal cabecera de la producción no es vacio
                     __eval_rules(head, prod, G.map_prodstr_rules[prod_id], False) # Evaluar reglas heredadas y continuar a aplicar producciones
 
                 prod = [] # Producción
-                if isinstance(current_token, Character):  # Si el token es un número
+                if current_token.tkn_type == Token_Type.character:  # Si el token es un número
                     prod = __new_nodes(
-                        ll_table['character'][current_symbol.identifier]) # Almacenar la producción 
+                        ll_table['character'][current_symbol.identifier]) # Almacenar la producción
                     rule_key = __append_ids(rule_key, prod) # Construir la llave que nos permita obtener las reglas de la producción que se aplicó
 
-                elif isinstance(current_token, Op):  # Si el token es un operador
+                elif current_token.is_operator():  # Si el token es un operador
                     prod = __new_nodes(
                         ll_table[current_token.value][current_symbol.identifier])
                     rule_key = __append_ids(rule_key, prod) # Construir la llave que nos permita obtener las reglas de la producción que se aplicó

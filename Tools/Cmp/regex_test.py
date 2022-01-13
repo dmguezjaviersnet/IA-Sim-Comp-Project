@@ -25,5 +25,8 @@ def testregex2():
     # assert dfa.match('') == True
     # assert dfa.match('abc') == True
 
+def main():
+    testregex2()
 
-testregex2()
+if __name__ == '__main__':
+    main()
