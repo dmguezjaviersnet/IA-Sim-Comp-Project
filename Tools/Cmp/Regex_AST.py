@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from automaton import *
+from automaton_tools import NFA, AutomatonClosure, AutomatonConcat, AutomatonUnion 
 
 class Node:
 

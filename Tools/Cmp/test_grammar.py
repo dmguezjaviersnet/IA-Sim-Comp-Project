@@ -4,7 +4,7 @@ from Grammar import Grammar
 from Non_terminal import Non_terminal
 from Production import Production
 from Terminal import *
-from rules import *
+from Tools.Cmp.test_grammar_rules import *
 
 
 arth_token_builder: Dict[str, Callable] = {
@@ -17,20 +17,19 @@ arth_token_builder: Dict[str, Callable] = {
     '$': lambda : Op('$' ,Token_Type.eof, 1)
 }
 
-def arth_grammar_tokenize() -> List[Token]:
-    arth_line = input().split()
-    arth_line.append('$')
+def arth_grammar_tokenize(line: str) -> List[Token]:
+    line.append('$')
 
     tokens: List[Token] = []
     #### Lexer para ir probando ####
-    for i in range(len(arth_line)):
-        if arth_line[i] in arth_token_builder.keys():
-            arth_token_builder[arth_line[i]]()
+    for i in range(len(line)):
+        if line[i] in arth_token_builder.keys():
+            arth_token_builder[line[i]]()
       
         else:
             number = 0
             try:
-                number = int(arth_line[i])
+                number = int(line[i])
             except: print('Invalid syntax')
             tokens.append(Character(number, tkn_type=Token_Type.character))
 

@@ -1,21 +1,14 @@
-from Grammar import *
-from Own_token import *
-from nonr_parser import non_recursive_parse
-from Terminal import *
-from Non_terminal import *
-from Production import *
 
-from rules import *
-from regex_rules import *
+from Tools.Cmp.Regex_Engine import Regex_Engine
+from nonr_parser import non_recursive_parse
+from automaton_tools import NFAtoDFA
+from regex_grammar import regex_grammar
 
 def main():
-    ############################### Gramática de prueba (aritmética) #################################
-    
-
     ############################### Gramática de Regex #################################
+    re = Regex_Engine('(a|ε)*')
+    tokens = re.regexTokenizer()
 
-
-    tokens = regexTokenizer('(a|ε)*')
     ast, parsed2 = non_recursive_parse(regex_grammar, tokens)
     # print(parsed2)
     nfa = ast.eval()
@@ -32,6 +25,8 @@ def main():
     print(regex_grammar)
     # print(parsed2)
     # print(parsed)
+
+    ############################### Gramática de prueba (aritmética) #################################
 
 if __name__ == '__main__':
     main()

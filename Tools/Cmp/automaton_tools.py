@@ -1,11 +1,8 @@
 from typing import List
 from State import State
-from automaton import NFA,DFA, Automaton, StatesContainer
-
+from automaton import NFA, DFA, Automaton, StatesContainer
 
 EPSILON = ''
-
-
 
 '''
 Model with State
@@ -58,7 +55,6 @@ def goTo(automaton:'NFA', states: List[int], symbol: str):
     
     return goto
 
-
 def from_old_model_to_new_model(automaton: 'Automaton', returnStatesList=False):
     states = []
     
@@ -72,7 +68,6 @@ def from_old_model_to_new_model(automaton: 'Automaton', returnStatesList=False):
             origin[symbol] = [ states[d] for d in dest]
     
     return states[0] if returnStatesList else states[0], states
-
 
 def NFAtoDFA(automaton: 'NFA'):
     transitions = {}
@@ -114,11 +109,7 @@ def NFAtoDFA(automaton: 'NFA'):
 
     return DFA(nStates = len(statesforDFA), q0 = 0, finalStates = finals, transitions = transitions, statesList = statesList)
 
-
-
-
-
-#operations between automatas
+# Operciones entre autómatas
 
 def AutomatonUnion(a1: NFA, a2: NFA):
     '''
@@ -181,7 +172,6 @@ def AutomatonConcat(a1: NFA, a2: NFA):
     
     return NFA(new_number_of_states, newq0, [newFinalState], newTransitions)
 
-
 def AutomatonClosure(a1: NFA):
     
     newTransitions = {}
@@ -205,4 +195,3 @@ def AutomatonClosure(a1: NFA):
     new_number_of_states = a1.number_of_states  + 2
     
     return NFA(new_number_of_states, newq0, [newFinalState], newTransitions)
-

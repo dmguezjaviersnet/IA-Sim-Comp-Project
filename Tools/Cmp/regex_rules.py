@@ -1,5 +1,6 @@
+from typing import List
 from Own_symbol import Symbol
-from astRegex import *
+from Regex_AST import *
 
 ################################ E
 # -> T X

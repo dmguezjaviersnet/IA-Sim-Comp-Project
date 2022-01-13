@@ -1,10 +1,8 @@
 from typing import Callable, Dict
-from Own_token import Character, Op, Token_Type
+from Own_token import Character, Op, Token, Token_Type
 from automaton import *
 from nonr_parser import non_recursive_parse
 from regex_grammar import *
-
-import mymodel
 
 regex_token_builder: Dict[str, Callable] = {
     '*': Op('*', Token_Type.closure, 3),
@@ -17,7 +15,7 @@ regex_token_builder: Dict[str, Callable] = {
 
 class Regex_Engine:
 
-    def __init__(self, regex):
+    def __init__(self, regex: str):
         self.regex = regex
         self.automaton: 'DFA' = self.build_automaton(regex)
 
@@ -25,7 +23,7 @@ class Regex_Engine:
         return self.automaton.match(text)
 
     
-    def build_automaton(self, regex)-> DFA:
+    def build_automaton(self, regex) -> DFA:
         tokens = self.regexTokenizer(regex)
         ast, _ = non_recursive_parse(regex_grammar, tokens)
         nfa = ast.eval()
@@ -33,12 +31,12 @@ class Regex_Engine:
         return nfa
 
 
-    def regexTokenizer(self, regex_text: str):
+    def regexTokenizer(self) -> List[Token]:
         tokens = []
 
         literal = False
 
-        for symbol in regex_text:
+        for symbol in self.regex:
             if literal:
                 tokens.append(Character(symbol, tkn_type=Token_Type.character)) 
                 literal = False
@@ -58,11 +56,4 @@ class Regex_Engine:
                     tokens.append(Character(symbol, tkn_type=Token_Type.character))
 
         return tokens
-
-def main():
-   regex = Regex_Engine('(a|b)*')
-   print(regex.automaton)
-
-
-main()
 

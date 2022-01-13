@@ -6,7 +6,7 @@ from Non_terminal import Non_terminal
 from Own_symbol import Symbol
 from Own_token import *
 from Terminal import Terminal
-from rules import eval_rule
+from test_grammar_rules import eval_rule
 
 
 def __eval_rules(head: Symbol, tail: List[Symbol], rules: List[Tuple[Callable, bool]], eval_sintetized: bool): # Evaluar las reglas correspondientes

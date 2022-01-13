@@ -39,7 +39,6 @@ class Automaton:
 
         self.vocabulary.discard(EPSILON) # remove epsilon from vocabulary 
         
-
 class NFA(Automaton):
     
     '''Autómata no-determinista'''
@@ -93,8 +92,6 @@ class DFA(Automaton):
 
         return self.currentState in self.finals
 
-
-
 class StatesContainer:
 
     def __init__(self, values, automaton: 'NFA', id: int = -1):
@@ -110,8 +107,3 @@ class StatesContainer:
     
     def __iter__(self):
         return iter(self.set)
-    
-
-
-
-
