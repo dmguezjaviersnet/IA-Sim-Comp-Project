@@ -14,7 +14,8 @@ regex_token_builder: Dict[str, Callable] = {
     'ε': Op('ε', Token_Type.repsilon, 2),
     '$': Op('$' ,Token_Type.eof, 1)
 }
-class Regex:
+
+class Regex_Engine:
 
     def __init__(self, regex):
         self.regex = regex
@@ -23,43 +24,43 @@ class Regex:
     def __call__(self, text):
         return self.automaton.match(text)
 
-    @staticmethod
-    def build_automaton(regex)-> DFA:
-        tokens = regexTokenizer(regex)
+    
+    def build_automaton(self, regex)-> DFA:
+        tokens = self.regexTokenizer(regex)
         ast, _ = non_recursive_parse(regex_grammar, tokens)
         nfa = ast.eval()
         
         return nfa
 
 
-def regexTokenizer(regex_text: str):
-    tokens = []
-    
-    literal = False
+    def regexTokenizer(self, regex_text: str):
+        tokens = []
 
-    for symbol in regex_text:
-        if literal:
-            tokens.append(Character(symbol, tkn_type=Token_Type.character)) 
-            literal = False
+        literal = False
+
+        for symbol in regex_text:
+            if literal:
+                tokens.append(Character(symbol, tkn_type=Token_Type.character)) 
+                literal = False
+
+            elif symbol.isspace():
+                continue   
             
-        elif symbol.isspace():
-            continue   
-        
-        elif symbol =='\\':
-            literal =  True
-            continue  
-        
-        else:
-            if symbol in regex_token_builder.keys():
-                tokens.append(regex_token_builder[symbol])
-    
+            elif symbol =='\\':
+                literal =  True
+                continue  
+            
             else:
-                tokens.append(Character(symbol, tkn_type=Token_Type.character))
-    
-    return tokens
+                if symbol in regex_token_builder.keys():
+                    tokens.append(regex_token_builder[symbol])
+
+                else:
+                    tokens.append(Character(symbol, tkn_type=Token_Type.character))
+
+        return tokens
 
 def main():
-   regex = Regex('(a|b)*')
+   regex = Regex_Engine('(a|b)*')
    print(regex.automaton)
 
 
