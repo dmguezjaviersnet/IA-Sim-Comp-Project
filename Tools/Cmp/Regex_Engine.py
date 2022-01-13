@@ -3,6 +3,7 @@ from Own_token import Token, Token_Type
 from automaton import *
 from nonr_parser import non_recursive_parse
 from regex_grammar import *
+from automaton_tools import*
 
 regex_token_builder: Dict[str, Callable] = {
     '*': Token('*', Token_Type.closure),
@@ -28,7 +29,7 @@ class Regex_Engine:
         ast, _ = non_recursive_parse(regex_grammar, tokens)
         nfa = ast.eval()
         
-        return nfa
+        return NFAtoDFA(nfa)
 
 
     def regexTokenizer(self) -> List[Token]:
