@@ -6,9 +6,9 @@ class Automaton:
 
     '''Representa un autómata con todas sus características'''
 
-    @property
-    def number_of_states(self):
-        return len(self.states)
+    # @property
+    # def number_of_states(self):
+    #     return len(self.states)
 
     def __init__(self, nStates: int, q0: int, finalStates: List[int], transitions, statesList=[]):
         
@@ -25,7 +25,7 @@ class Automaton:
         #     self.states = statesList
         
         
-       
+        self.number_of_states = nStates
 
         self.q0 = q0
         self.finals = set(finalStates)
@@ -47,7 +47,7 @@ class NFA(Automaton):
         super().__init__(nStates, q0, finalStates, transitions, statesList)
     
     def epsilonTransitions(self, state):
-        print(self.transitions)
+        
         if state in self.transitions and EPSILON in self.transitions[state]: 
             return self.transitions[state][EPSILON]
         else:
@@ -73,7 +73,7 @@ class DFA(Automaton):
     
 
     def __str__(self) -> str:
-        return f"States: {self.states}\n q0:{self.q0} \n Final States: {self.finals} \n Transitions: {self.transitions} \n Vocabulary: {self.vocabulary} "
+        return f"q0:{self.q0} \n Final States: {self.finals} \n Transitions: {self.transitions} \n Vocabulary: {self.vocabulary} "
 
     def _move_next_state(self, symbol):
         self.currentState = self.transitions[self.currentState][symbol]

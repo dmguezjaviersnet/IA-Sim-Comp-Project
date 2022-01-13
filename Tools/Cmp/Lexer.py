@@ -1,13 +1,13 @@
 from State import*
 from typing import Tuple
-from Tools.Cmp.Own_token import Token
+from Own_token import Token
 
-from automaton import from_old_model_to_new_model
-from Tools.Cmp.Regex_Engine import *
+from State import *
+from Regex_Engine import *
 
 class Lexer:
 
-    def __init__(self, *regex_table: Tuple[str, str], eof) -> None:
+    def __init__(self, regex_table: Tuple[str, Token_Type], eof) -> None:
         self.regexs =  self._build_regex_automatons(regex_table)
         self.eof = eof
         self.automaton = self._build_automaton()
@@ -21,12 +21,12 @@ class Lexer:
         
         return start.to_DFA()
         
-    def _build_regex_automatons(*regex_table: Tuple[str, str]):
+    def _build_regex_automatons(self, regex_table: Tuple[str, Token_Type]):
         regex_automatons = []
 
         for priority, (regex, token_type) in enumerate(regex_table):
 
-            automaton, states = from_old_model_to_new_model(Regex_Engine(regex).automaton, True)
+            automaton, states = State.from_old_model_to_new_model(Regex_Engine(regex).automaton, True)
 
             for state in states:
                 if state.isFinal:

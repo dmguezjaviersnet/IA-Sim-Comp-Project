@@ -25,7 +25,7 @@ class Regex_Engine:
     
     def build_automaton(self) -> DFA:
         tokens = self.regexTokenizer()
-        ast, _ = non_recursive_parse(regex_grammar, tokens)
+        _, ast = non_recursive_parse(regex_grammar, tokens)
         nfa = ast.eval()
         
         return NFAtoDFA(nfa)
@@ -38,7 +38,7 @@ class Regex_Engine:
 
         for symbol in self.regex:
             if literal:
-                tokens.append(Token(symbol, tkn_type=Token_Type.character)) 
+                tokens.append(Token(symbol, token_type=Token_Type.character)) 
                 literal = False
 
             elif symbol.isspace():

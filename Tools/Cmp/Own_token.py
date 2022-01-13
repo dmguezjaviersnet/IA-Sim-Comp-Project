@@ -10,6 +10,7 @@ class Token_Type(Enum):
     div = 5
     open_parenthesis = 8
     closed_parenthesis = 9
+    number = 30
 
     # Regex
     closure = 6

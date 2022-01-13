@@ -34,7 +34,7 @@ class State:
 
     @property
     def eClosure(self):
-        return epsilonClosure2(self)
+        return State.epsilon_closure(self)
     
     @property
     def name(self):
@@ -45,7 +45,7 @@ class State:
         symbols = set()
         
         for symbol in self.transitions.keys():
-            symbol.add(symbol)
+            symbols.add(symbol)
         
         return symbols
         
@@ -114,15 +114,19 @@ class State:
     def from_old_model_to_new_model(automaton: 'Automaton', returnStatesList=False):
         states = []
 
-        for n in range(automaton.states):
+        for n in range(automaton.number_of_states):
             state = State(f"q{n}", n in automaton.finals)
             states.append(state)
 
         for origin, t  in automaton.transitions.items():
+            
+            origin = states[origin]
+            
             for symbol, dest in t.items():
-                origin = states[origin]
-                origin[symbol] = [ states[d] for d in dest]
-
+                
+                # origin[symbol] = [ states[d] for d in dest]
+                origin[symbol] = dest
+        
         return states[0] if returnStatesList else states[0], states
 
     
