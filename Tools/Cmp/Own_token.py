@@ -8,25 +8,25 @@ class Token_Type(Enum):
     minus = 3
     times = 4
     div = 5
+    open_parenthesis = 8
+    closed_parenthesis = 9
 
     # Regex
     closure = 6
     union = 7
+    repsilon = 10
 
-    repsilon = 11
-    open_parenthesis = 8
-    closed_parenthesis = 9
-    eof = 10
+    eof = 11
 
 
 class Token: # Clase para representar los tokens
 
     def __init__(self, lexeme: str, token_type: Token_Type): # Ctor
         self.tkn_type = token_type
-        self.lexem = lexeme
+        self.lexeme = lexeme
 
     def is_operator(self):
-        return self.tkn_type in range(1, 8);
+        return self.tkn_type.value in range(2, 11);
     
     def __str__(self) -> str:
         return f"{self.value} : {self.tkn_type}"
