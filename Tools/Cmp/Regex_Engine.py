@@ -11,7 +11,6 @@ regex_token_builder: Dict[str, Callable] = {
     ')': Token(')', Token_Type.closed_parenthesis),
     '|': Token('|', Token_Type.union),
     'ε': Token('ε', Token_Type.repsilon),
-    '$': Token('$' ,Token_Type.eof)
 }
 
 class Regex_Engine:

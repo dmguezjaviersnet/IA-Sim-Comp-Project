@@ -39,7 +39,7 @@ def __new_nodes(prod: List[Symbol]) -> List[Symbol]: # Crear nuevos nodos para e
     return new_cst_nodes
 
 
-def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [Any, bool]: # Parser predictivo no recursivo (LL)
+def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: # Parser predictivo no recursivo (LL)
     eof_appended = False # Si ya añadimos eof a la pila
     stack: List[tuple[Symbol, Symbol, str, List[Symbol]]] = [] # Una pila para ir guardando tuplas (cabeza de la producción, símbolo que se está analizando, id de la producción, producción)
     stack.append((None, G.initial_nt, '', None)) # Inicialmente en la pila está una tupla con el símbolo inicial de la gramática y el resto de los valores de la tupla tienen valores que no afecten el algoritmo
@@ -64,7 +64,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [Any, bool]: #
 
             elif isinstance(current_symbol, Terminal) or current_symbol == 'eps': # Si el símbolo es un terminal
                 if current_symbol.identifier == 'character': # Y es un caracter
-                    current_symbol.val = current_token.value # Almacenamos su valor
+                    current_symbol.val = current_token.lexeme # Almacenamos su valor
 
                 stack.pop() # Sacamos de la pila el terminal
                 __eval_rules(head, prod, G.map_prodstr_rules[prod_id], True) # Evaluar reglas sintetizadas
@@ -74,9 +74,9 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [Any, bool]: #
 
                 current_token_index += 1  # Consumir el Token
                 if  ((current_token.tkn_type == Token_Type.character and current_symbol.identifier != 'character') or
-                     (current_token.is_operator() and current_symbol.identifier != current_token.value)):
+                     (current_token.is_operator() and current_symbol.identifier != current_token.lexeme)):
 
-                    return False
+                    return False, None
 
             elif prod != None and current_symbol == prod[len(prod) - 1] and current_symbol.ast != None: # Si es el último no-terminal de la producción y ya está computado su AST
                 __eval_rules(head, prod, G.map_prodstr_rules[prod_id], True) # Evaluar reglas sintetizadas
@@ -99,7 +99,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [Any, bool]: #
 
                 elif current_token.is_operator():  # Si el token es un operador
                     prod = __new_nodes(
-                        ll_table[current_token.value][current_symbol.identifier])
+                        ll_table[current_token.lexeme][current_symbol.identifier])
                     rule_key = __append_ids(rule_key, prod) # Construir la llave que nos permita obtener las reglas de la producción que se aplicó
 
                 if not eof_appended and current_token_index == len(tokens) - 1: # Si ya se han leído todos los tokens
