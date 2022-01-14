@@ -1,5 +1,6 @@
 from typing import *
 from elements3d import Vector3
+import uuid
 
 class obj:
   def __init__(self, position:Vector3, unique_id, weith:float=1, diameter:int=1,name=None):
@@ -17,7 +18,19 @@ class obj:
     return 'name: ' + str(self.name) + ' weith: ' + str(self.weith) + ' position: ' + str(self.position) + '  diameter: ' + str(self.radius)
 
 class Rocket(obj):
-    def __init__(self, fuel:int , satellites: List['Satellite'] = []) -> None:
-      self.fuel = fuel
-      self.satellites = satellites
-      self.life = 100
+  def __init__(self, position: Vector3, unique_id, weith: float = 1, diameter: int = 1, name=None, fuel:float= 100 , satellites: List['Satellite']=[]):
+    super().__init__(position, unique_id, weith=weith, diameter=diameter, name=name)
+    self.fuel = fuel
+    self.satellites = satellites
+    self.life = 100
+
+class Satellite(obj):
+  def __init__(self, position: Vector3, unique_id, weith: float = 1, diameter: int = 1, name=None):
+    super().__init__(position, unique_id, weith=weith, diameter=diameter, name=name)
+
+
+def generateObj ():
+  unique_id = uuid.uuid4()
+  position = Vector3.random()
+  new_obj = obj(position=position,unique_id= unique_id)
+  return new_obj
