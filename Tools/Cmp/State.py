@@ -106,14 +106,14 @@ class State:
 
         while len(stack_pending_states): # mientras queden elementos por sacar de la pila
             currentState: 'State' = stack_pending_states.pop() # saca el próximo estado
-            symbols: Set['State'] = State.get_symbols_from_states(e_closure) # 
+            symbols: Set['State'] = State.get_symbols_from_states(currentState.substates) # 
             
             
             for symbol in symbols: # ve por cada símbolo 
-                go_to = State.go_to(symbol, currentState.substates) # calculo el goto
-                e_closure = State.epsilon_closure(go_to) # calcula la epsilon clausura
+                go_to = State.go_to(symbol, currentState.substates) # calculo el goto 
+                e_closure = State.epsilon_closure(go_to) # calculo la epsilon clausura al resultado del goto
 
-                if e_closure not in e_closures:
+                if e_closure not in e_closures: # compruebo que esa epsilon clausura no la haya tenido previamente
                     new_state = State(f'q_{index}', any(state.is_final_state for state in e_closure), tuple(e_closure))
                     index += 1 
                     e_closures.append(e_closure)

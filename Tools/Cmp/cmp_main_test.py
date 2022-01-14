@@ -18,7 +18,7 @@ def main():
     ('(1|2|3|4|5|6|7|8|9)(1|2|3|4|5|6|7|8|9)*', Token_Type.character)],
      eof=Token('$', Token_Type.eof))
 
-    tokens = lex('1+22*3')
+    tokens = lex('1+22*3-16789')
     for i in tokens:
         print(i)
     print(':)')
