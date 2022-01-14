@@ -1,5 +1,5 @@
 from typing import * 
-
+import random
 class Vector3:
   def __init__(self, x:int , y:int, z:int) -> None:
     self.x: int = x 
@@ -22,8 +22,15 @@ class Vector3:
   def sig(self):
     return Vector3( sig(self.x), sig(self.y), sig(self.z))
 
-  def Zero (self):
+  def Zero ():
     return Vector3(0,0,0)
+
+  def random():
+    x = random.randint(0,100)
+    y = random.randint(0,100)
+    z = random.randint(0,100)
+    return Vector3(x,y,z)
+
 
 def sig (x : int):
   if x > 0: return 1 
