@@ -4,109 +4,115 @@ from tools import*
 
 class Automaton:
 
-    '''Representa un autómata con todas sus características'''
+    '''
+        Representa un autómata NFA con todas sus características
 
-    # @property
-    # def number_of_states(self):
-    #     return len(self.states)
+    '''
 
-    def __init__(self, number_of_states: int, initial_state: int, finalStates: List[int], transitions):
-        # states = []
-        # for i in range(number_of_states):
-        #     states.append(State(i,i in finalStates))
-        # if not len(statesList):
-        #     states = []
-        
-        #     for i in range(nStates):
-        #         state = State(i, f"q{i}", i in finalStates)
-        #         states.append(state)
-            
-        #     self.states = states
-        
-        # else:
-        #     self.states = statesList
-        
-        
-        self.number_of_states = number_of_states
-
-        self.initial_state = initial_state # estado inicial del autómata
-        self.finals = set(finalStates)
     
-        self.vocabulary: Set = set()
-        self.transitions = {state: {} for state in range(self.number_of_states)}
+    def __init__(self, number_of_states: int, initial_state: int, finalStates: List[int], transitions):
+        
+        self.number_of_states = number_of_states # número de estados que va a tener el autómata
+
+        self.initial_state = initial_state # el estado inicial del autómata
+        self.finals = set(finalStates) # el conjunto de todos los estados finales del autómata
+    
+        self.vocabulary: Set = set() # el vocabulario del autómata(conjunto finito de símbolos que pueden aparecer en la cinta) 
+        self.transitions = {state: {} for state in range(self.number_of_states)} # función de transición que dado un estado y un símbolo te da todos los posibles estados a los que te puedes mover
 
         for (origin,symbol), destinations in transitions.items():
             
             self.transitions[origin][symbol] = destinations
             self.vocabulary.add(symbol)
 
-        self.vocabulary.discard(EPSILON) # remove epsilon from vocabulary 
+        self.vocabulary.discard(EPSILON) # quitamos del vocabulario el símbolo '' que representa las transiciones epsilons
         
-class NFA(Automaton):
+
+    def __add__(self, other: 'Automaton'):
+        return Automaton.automaton_concat(self, other)
     
-    '''Autómata no-determinista'''
+    @staticmethod
+    def automaton_union(a1: 'Automaton', a2: 'Automaton')-> 'Automaton':
+        '''
+            Devuelve la operación union entre dos autómatas
+        '''
+        newTransitions = {}
+        newq0 = 0
+        newa1start = 1
+        newa2start = a1.number_of_states + 1
+        newFinalState = a2.number_of_states + newa2start
 
-    def __init__ (self, nStates, q0, finalStates, transitions):
-        super().__init__(nStates, q0, finalStates, transitions)
-    
-    def epsilonTransitions(self, state):
-        
-        if state in self.transitions and EPSILON in self.transitions[state]: 
-            return self.transitions[state][EPSILON]
-        else:
-            return []
-    
+        for i, j in a1.transitions.items():
+               for k,l in j.items():
+                   newTransitions[(i+newa1start,k)] = [x+newa1start for x in l]
 
-    def __str__(self) -> str:
-        return f" Number of States:{self.number_of_states}\n q0:{self.q0}\nTransitions:{self.transitions}\n finalStates={self.finals}"
+        for i, j in a2.transitions.items():
+               for k,l in j.items():
+                   newTransitions[(i+newa2start,k)] = [x+newa2start for x in l]
 
-class DFA(Automaton):
+        newTransitions[(newq0, EPSILON)] = [newa1start, newa2start]
+        for fs in a1.finals:
+            if (fs, EPSILON) not in a1.transitions:
+                newTransitions[(fs+newa1start, EPSILON)] = [newFinalState]
+            else:
+                newTransitions[(fs+newa1start, EPSILON)].append(newFinalState)
 
-    '''Autómata determinista'''
+        for fs in a2.finals:
+           if (fs, EPSILON) not in a2.transitions:
+               newTransitions[(fs+newa2start, EPSILON)] = [newFinalState]
+           else:
+               newTransitions[(fs+newa2start, EPSILON)].append(newFinalState)
 
-    def __init__(self, nStates: int, q0: int, finalStates: List[int],  transitions):
-        
-        temp: Dict = {}
-        for i, j in transitions.items():
-            for k,l in j.items():
-                temp[(i,k)] = l
-        
-        self.currentState = q0
-        super().__init__(nStates, q0, finalStates, temp)
-    
+        new_number_of_states = a1.number_of_states + a2.number_of_states + 2
 
-    def __str__(self) -> str:
-        return f"q0:{self.q0} \n Final States: {self.finals} \n Transitions: {self.transitions} \n Vocabulary: {self.vocabulary} "
+        return Automaton(new_number_of_states, newq0, [newFinalState], newTransitions)
 
-    def _move_next_state(self, symbol):
-        self.currentState = self.transitions[self.currentState][symbol]
+    @staticmethod
+    def automaton_concat(a1: 'Automaton', a2: 'Automaton') -> 'Automaton':
+        newTransitions = {}
+        newq0 = 0
+        newa1start = 0
+        newa2start = a1.number_of_states
+        newFinalState = a2.number_of_states + newa2start - 1
 
-    def _reset_current_state(self):
-        self.currentState = self.q0
-    
-    def match(self, word):
-        self._reset_current_state()
+        for i, j in a1.transitions.items():
+                for k,l in j.items():
+                    newTransitions[(i,k)] = l
 
-        for s in word:
-            try:
-                self._move_next_state(s)
-            except KeyError:
-                return False
+        for sf in a1.finals:
+            if (sf, EPSILON) in newTransitions:
+                newTransitions[sf, EPSILON].append(newa2start)
+            else:
+                newTransitions[ sf, EPSILON] = [newa2start]
 
-        return self.currentState in self.finals
+        for i, j in a2.transitions.items():
+               for k,l in j.items():
+                   newTransitions[(i+newa2start,k)] = [x+newa2start for x in l]
 
-class StatesContainer:
+        new_number_of_states = a1.number_of_states + a2.number_of_states
+        return Automaton(new_number_of_states, newq0, [newFinalState], newTransitions)
 
-    def __init__(self, values, automaton: 'NFA', id: int = -1):
-        self.elems = set(values)
-        self.id = id
-        self.tag = [f"q{e} " for e in self.elems] 
-        self.isFinal = any(s in automaton.finals for s in self.elems)
-        
-    def add(self, value):
-        n = len(self.set)
-        self.set.add(value)
-        return n != len(self.set)
-    
-    def __iter__(self):
-        return iter(self.set)
+    @staticmethod
+    def automaton_closure(a1: 'Automaton')-> 'Automaton':
+
+        newTransitions = {}
+        newq0 = 0
+        newa1start = 1
+        newFinalState = a1.number_of_states + 2 - 1
+
+        for i, j in a1.transitions.items():
+               for k,l in j.items():
+                   newTransitions[(i+newa1start,k)] = [x+newa1start for x in l]
+
+        newTransitions[(newq0, EPSILON)] = [newa1start, newFinalState]
+
+        for fs in a1.finals:
+            if (fs, EPSILON) not in a1.transitions:
+                newTransitions[(fs+newa1start, EPSILON)] = [newFinalState]
+            else:
+                newTransitions[(fs+newa1start, EPSILON)].append(newFinalState)
+
+        newTransitions[(newFinalState, EPSILON)] = [newq0]
+        new_number_of_states = a1.number_of_states  + 2
+
+        return Automaton(new_number_of_states, newq0, [newFinalState], newTransitions)

@@ -1,6 +1,5 @@
 from abc import abstractmethod
-from automaton_tools import NFA, AutomatonClosure, AutomatonConcat, AutomatonUnion 
-
+from automaton import*
 class Node:
 
     '''Objeto para representar nodos de AST para REGEX'''
@@ -45,28 +44,28 @@ class BinaryNode(Node):
 
 class EpsilonNode(AtomicNode):
     def eval(self):
-        return NFA(nStates=1, q0 = 0, finalStates=[0], transitions={})
+        return Automaton(number_of_states=1, initial_state=0, finalStates=[0], transitions={})
 
 
 class SymbolNode(AtomicNode):
     def eval(self):
         symbol = self.value
-        return NFA(nStates=2, q0 = 0, finalStates=[1], transitions={(0,symbol):[1]})
+        return Automaton(number_of_states=2, initial_state=0, finalStates=[1], transitions={(0,symbol):[1]})
 
 class ClosureNode(UnaryNode):
         
-    def operate(self, value):
-        return AutomatonClosure(value)
+    def operate(self, value: 'Automaton')-> 'Automaton':
+        return Automaton.automaton_closure(value)
 
 class UnionNode(BinaryNode):
 
-    def operate(self, lvalue, rvalue):
-        return AutomatonUnion(lvalue, rvalue)
+    def operate(self, lvalue: 'Automaton', rvalue: 'Automaton') -> 'Automaton':
+        return Automaton.automaton_union(lvalue, rvalue)
 
 class ConcatNode(BinaryNode):
 
-    def operate(self, lvalue, rvalue):
-        return AutomatonConcat(lvalue, rvalue)
+    def operate(self, lvalue: 'Automaton', rvalue: 'Automaton') -> 'Automaton':
+        return lvalue + rvalue
 
 
 

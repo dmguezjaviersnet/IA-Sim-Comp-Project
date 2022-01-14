@@ -3,7 +3,7 @@ from Own_token import Token, Token_Type
 from automaton import *
 from nonr_parser import non_recursive_parse
 from regex_grammar import *
-from automaton_tools import*
+
 
 regex_token_builder: Dict[str, Callable] = {
     '*': Token('*', Token_Type.closure),
@@ -17,21 +17,19 @@ class Regex_Engine:
 
     def __init__(self, regex: str):
         self.regex = regex
-        self.automaton: 'DFA' = self.build_automaton()
-
-    def __call__(self, text):
-        return self.automaton.match(text)
+        self.automaton: 'Automaton' = self._build_automaton()
 
     
-    def build_automaton(self) -> DFA:
-        tokens = self.regexTokenizer()
+
+    
+    def _build_automaton(self) -> 'Automaton':
+        tokens = self._regexTokenizer()
         _, ast = non_recursive_parse(regex_grammar, tokens)
-        nfa = ast.eval()
-        
+        nfa = ast.eval()        
         return nfa
 
 
-    def regexTokenizer(self) -> List[Token]:
+    def _regexTokenizer(self) -> List[Token]:
         tokens = []
 
         literal = False

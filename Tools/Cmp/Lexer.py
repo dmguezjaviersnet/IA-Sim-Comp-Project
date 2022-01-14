@@ -1,7 +1,6 @@
 from State import*
 from typing import Tuple
 from Own_token import Token
-from automaton_tools import*
 from State import *
 from Regex_Engine import *
 
@@ -29,7 +28,7 @@ class Lexer:
             automaton, states = State.from_old_model_to_new_model(Regex_Engine(regex).automaton, True)
 
             for state in states:
-                if state.isFinal:
+                if state.is_final_state:
                     state.tag = (priority, token_type)
             
             regex_automatons.append(automaton)
@@ -39,7 +38,7 @@ class Lexer:
 
     def _walk(self, text):
         state = self.automaton
-        endState = state if state.isFinal else None
+        endState = state if state.is_final_state else None
         lexeme = ''
 
         for symbol in text:
@@ -47,7 +46,7 @@ class Lexer:
                 lexeme += symbol
                 state = state[symbol][0]
 
-                if state.isFinal:
+                if state.is_final_state:
                     endState = state
                     endState.lexeme = lexeme
 

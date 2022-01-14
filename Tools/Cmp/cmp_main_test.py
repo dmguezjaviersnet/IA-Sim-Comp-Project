@@ -4,7 +4,6 @@ from Lexer import Lexer
 from Own_token import Token_Type, Token
 from Terminal import EOF
 from nonr_parser import non_recursive_parse
-from automaton_tools import NFAtoDFA
 from regex_grammar import regex_grammar
 
 
