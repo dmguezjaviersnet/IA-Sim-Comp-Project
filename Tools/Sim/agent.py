@@ -77,8 +77,20 @@ class Factory():
     return rocket
 
 class launchpad:
-  def __init__(self, quality = 10) -> None:
+  def __init__(self,env , quality = 10, amount_pltaforms= 1) -> None:
     self.age = 0 
     self.quality = quality
+    self.amount_plataforms = amount_pltaforms
+    self.plataforms = simpy.Resource(env,amount_pltaforms)
+
+  def launchrocket (self , rocket: Rocket , env):
+    arrive = env.now 
+    print('---> %s llego a plataforma en minuto %.2f' %(str(rocket.unique_id),arrive))
+    with self.plataforms.request() as request:
+      yield request
+      go_launch = env.now
+      delay = go_launch - arrive 
+      print('*** %s pasa a la plataforma de lanzamiento en el minuto %.2f habiendo esperado %.2f minutos ' %(str(rocket.unique_id),arrive,delay))
+      
 
 
