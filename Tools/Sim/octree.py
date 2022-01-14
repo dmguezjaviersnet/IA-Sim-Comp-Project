@@ -1,33 +1,28 @@
-
 from typing import *
 from Vector3 import *
+from elements3d import * 
+from objects import *
 
 MINRADIUS =1
 
-class Region:
-  def __init__(self, center: Vector3 , radio : int) -> None:
-    self.center = center
-    self.radio = radio
-  
-  def __str__(self) -> str:
-    return 'center :' + str(self.center)  + '  radio: ' + str(self.radio)
-
-class Objects:
-  def __init__(self, position, mass=1, radius=1,name=None):
-    self.mass = mass
-    self.position = position
-    self.radius = radius
-    self.name = name
-
-  def move (self , newPosition)-> None:
-    self.position = newPosition
 
 
-  def __str__(self) -> str:
-    return 'name: ' + str(self.name) + ' mass: ' + str(self.mass) + ' position: ' + str(self.position) + '  radius: ' + str(self.radius)
+# class obj:
+#   def __init__(self, position, mass=1, radius=1,name=None):
+#     self.mass = mass
+#     self.position = position
+#     self.radius = radius
+#     self.name = name
+
+#   def move (self , newPosition)-> None:
+#     self.position = newPosition
+
+
+#   def __str__(self) -> str:
+#     return 'name: ' + str(self.name) + ' mass: ' + str(self.mass) + ' position: ' + str(self.position) + '  radius: ' + str(self.radius)
 
 class Node:
-  def __init__(self, region: Region, objects: List[Objects] ,parent , depth:int=0, isLeafNode:bool = True ):
+  def __init__(self, region: Region, objects: List[obj] ,parent , depth:int=0, isLeafNode:bool = True ):
     self.objects = objects
     self.region = region
     self.childs = [None for i in range(8)]
@@ -35,7 +30,7 @@ class Node:
     self.depth = depth
     self.isLeafNode = True 
 
-def giveMeOctantOfRegion (region: Region, object:Objects):
+def giveMeOctantOfRegion (region: Region, object:obj):
   if (region.center.x < object.position.x):
     if (region.center.y < object.position.y):
       if (region.center.z < object.position.z):
@@ -85,7 +80,7 @@ def ObjectInside(region: Region , vector: Vector3):
 # de alguna region retorna una lista de listas de objetos de 
 # cardinalidad 9, el ultimo posicion del array es para los 
 # objetos que estan sobre algun plano princial de la region en cuestion
-def clasifyObjects (objects: List [Objects] , center: Vector3):
+def clasifyObjects (objects: List [obj] , center: Vector3):
   #building list for clasify objects
   clasifyList = dict() 
   for obj in objects:
@@ -105,10 +100,10 @@ dirz =[-1,1,-1,1,-1,1,-1,1]
 
 
 # class Octree:
-#   def __init__(self, region: Region, objects: List[Objects]):
+#   def __init__(self, region: Region, objects: List[obj]):
 #     self.root = self.BuildTree(parent= None, region=region, objects=objects)
 
-#   def BuildTree(self, parent: Node,region: Region, objects: List[Objects]):
+#   def BuildTree(self, parent: Node,region: Region, objects: List[obj]):
 #     newRadio = region.radio // 2 
 #     if len(objects) == 0 : return None 
 #     if newRadio < MINRADIUS:
@@ -128,10 +123,10 @@ dirz =[-1,1,-1,1,-1,1,-1,1]
 #       newNode.childs[i] = self.BuildTree(parent=newNode , region= newRegion, objects= objs[i])
 #     return newNode
 
-#   def insertObject (self, object: Objects):
+#   def insertObject (self, object: obj):
 #     self.root = self._insertObject(node=self.root, object=object)
 
-#   def _insertObject(self , node: Node , object: Objects):
+#   def _insertObject(self , node: Node , object: obj):
 #     if not ObjectInside(node.region,object):
 #       pass 
 #     newRadio = node.region.radio // 2
@@ -154,7 +149,7 @@ dirz =[-1,1,-1,1,-1,1,-1,1]
 #     if len(node.objects) > 0:
 #       print('object:' , [str(item) for item in node.objects] , 'Region: ' , node.region)
   
-#   def moveObject(self, node: Node, object: Objects):
+#   def moveObject(self, node: Node, object: obj):
 #     if not ObjectInside(node.region,object.position):
 #       if node.parent is None: pass 
 #       else: self.moveObject(node.parent,object)
@@ -182,9 +177,9 @@ dirz =[-1,1,-1,1,-1,1,-1,1]
 #         return True
 #     return False 
 
-# o1 = Objects(position=Vector3(2,3,1), name= "object1")
-# o2 = Objects(position=Vector3(1,1,2), name= "object2")
-# o3 = Objects(position=Vector3(-1,-4,2), name= "object3")
+# o1 = obj(position=Vector3(2,3,1), name= "object1")
+# o2 = obj(position=Vector3(1,1,2), name= "object2")
+# o3 = obj(position=Vector3(-1,-4,2), name= "object3")
 
 
 # lstObj = [o1,o2,o3]
