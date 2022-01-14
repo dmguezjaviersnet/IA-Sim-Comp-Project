@@ -94,5 +94,16 @@ class launchpad:
       delay = go_launch - arrive 
       print('*** %s pasa a la plataforma de lanzamiento [%s] en el minuto %.2f habiendo esperado %.2f minutos ' %(str(rocket.unique_id),str(self.unique_id),arrive,delay))
       
+  def trakingflight (self, env, rocket: Rocket):
+    takeoff_time = env.now
+    R = random.random()
+    rise_time = -400 * math.log(R)
+    yield  env.timeout(rise_time)
+    for curr_satellite in rocket.satellites:
+      self.launch_into_orbit(env= env,satellite=curr_satellite)
+
+  def launch_into_orbit (self , env, satellite : Satellite):
+    pass 
+
 
 
