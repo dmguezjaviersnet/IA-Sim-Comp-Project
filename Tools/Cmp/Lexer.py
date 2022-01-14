@@ -1,7 +1,7 @@
 from State import*
 from typing import Tuple
 from Own_token import Token
-
+from automaton_tools import*
 from State import *
 from Regex_Engine import *
 
@@ -14,7 +14,7 @@ class Lexer:
 
     
     def _build_automaton(self):
-        start = State('start')
+        start = State('initial_state')
 
         for state in self.regexs:
             start.add_epsilon_transition(state)
@@ -45,7 +45,7 @@ class Lexer:
         for symbol in text:
             if state.has_a_transition(symbol):
                 lexeme += symbol
-                state = state[symbol]
+                state = state[symbol][0]
 
                 if state.isFinal:
                     endState = state

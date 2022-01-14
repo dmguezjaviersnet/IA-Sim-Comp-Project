@@ -75,7 +75,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: #
                     continue # Entonces no se consume ningún token
 
                 current_token_index += 1  # Consumir el Token
-                if  ((current_token.tkn_type == Token_Type.character and current_symbol.identifier != 'character') or
+                if  ((current_token.token_type == Token_Type.character and current_symbol.identifier != 'character') or
                      (current_token.is_operator() and current_symbol.identifier != current_token.lexeme)):
 
                     return False, None
@@ -94,7 +94,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: #
                     __eval_rules(head, prod, G.map_prodstr_rules[prod_id], False) # Evaluar reglas heredadas y continuar a aplicar producciones
 
                 prod = [] # Producción
-                if current_token.tkn_type == Token_Type.character:  # Si el token es un número
+                if current_token.token_type == Token_Type.character:  # Si el token es un número
                     prod = __new_nodes(
                         ll_table['character'][current_symbol.identifier]) # Almacenar la producción
                     rule_key = __append_ids(rule_key, prod) # Construir la llave que nos permita obtener las reglas de la producción que se aplicó

@@ -1,5 +1,5 @@
 from typing import Dict, List, Set, Tuple
-
+# from State import State
 from tools import*
 
 class Automaton:
@@ -10,8 +10,10 @@ class Automaton:
     # def number_of_states(self):
     #     return len(self.states)
 
-    def __init__(self, nStates: int, q0: int, finalStates: List[int], transitions, statesList=[]):
-        
+    def __init__(self, number_of_states: int, initial_state: int, finalStates: List[int], transitions):
+        # states = []
+        # for i in range(number_of_states):
+        #     states.append(State(i,i in finalStates))
         # if not len(statesList):
         #     states = []
         
@@ -25,15 +27,16 @@ class Automaton:
         #     self.states = statesList
         
         
-        self.number_of_states = nStates
+        self.number_of_states = number_of_states
 
-        self.q0 = q0
+        self.initial_state = initial_state # estado inicial del autómata
         self.finals = set(finalStates)
     
         self.vocabulary: Set = set()
         self.transitions = {state: {} for state in range(self.number_of_states)}
 
         for (origin,symbol), destinations in transitions.items():
+            
             self.transitions[origin][symbol] = destinations
             self.vocabulary.add(symbol)
 
@@ -43,8 +46,8 @@ class NFA(Automaton):
     
     '''Autómata no-determinista'''
 
-    def __init__ (self, nStates, q0, finalStates, transitions, statesList = []):
-        super().__init__(nStates, q0, finalStates, transitions, statesList)
+    def __init__ (self, nStates, q0, finalStates, transitions):
+        super().__init__(nStates, q0, finalStates, transitions)
     
     def epsilonTransitions(self, state):
         
@@ -61,7 +64,7 @@ class DFA(Automaton):
 
     '''Autómata determinista'''
 
-    def __init__(self, nStates: int, q0: int, finalStates: List[int],  transitions, statesList = []):
+    def __init__(self, nStates: int, q0: int, finalStates: List[int],  transitions):
         
         temp: Dict = {}
         for i, j in transitions.items():
@@ -69,7 +72,7 @@ class DFA(Automaton):
                 temp[(i,k)] = l
         
         self.currentState = q0
-        super().__init__(nStates, q0, finalStates, temp, statesList)
+        super().__init__(nStates, q0, finalStates, temp)
     
 
     def __str__(self) -> str:

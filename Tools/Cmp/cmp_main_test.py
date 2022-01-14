@@ -20,6 +20,8 @@ def main():
      eof=Token('$', Token_Type.eof))
 
     tokens = lex('1+22*3')
+    for i in tokens:
+        print(i)
     print(':)')
     # # print(parsed2)
     # # nfa = ast.eval()

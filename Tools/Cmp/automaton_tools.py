@@ -34,7 +34,7 @@ def goTo(automaton:'NFA', states: List[int], symbol: str):
 def NFAtoDFA(automaton: 'NFA'):
     transitions = {}
 
-    q0 = StatesContainer(epsilonClosure(automaton, [automaton.q0]),automaton, 0)
+    q0 = StatesContainer(epsilonClosure(automaton, [automaton.initial_state]),automaton, 0)
 
     stack = [q0]
     statesforDFA: List[StatesContainer] = [q0]

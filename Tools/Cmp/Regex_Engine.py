@@ -28,7 +28,7 @@ class Regex_Engine:
         _, ast = non_recursive_parse(regex_grammar, tokens)
         nfa = ast.eval()
         
-        return NFAtoDFA(nfa)
+        return nfa
 
 
     def regexTokenizer(self) -> List[Token]:
