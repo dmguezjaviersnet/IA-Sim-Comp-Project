@@ -1,4 +1,4 @@
-from Regex_Engine import Regex_Engine
+from Regex_Engine import *
 from State import*
 
 def test_regex_engine1():
@@ -26,3 +26,8 @@ def test_regex_engine3_check_type():
     assert type(regexengine) is Regex_Engine
     assert type(automaton) is Automaton
 
+def test_tokenizer_regex1():
+    tokens = Regex_Engine.regexTokenizer('(a|b)*')
+    assert [token.lexeme for token in tokens] == ['(', 'a', '|', 'b', ')', '*', '$']
+    assert [token.token_type for token in tokens] == [Token_Type.open_parenthesis, Token_Type.character, Token_Type.union, Token_Type.character, Token_Type.closed_parenthesis, Token_Type.closure, Token_Type.eof]
+    

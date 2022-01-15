@@ -23,13 +23,19 @@ def test_lexer():
     for i in tokens:
         print(i)
     print(':)')
+    
 
 def main():
     ############################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
+    
     # au = re.automaton
-    test_lexer()
-    # tokens = Regex_Engine.regexTokenizer('(a|b)*')
+    # test_lexer()
+    tokens = Regex_Engine.regexTokenizer('(a|b)*')
+    a1 = [t.token_type for t in tokens]
+    a2 = [t.lexeme for t in tokens]
+    print(a1)
+    print(a2)
     # for i in tokens:
     #     print(i)
     # test_lexer()
