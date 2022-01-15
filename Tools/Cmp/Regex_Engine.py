@@ -14,7 +14,11 @@ regex_token_builder: Dict[str, Callable] = {
 }
 
 class Regex_Engine:
-
+    '''
+        Clase que representa el motor de expresiones regulares
+        Crea el autómata para reconocer cadenas que matchean con la 
+        expresión regular con la que se inicilizó la clase
+    '''
     def __init__(self, regex: str):
         self.regex = regex
         self.automaton: 'Automaton' = self._build_automaton()
@@ -30,19 +34,23 @@ class Regex_Engine:
 
     @staticmethod
     def regexTokenizer(text) -> List[Token]:
+        '''
+            Dado una cadena de entrada (que seríá una expresión regular) devuelve los tokens necesarios 
+            para ser usado en el parser LL(1) que parsearíá dicha expresión regular.
+        '''
         tokens = []
 
         literal = False
 
-        for symbol in text:
-            if literal:
+        for symbol in text: # va por cada carácter de la cadena
+            if literal: # si es un carácter literal
                 tokens.append(Token(symbol, token_type=Token_Type.character)) 
                 literal = False
 
             elif symbol.isspace():
                 continue   
             
-            elif symbol =='\\':
+            elif symbol =='\\': 
                 literal =  True
                 continue  
             

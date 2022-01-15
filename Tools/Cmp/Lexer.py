@@ -7,8 +7,12 @@ from Regex_Engine import *
 class Lexer:
 
     def __init__(self, regex_table: Tuple[str, Token_Type], eof) -> None:
+        '''
+            Se define una tabla de tokens<regex_table> 
+            (conjunto de tuplas de la forma <regex, token_type>)
+        '''
         self.regexs =  self._build_regex_automatons(regex_table)
-        self.eof = eof
+        self.eof = eof 
         self.automaton = self._build_automaton()
 
     
@@ -21,6 +25,13 @@ class Lexer:
         return start.to_DFA()
         
     def _build_regex_automatons(self, regex_table: Tuple[str, Token_Type]):
+        
+        '''
+        Al crear el automata queda dicho en cada estado final cuáles son los 
+        tipos de tokens que se ven involucrados y cual es su prioridad, 
+        dónde la prioridad se define en el orden en que se fue creando 
+        la tabla de tal forma que los primeros son los que tienen más prioridad
+        '''
         regex_automatons = []
 
         for priority, (regex, token_type) in enumerate(regex_table):
@@ -29,7 +40,7 @@ class Lexer:
 
             for state in states:
                 if state.is_final_state:
-                    state.tag = (priority, token_type)
+                    state.tag = (priority, token_type) # por cada estado final del autómata que reconoce la expresión regular <regex> se agrega la tupla de (<priority>, <token_type>)
             
             regex_automatons.append(automaton)
         

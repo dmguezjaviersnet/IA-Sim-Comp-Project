@@ -4,6 +4,25 @@ from Terminal import*
 
 from Non_terminal import*
 from Production import*
+
+'''
+    Gramática de Expresiones Regulares
+    E -> T X
+    X -> '|' E
+       | epsilon
+    T -> F Y
+    Y -> F Y 
+       | epsilon
+    F -> A P
+    P -> M
+       | epsilon
+    M -> *
+       | epsilon
+    A -> symbol
+       | (E)
+       | ε
+
+'''
 # Terminales
 clousure = Terminal('*')
 openb = Terminal('(')
