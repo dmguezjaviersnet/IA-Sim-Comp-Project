@@ -23,18 +23,18 @@ class Regex_Engine:
 
     
     def _build_automaton(self) -> 'Automaton':
-        tokens = self._regexTokenizer()
+        tokens = Regex_Engine.regexTokenizer(self.regex)
         _, ast = non_recursive_parse(regex_grammar, tokens)
         nfa = ast.eval()        
         return nfa
 
-
-    def _regexTokenizer(self) -> List[Token]:
+    @staticmethod
+    def regexTokenizer(text) -> List[Token]:
         tokens = []
 
         literal = False
 
-        for symbol in self.regex:
+        for symbol in text:
             if literal:
                 tokens.append(Token(symbol, token_type=Token_Type.character)) 
                 literal = False

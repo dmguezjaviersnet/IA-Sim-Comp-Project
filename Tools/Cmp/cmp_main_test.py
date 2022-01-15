@@ -5,12 +5,13 @@ from Own_token import Token_Type, Token
 from Terminal import EOF
 from nonr_parser import non_recursive_parse
 from regex_grammar import regex_grammar
+from State import*
 
 
-def main():
-    ############################### Gramática de Regex #################################
-    # re = Regex_Engine('(a|b)*')
-    # au = re.automaton
+    
+    
+
+def test_lexer():
     lex = Lexer([('+', Token_Type.plus),
     ('-', Token_Type.minus),
     ('\*', Token_Type.times),
@@ -22,6 +23,16 @@ def main():
     for i in tokens:
         print(i)
     print(':)')
+
+def main():
+    ############################### Gramática de Regex #################################
+    # re = Regex_Engine('(a|b)*')
+    # au = re.automaton
+    test_lexer()
+    # tokens = Regex_Engine.regexTokenizer('(a|b)*')
+    # for i in tokens:
+    #     print(i)
+    # test_lexer()
     # # print(parsed2)
     # # nfa = ast.eval()
     # # dfa = NFAtoDFA(nfa)

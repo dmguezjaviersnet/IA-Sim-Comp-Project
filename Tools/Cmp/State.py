@@ -15,8 +15,8 @@ class State:
         self.tag = None
         self.substates: Tuple['State'] = substates
         self.is_final_state: bool = is_final_state
-        self.transitions: Dict[str, 'State']= {}
-        self.epsilon_transitions: Set['State']  = set()
+        self.transitions: Dict[str, 'State']= {} # transiciones desde este estado y un símbolo te da el conjunto de estados a los que te puedes mover
+        self.epsilon_transitions: Set['State']  = set() # las epsilon transciones que hay de este estado y el conjunto de estados a los que te puedes mover por estas
     
     def has_a_transition(self, symbol):
         '''
@@ -64,25 +64,31 @@ class State:
         return symbols
         
     @staticmethod
-    def epsilon_closure(states: 'State'): # model with State
+    def epsilon_closure(states: 'State'): 
         '''
-        
+            Recibe un conjunto de estados.  Dado un conjunto de estados mueve por transiciones 
+            epsilon y añade todos los estados que son alcanzables por transiciones epsilon
         '''
-        eClosure = set(states)
+        e_closure = set(states)
         stack = list(states)
 
-        while len(stack):
-            state = stack.pop()
-            for eTransition in state.epsilon_transitions:
-                if not eTransition in eClosure:
-                    stack.append(eTransition)
-                    eClosure.add(eTransition)
+        while len(stack): # mientras queden estados en la pila
+            current_state = stack.pop() # saca de la pila el próximo estado
+            for new_state in current_state.epsilon_transitions: # ve por cada estado alcanzable por transiciones epsilon
+                if not new_state in e_closure: 
+                    stack.append(new_state)
+                    e_closure.add(new_state)
 
-        return eClosure
+        return e_closure
 
 
     @staticmethod
     def go_to(symbol: str, states: 'State'):
+        '''
+            La operación goto recibe un conjunto de estados <states> y un símbolo <symbol>. Dado un conjunto
+            de estados y símbolo yo voy a obtener el conjunto de todos los estados que yo llego
+            si parto de los estados iniciales.
+        '''
         goto = set()
 
         for state in states:
@@ -123,7 +129,7 @@ class State:
                 else:
                     new_state = states[e_closures.index(e_closure)]
                 
-                currentState.add_transition(symbol, new_state)
+                currentState.add_transition(symbol, new_state) # agrego una transición del estado actual cn el símbolo hacia el nuevo estado <new_state>
 
         return initial_state          
 
@@ -149,10 +155,33 @@ class State:
                 origin[symbol] = [ states[d] for d in dest]
                 
         
-        return states[0] if returnStatesList else states[0], states
+        return (states[0], states) if returnStatesList else states[0]
 
     
 
+    def match_from_nfa(self, text): 
+        '''
+            Dice si el autómata puede o no reconocer la cadena
+            en un autómata no determinista
+        '''
+        states: Set['State'] = self.e_closure
+        for c in text:
+            states = State.go_to(c, states)
+            states = State.epsilon_closure(states)
+        
+        return any(state.is_final_state for state in states)
+
+    def match_from_dfa(self, text):
+        '''
+            Dice si el autómata puede o no reconocer la cadena 
+            en un autómata determinista
+        '''
+        for c in text:
+            try:
+                return self[c][0].match_from_dfa(text[1:])
+            except:
+                return False
+        return self.is_final_state
 
         
 
