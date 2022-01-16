@@ -12,6 +12,9 @@ regex_token_builder: Dict[str, Callable] = {
     '(': Token('(', Token_Type.open_parenthesis),
     ')': Token(')', Token_Type.closed_parenthesis),
     '|': Token('|', Token_Type.union),
+    '[': Token('[', Token_Type.open_square_brackets),
+    ']': Token(']', Token_Type.closed_square_brackets),
+    '-': Token('-', Token_Type.rrange),
     'ε': Token('ε', Token_Type.repsilon),
 }
 
