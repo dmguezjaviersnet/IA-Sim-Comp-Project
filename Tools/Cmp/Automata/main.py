@@ -1,5 +1,7 @@
+
 from automaton import *
 import pytest
+from astRegex import *
 
 def main():
     nfa = NFA( nStates =4, q0 = 0,finalStates=[3], transitions={
@@ -25,6 +27,20 @@ def main():
     # print(dfa.number_of_states)
     # test_union()
     test_closure()
+    #test_concat()
+    # test_ast()
+
+def test_ast():
+    concat  = ConcatNode(SymbolNode('a'), SymbolNode('b'))
+    x1 = concat.eval()
+    union = UnionNode(SymbolNode('1'), SymbolNode('g'))
+    x2 = union.eval()
+    closure = ClosureNode(SymbolNode('p'))
+    x3 = closure.eval()
+    print(x1)
+    print(x2)
+    print(x3)
+
 
 def test_concat():
     
