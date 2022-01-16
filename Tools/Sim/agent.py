@@ -19,13 +19,13 @@ class Agent:
     loc: tuple coordenates 
     params: dictionary of parameters
     """
-    self.loc = loc
-    self.age = 0 
-    self.unique_id = unique_id
+    self.loc: Vector3 = loc
+    self.age:int  = 0 
+    self.unique_id : uuid.UUID = unique_id
 
     # extract the parameter 
-    min_lifespan = params.get('min_lifespan', 100000)
-    max_lifespan = params.get('max_lifespan', 100000)
+    min_lifespan: int = params.get('min_lifespan', 100000)
+    max_lifespan: int = params.get('max_lifespan', 100000)
 
     self.lifespan = np.random.uniform(min_lifespan,max_lifespan)
 
@@ -39,11 +39,11 @@ class RocketQuality(Enum):
 
 class factory():
   def __init__(self, loc:Vector3 ) -> None:
-    self.age = 0 
-    self.loc = loc
-    self.ranking = 0 
+    self.age: int  = 0 
+    self.loc: int = loc
+    self.ranking : int = 0 
 
-  def produceSatellite(self, env, quiality = None):
+  def produceSatellite(self, env : simpy.Environment, quiality : int = None):
     start_pro = env.now
     R = random.random()
     t_const = -T_BUILD_SATELLITE * math.log(R)
@@ -60,7 +60,7 @@ class factory():
     print("+++ Producido con exito el satelite con id (%s) en %.2f minutos" %(str(new_satellite.unique_id),end_pro - start_pro)) 
     return new_satellite
 
-  def produceRocket(self,env,quality = None):
+  def produceRocket(self,env : simpy.Environment,quality: int = None):
     start_pro = env.now
     R = random.random()
     t_const = -T_BUILD_ROCKET * math.log(R)
@@ -78,19 +78,19 @@ class factory():
     return rocket
 
 class launchpad:
-  def __init__(self,env , quality = 10, amount_plataforms= 1) -> None:
-    self.age = 0 
-    self.quality = quality
-    self.amount_plataforms = amount_plataforms
-    self.plataforms = simpy.Resource(env,amount_plataforms)
-    self.unique_id = uuid.uuid4()
+  def __init__(self,env: simpy.Environment, quality: int = 10, amount_plataforms: int= 1) -> None:
+    self.age: int = 0 
+    self.quality : int = quality
+    self.amount_plataforms : int  = amount_plataforms
+    self.plataforms : simpy.Resource = simpy.Resource(env,amount_plataforms)
+    self.unique_id : uuid.UUID = uuid.uuid4()
 
-  def launchrocket (self, env, rocket: Rocket):
-    arrive = env.now 
+  def launchrocket (self,rocket: Rocket , ):
+    arrive = self.env.now 
     print('---> %s llego a plataforma [%s] el cohete en el minuto %.2f' %(str(rocket.unique_id),str(self.unique_id),arrive))
     with self.plataforms.request() as request:
       yield request
-      go_launch = env.now
+      go_launch = self.env.now
       delay = go_launch - arrive 
       print('*** %s pasa a la plataforma de lanzamiento [%s] en el minuto %.2f habiendo esperado %.2f minutos ' %(str(rocket.unique_id),str(self.unique_id),arrive,delay))
       
@@ -102,8 +102,5 @@ class launchpad:
     for curr_satellite in rocket.satellites:
       self.launch_into_orbit(env= env,satellite=curr_satellite)
 
-  def launch_into_orbit (self , env, satellite : Satellite):
-    pass 
-
-
-
+  def launch_into_orbit (self , env, satellite : Satellite, storeobjects : simpy.Store):
+    storeobjects.put(satellite)
