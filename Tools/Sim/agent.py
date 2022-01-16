@@ -11,6 +11,7 @@ from elements3d import *
 
 T_BUILD_ROCKET = 200
 T_BUILD_SATELLITE = 100
+T_WAITING_TO_INTERACT = 100
 
 class Agent: 
   def __init__(self, loc:Vector3 , unique_id,params) -> None:
@@ -30,10 +31,6 @@ class Agent:
     self.lifespan = np.random.uniform(min_lifespan,max_lifespan)
 
 
-class Person(Agent):
-  def __init__ (self, loc: Vector3 , unique_id: uuid.UUID):
-    super().__init__(loc, unique_id)
-
 class RocketQuality(Enum):
   VERYGOOD = 0 
   GOOD = 1
@@ -48,7 +45,7 @@ class factory():
     self.loc: int = loc
     self.ranking : int = 0 
 
-  def produceSatellite(self, env : simpy.Environment, quiality : int = None):
+  def produceSatellite(self, env : simpy.Environment, quiality : int = None) -> Satellite:
     start_pro = env.now
     R = random.random()
     t_const = -T_BUILD_SATELLITE * math.log(R)
@@ -65,7 +62,7 @@ class factory():
     print("+++ Producido con exito el satelite con id (%s) en %.2f minutos" %(str(new_satellite.unique_id),end_pro - start_pro)) 
     return new_satellite
 
-  def produceRocket(self,env : simpy.Environment,quality: int = None):
+  def produceRocket(self,env : simpy.Environment,quality: int = None) -> Rocket:
     start_pro = env.now
     R = random.random()
     t_const = -T_BUILD_ROCKET * math.log(R)
@@ -110,3 +107,23 @@ class launchpad:
       storeobjects.put(curr_satellite)
       print('+++ %s lanzado con exito a la orbita en el minuto %.2f' % (str(curr_satellite.unique_id),self.env.now))
       self.env.process(curr_satellite.move(self.env))
+
+
+class Person(Agent):
+  def __init__ (self, loc: Vector3 , unique_id: uuid.UUID):
+    super().__init__(loc, unique_id)
+
+  def toInteract (self, env: simpy.Environment, factories: List[factory], launchpads : List[launchpad],objects = simpy.Store):
+    while True:
+      R = random.random()
+      delay = - T_WAITING_TO_INTERACT * math.log(R)
+      yield env.timeout(delay)
+      # decide to create a Rocket
+      curr_fact = random.choice(factories)
+
+      curr_rocket = yield env.process(curr_fact.produceRocket(env,quality=5))
+
+      curr_launch = random.choice(launchpads)
+
+      yield env.process(curr_launch.launchrocket(curr_rocket,objects))
+      print('+++ ^^^ La persona %s mando a lanzar el cohete %s en el minuto %.2f' % (str(self.unique_id),str(curr_rocket), env.now))
