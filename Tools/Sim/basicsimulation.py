@@ -8,7 +8,7 @@ import uuid
 from agent import * 
 from elements3d import * 
 
-NUMERO_INICIAL_OBJETOS = 100
+NUMERO_INICIAL_OBJETOS = 1
 TOTAL_COHETES = 10
 NUMERO_PLATAFORMAS = 1 
 NUMERO_FABRICAS = 2
@@ -34,7 +34,7 @@ def launch_rocket(env,name,plataformas):
     print('*** %s pasa a la plataforma de lanzamiento en el minuto %.2f habiendo esperado %.2f minutos ' %(name,llega,espera))
     yield env.process(lanzar(name))
 
-def principal (env: Environment,launchpads):
+def principal (env: simpy.Environment,launchpads: simpy.Store , factories : simpy.Store , objects: simpy.Store):
   # llegada = 0
   # for i in range(TOTAL_COHETES):
   #   R = random.random()
@@ -45,17 +45,47 @@ def principal (env: Environment,launchpads):
     R = random.random()
     delay = -300 * math.log(R)
     yield env.timeout(delay)
-    curr_factory = random.choice(FACTORIES)
+    curr_factory = random.choice(factories.items)
     curr_rocket = yield env.process(curr_factory.produceRocket(env))
-    curr_launchpad = random.choice(LAUNCHPAD)
-    env.process(curr_launchpad.launchrocket(env,curr_rocket))
+    curr_launchpad = random.choice(launchpads.items)
+    env.process(curr_launchpad.launchrocket(curr_rocket,objects))
 
 
 env = simpy.Environment()
 # plataformas = simpy.Resource(env,NUMERO_PLATAFORMAS)
-LAUNCHPAD = [launchpad(env) for i in range (NUMERO_PLATAFORMAS)]
-FACTORIES = [factory(Vector3.random()) for i in range (NUMERO_FABRICAS)]
-OBJECTS = [generateObj() for i in range (NUMERO_INICIAL_OBJETOS)]
+ 
 
-env.process(principal(env,LAUNCHPAD))
+# env.process(principal(env,LAUNCHPAD))
+# env.run()
+
+def creatingInitialObject (store: simpy.Store):
+  for  item in [generateObj() for i in range (NUMERO_INICIAL_OBJETOS)]:
+    store.put(item)
+
+def creatingInitialFactories (store: simpy.Store):
+  for item in [factory(Vector3.random()) for i in range (NUMERO_FABRICAS)]:
+    store.put(item)
+  
+def creatingInitialLaunchpad(store: simpy.Store):
+  for item in [launchpad(env) for i in range(NUMERO_PLATAFORMAS)]:
+    store.put(item)
+
+
+OBJECTS = simpy.Store(env)
+FACTORIES = simpy.Store(env)
+LAUNCHPAD = simpy.Store(env) 
+
+
+creatingInitialObject(OBJECTS)
+creatingInitialFactories(FACTORIES)
+creatingInitialLaunchpad(LAUNCHPAD)
+
+
+print (len(OBJECTS.items))
+print (len(FACTORIES.items))
+print (len(LAUNCHPAD.items))
+
+env.process(principal (env,LAUNCHPAD,FACTORIES,OBJECTS))
 env.run()
+
+print(len(OBJECTS.items))

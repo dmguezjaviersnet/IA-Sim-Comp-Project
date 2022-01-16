@@ -80,27 +80,32 @@ class factory():
 class launchpad:
   def __init__(self,env: simpy.Environment, quality: int = 10, amount_plataforms: int= 1) -> None:
     self.age: int = 0 
+    self.env: simpy.Environment = env
     self.quality : int = quality
     self.amount_plataforms : int  = amount_plataforms
     self.plataforms : simpy.Resource = simpy.Resource(env,amount_plataforms)
     self.unique_id : uuid.UUID = uuid.uuid4()
 
-  def launchrocket (self,rocket: Rocket , ):
+  def launchrocket (self,rocket: Rocket ,storeobjects : simpy.Store):
     arrive = self.env.now 
-    print('---> %s llego a plataforma [%s] el cohete en el minuto %.2f' %(str(rocket.unique_id),str(self.unique_id),arrive))
+    print('---> el cohete %s llego a plataforma [%s] en el minuto %.2f' %(str(rocket.unique_id),str(self.unique_id),arrive))
     with self.plataforms.request() as request:
       yield request
       go_launch = self.env.now
       delay = go_launch - arrive 
       print('*** %s pasa a la plataforma de lanzamiento [%s] en el minuto %.2f habiendo esperado %.2f minutos ' %(str(rocket.unique_id),str(self.unique_id),arrive,delay))
+      yield self.env.process(self.trakingflight(rocket,storeobjects))
       
-  def trakingflight (self, env, rocket: Rocket):
-    takeoff_time = env.now
+  def trakingflight (self, rocket: Rocket, storeobjects: simpy.Store):
+    takeoff_time = self.env.now
     R = random.random()
     rise_time = -400 * math.log(R)
-    yield  env.timeout(rise_time)
+    yield  self.env.timeout(rise_time)
     for curr_satellite in rocket.satellites:
-      self.launch_into_orbit(env= env,satellite=curr_satellite)
+      # yield self.env.process(self.launch_into_orbit(satellite=curr_satellite, storeobjects= storeobjects))
+      storeobjects.put(curr_satellite)
+      print('+++ %s lanzado con exito a la orbita en el minuto %.2f' % (str(curr_satellite.unique_id),self.env.now))
 
-  def launch_into_orbit (self , env, satellite : Satellite, storeobjects : simpy.Store):
-    storeobjects.put(satellite)
+  # def launch_into_orbit (self, satellite : Satellite, storeobjects : simpy.Store):
+  #   storeobjects.put(satellite)
+  #   print('+++ %s lanzado con exito a la orbita en el minuto %.2f' % (str(satellite.unique_id),self.env.now))
