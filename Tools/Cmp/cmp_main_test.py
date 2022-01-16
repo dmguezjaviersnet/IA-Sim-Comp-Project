@@ -21,17 +21,17 @@ def test1():
     
 
 def test_lexer():
-    lex = Lexer([('+', Token_Type.plus),
+    lex = Lexer([('\+', Token_Type.plus),
     ('-', Token_Type.minus),
     ('\*', Token_Type.times),
     ('/', Token_Type.div),
     ('\(', Token_Type.open_parenthesis),
     ('\)', Token_Type.closed_parenthesis),
-    ('(1|2|3|4|5|6|7|8|9)(1|2|3|4|5|6|7|8|9)*', Token_Type.number),
+    ('(1|2|3|4|5|6|7|8|9)+', Token_Type.number),
     ('(\\ )*', Token_Type.space)],
      eof=Token_Type.eof)
 
-    tokens = lex('(1  + 22 * 3) -    16789')
+    tokens = lex('( 1+22*3) -           16789')
     
     for i in tokens:
         print(i)
@@ -44,8 +44,8 @@ def main():
     
     # au = re.automaton
     # test_lexer()
-    # test_lexer()
-    test1()
+    test_lexer()
+    
     # tokens = Regex_Engine.regexTokenizer('(a|b)*')
     # a1 = [t.token_type for t in tokens]
     # a2 = [t.lexeme for t in tokens]
