@@ -9,7 +9,7 @@ from agent import *
 from elements3d import * 
 
 NUMERO_INICIAL_OBJETOS = 1
-TOTAL_COHETES = 10
+TOTAL_COHETES = 1000
 NUMERO_PLATAFORMAS = 1 
 NUMERO_FABRICAS = 2
 MIN_ESPERA_COHETE = 200 
@@ -71,6 +71,11 @@ def creatingInitialLaunchpad(store: simpy.Store):
     store.put(item)
 
 
+def creatingProcessToMOveObjects(env: simpy.Environment , objects: List[obj]):
+  for item in objects:
+    env.process(item.move(env))
+
+
 OBJECTS = simpy.Store(env)
 FACTORIES = simpy.Store(env)
 LAUNCHPAD = simpy.Store(env) 
@@ -80,12 +85,7 @@ creatingInitialObject(OBJECTS)
 creatingInitialFactories(FACTORIES)
 creatingInitialLaunchpad(LAUNCHPAD)
 
+creatingProcessToMOveObjects(env,OBJECTS.items)
 
-print (len(OBJECTS.items))
-print (len(FACTORIES.items))
-print (len(LAUNCHPAD.items))
-
-env.process(principal (env,LAUNCHPAD,FACTORIES,OBJECTS))
+env.process(principal(env,LAUNCHPAD,FACTORIES,OBJECTS))
 env.run()
-
-print(len(OBJECTS.items))

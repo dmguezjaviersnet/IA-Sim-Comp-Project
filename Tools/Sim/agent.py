@@ -29,6 +29,11 @@ class Agent:
 
     self.lifespan = np.random.uniform(min_lifespan,max_lifespan)
 
+
+class Person(Agent):
+  def __init__ (self, loc: Vector3 , unique_id: uuid.UUID):
+    super().__init__(loc, unique_id)
+
 class RocketQuality(Enum):
   VERYGOOD = 0 
   GOOD = 1
@@ -102,10 +107,6 @@ class launchpad:
     rise_time = -400 * math.log(R)
     yield  self.env.timeout(rise_time)
     for curr_satellite in rocket.satellites:
-      # yield self.env.process(self.launch_into_orbit(satellite=curr_satellite, storeobjects= storeobjects))
       storeobjects.put(curr_satellite)
       print('+++ %s lanzado con exito a la orbita en el minuto %.2f' % (str(curr_satellite.unique_id),self.env.now))
-
-  # def launch_into_orbit (self, satellite : Satellite, storeobjects : simpy.Store):
-  #   storeobjects.put(satellite)
-  #   print('+++ %s lanzado con exito a la orbita en el minuto %.2f' % (str(satellite.unique_id),self.env.now))
+      self.env.process(curr_satellite.move(self.env))
