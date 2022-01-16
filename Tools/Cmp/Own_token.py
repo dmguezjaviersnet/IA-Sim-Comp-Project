@@ -8,19 +8,22 @@ class Token_Type(Enum):
     minus = 3
     times = 4
     div = 5
-    open_parenthesis = 8
-    closed_parenthesis = 9
-    number = 30
+    open_parenthesis = 6
+    closed_parenthesis = 7
+    number = 8
 
     # Regex
-    closure = 6
-    union = 7
-    repsilon = 10
-    rplus = 8
-    question = 9
+    closure = 9
+    union = 10
+    repsilon = 11
+    rplus = 12
+    question = 13
+    rrange = 14
+    open_square_brackets = 15
+    closed_square_brackets = 16
 
-    eof = 11
-    space = 12
+    eof = 17
+    space = 18
     
 
 

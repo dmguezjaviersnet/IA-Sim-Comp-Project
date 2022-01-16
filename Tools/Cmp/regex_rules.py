@@ -83,6 +83,64 @@ def A_rule_symbol_rgx(head: Symbol, tail: List[Symbol]):
 def A_rule_brackets_rgx(head: Symbol, tail: List[Symbol]):
     head.ast = tail[1].ast
 
+# -> [ W ]
+def A_rule_square_brackets_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[1].ast
+
 # -> ε
 def A_rule_eps_rgx(head: Symbol, tail: List[Symbol]):
     head.ast = EpsilonNode(tail[0].identifier)
+
+################################ W
+
+# -> R S
+def W_rule_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[1].ast
+
+def S1_rule_rgx(head: Symbol, tail: List[Symbol]):
+    tail[1].tmp = tail[0].ast
+
+################################ S
+
+# -> R S
+def S2_rule_rgx(head: Symbol, tail: List[Symbol]):
+    tail[1].tmp = tail[0].ast
+
+def S3_rule_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[1].ast
+
+# -> eps
+def S4_rule_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = head.tmp
+
+################################ R
+
+# -> B Q
+def Q1_rule_rgx(head: Symbol, tail: List[Symbol]):
+    tail[1].tmp = tail[0].ast
+
+def R1_rule_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[1].ast
+
+################################ Q
+
+# -> - B Q
+def B1_rule_rgx(head: Symbol, tail: List[Symbol]):
+    tail[2].tmp = RangeNode(head.tmp, tail[1].ast)
+
+def Q2_rule_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[2].ast
+
+# -> eps
+def Q3_rule_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = head.tmp
+
+############################### B
+# -> symbol
+def B_rule_symbol_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = SymbolNode(tail[0].val)
+
+############################### C
+# -> symbol
+def C_rule_symbol_rgx(head: Symbol, tail: List[Symbol]):
+    head.ast = SymbolNode(tail[0].val)

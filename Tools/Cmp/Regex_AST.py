@@ -75,8 +75,8 @@ class RangeNode(BinaryNode):
         return self.operate(left, right)
 
     def operate(self, lvalue, rvalue):
-        return Automaton(number_of_states=2, finalStates=[1], 
-        transitions={(0,chr(ascii_v)): 1 for ascii_v in range(ord(lvalue), ord(rvalue))})
+        return Automaton(number_of_states=2, initial_state=0, finalStates=[1], 
+        transitions={(0,chr(ascii_v)): [1] for ascii_v in range(ord(lvalue), ord(rvalue)+1)})
 
 
 
