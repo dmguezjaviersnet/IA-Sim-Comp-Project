@@ -99,7 +99,7 @@ def non_recursive_parse(G: Grammar, tokens: List[Token]) -> Tuple [bool, Any]: #
                         ll_table['character'][current_symbol.identifier]) # Almacenar la producción
                     rule_key = __append_ids(rule_key, prod) # Construir la llave que nos permita obtener las reglas de la producción que se aplicó
 
-                elif current_token.is_operator():  # Si el token es un operador
+                else:  # Si el token es un operador
                     prod = __new_nodes(
                         ll_table[current_token.lexeme][current_symbol.identifier])
                     rule_key = __append_ids(rule_key, prod) # Construir la llave que nos permita obtener las reglas de la producción que se aplicó
