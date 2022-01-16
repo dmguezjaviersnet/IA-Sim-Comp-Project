@@ -8,6 +8,15 @@ from regex_grammar import regex_grammar
 from State import*
 
 
+def test1():
+    regexengine = Regex_Engine('(a|b|c)?')
+    automaton = regexengine.automaton
+    automaton = State.from_old_model_to_new_model(automaton)
+    automaton = automaton.to_DFA()
+    print(automaton.match_from_dfa('aa'))
+    # assert automaton.match_from_dfa('bbb') == True
+    # assert automaton.match_from_dfa('') == True
+    # assert automaton.match_from_dfa('aaef') == False
     
     
 
@@ -35,7 +44,8 @@ def main():
     
     # au = re.automaton
     # test_lexer()
-    test_lexer()
+    # test_lexer()
+    test1()
     # tokens = Regex_Engine.regexTokenizer('(a|b)*')
     # a1 = [t.token_type for t in tokens]
     # a2 = [t.lexeme for t in tokens]
