@@ -18,6 +18,8 @@ class Token_Type(Enum):
     repsilon = 10
 
     eof = 11
+    space = 12
+    
 
 
 class Token: # Clase para representar los tokens
