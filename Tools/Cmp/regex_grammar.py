@@ -17,14 +17,19 @@ from Production import*
     P -> M
        | epsilon
     M -> *
+       | ?
+       | +
        | epsilon
     A -> symbol
        | (E)
        | ε
+    
 
 '''
 # Terminales
 clousure = Terminal('*')
+question = Terminal('?')
+rplus = Terminal('+')
 openb = Terminal('(')
 closedb = Terminal(')')
 bar = Terminal('|')
@@ -32,7 +37,7 @@ character = Terminal('character', 'val')
 empty = Terminal('eps')
 regex_empty = Terminal('ε')
 eof = Terminal('$')
-terminals = [clousure, bar, openb, closedb, character, regex_empty, empty, eof]
+terminals = [clousure, question, rplus, bar, openb, closedb, character, regex_empty, empty, eof]
 
 
 # No terminales
@@ -79,8 +84,8 @@ p6 = Production(P,
                 )
 
 p7 = Production(M, 
-                [[clousure]],
-                [[(M_rule_rgx, True)]]
+                [[clousure], [question], [rplus]],
+                [[(M_rule_rgx, True)],[(M_rule_question, True)],[(M_rule_plus, True)]]
                 )
 
 p8 = Production(A, 

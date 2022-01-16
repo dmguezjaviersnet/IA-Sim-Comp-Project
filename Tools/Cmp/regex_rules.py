@@ -66,6 +66,13 @@ def P_rule_eps_rgx(head: Symbol, tail: List[Symbol]):
 # -> *
 def M_rule_rgx(head: Symbol, tail: List[Symbol]):
     head.ast = ClosureNode(head.tmp)
+# -> ?
+def M_rule_question(head: Symbol, tail: List[Symbol]):
+    head.ast = UnionNode(head.tmp, EpsilonNode('ε'))
+
+# -> +
+def M_rule_plus(head: Symbol, tail: List[Symbol]):
+    head.ast = ConcatNode(head.tmp, ClosureNode(head.tmp))
 
 ############################### A
 # -> sym 

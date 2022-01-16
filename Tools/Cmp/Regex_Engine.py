@@ -7,6 +7,8 @@ from regex_grammar import *
 
 regex_token_builder: Dict[str, Callable] = {
     '*': Token('*', Token_Type.closure),
+    '?': Token('?', Token_Type.rplus),
+    '+': Token('+', Token_Type.question),
     '(': Token('(', Token_Type.open_parenthesis),
     ')': Token(')', Token_Type.closed_parenthesis),
     '|': Token('|', Token_Type.union),

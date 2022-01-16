@@ -16,6 +16,8 @@ class Token_Type(Enum):
     closure = 6
     union = 7
     repsilon = 10
+    rplus = 8
+    question = 9
 
     eof = 11
     space = 12
