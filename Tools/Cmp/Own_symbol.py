@@ -1,13 +1,18 @@
 from typing import overload
 
 
-class Symbol:
-    """docstring for Symbol."""
-    def __init__(self, id: str, *args):
+class Symbol: # Clase para símbolo de una gramática
+    
+    '''Representa un símbolo en una gramática, sea terminal o no terminal'''
+    
+    def __init__(self, id: str, *args): # Ctor
         self.identifier = id
         self.attrs = []
 
-        for elem in args:
+        for elem in args: # Crear campos con los nombres empaquetados en *args
             setattr(self, elem, None)
             self.attrs.append(elem)
+
+    def __str__(self) -> str:
+        return self.identifier
             
