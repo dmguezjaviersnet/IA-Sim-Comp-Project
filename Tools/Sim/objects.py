@@ -1,6 +1,7 @@
 from typing import *
 from elements3d import Vector3
 import uuid
+import simpy
 
 class obj:
   def __init__(self, position:Vector3, unique_id, weith:float=1, diameter:int=1,name=None):
@@ -10,8 +11,11 @@ class obj:
     self.name = name
     self.unique_id = unique_id
 
-  def move (self , newPosition)-> None:
-    self.position = newPosition
+  def move (self, env: simpy.Environment)-> None:
+    while True:
+      yield env.timeout(200)
+      self.position = Vector3.random()
+      print ('El objeto %s se ha movido a la posicion %s' %(str(self.unique_id), str(self.position)))
 
 
   def __str__(self) -> str:
