@@ -1,7 +1,0 @@
-{
-    "python.testing.pytestArgs": [
-        "Tools/Cmp/Test"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-}
