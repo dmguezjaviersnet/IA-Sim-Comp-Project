@@ -1,7 +1,7 @@
-from typing import List
-from Non_terminal import *
-from Terminal import *
-from Production import *
+from typing import Callable, Dict, List, Tuple
+from Non_terminal import Non_terminal
+from Terminal import Terminal
+from Production import Production
 
 class Grammar: # Clase para representar una gramática
 
@@ -13,18 +13,20 @@ class Grammar: # Clase para representar una gramática
         self.initial_nt = initial_nt # token inicial de la gramática
         self.productions = productions # producciones
 
-        self.map_prodstr_rules: dict[str, tuple[Callable, bool]] = self.__map_rules() # Para cada producción X -> W mapear en un diccionario las reglas que le corresponden
+        self.map_prodstr_rules: dict[str, Tuple[Callable, bool]] = self.__map_rules() # Para cada producción X -> W mapear en un diccionario las reglas que le corresponden
 
-    def __map_rules(self): # Método para mapear el string que identifica a un par (head, tail) con las reglas que le corresponden
-        ans: dict[str, tuple[Callable, bool]] = {}
+    def __map_rules(self) -> Dict[str, Tuple[int, int, Tuple[Callable, bool]]]: # Método para mapear el string que identifica a un par (head, tail) con las reglas que le corresponden
+        ans: Dict[str, Tuple[int, int, Tuple[Callable, bool]]] = {}
         
+        prod_id = 1
         for i, elem in enumerate(self.productions): # Por cada no-terminal
-            head_id = elem.head.identifier + ' -> ' # id de la cabeza de la producción
+            head_str = f'{elem.head.identifier} -> ' # id de la cabeza de la producción
             for j, _ in enumerate(self.productions[i].tails): # Por cada producción de este no terminal
-                tail_id = ''
+                tail_str = ''
                 for elem in self.productions[i].tails[j]: # Por cada elemento en esta producción
-                    tail_id += elem.identifier + ' ' # Añadirlo al id de la cola de la producción
-                ans[head_id + tail_id] = self.productions[i].rules[j] # Asignarle al id de la producción la regla correspondiente
+                    tail_str += f'{elem.identifier} ' # Añadirlo al id de la cola de la producción
+                ans[head_str + tail_str] = (prod_id, len(self.productions[i].tails[j]), self.productions[i].rules[j]) # Asignarle al id de la producción la regla correspondiente
+                prod_id += 1
         return ans
 
     def __str__(self) -> str:

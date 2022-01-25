@@ -1,7 +1,6 @@
 from typing import overload
 from Own_symbol import Symbol
 
-
 class Terminal(Symbol): # Clase para terminal de una gramática
     
     '''Clase que representa un nodo de un terminal de una gramática, en el árbol de derivación'''
@@ -9,7 +8,7 @@ class Terminal(Symbol): # Clase para terminal de una gramática
     def __init__(self, identifier: str, *args): # Ctor
         super().__init__(identifier, *args)
 
-class EOF(Terminal): # Caracter especial $
+class Eof(Terminal): # Caracter especial $
 
     def __init__(self, *args):
         super().__init__('$', *args)

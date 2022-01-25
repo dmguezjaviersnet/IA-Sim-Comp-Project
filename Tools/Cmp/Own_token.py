@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class Token_Type(Enum):
     # Arth
     character = 1
@@ -22,11 +21,11 @@ class Token_Type(Enum):
     open_square_brackets = 15
     closed_square_brackets = 16
 
-    eof = 17
-    space = 18
+    assign = 17
+
+    eof = 18
+    space = 19
     
-
-
 class Token: # Clase para representar los tokens
 
     def __init__(self, lexeme: str, token_type: Token_Type): # Ctor

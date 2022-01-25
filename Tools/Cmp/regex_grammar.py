@@ -1,9 +1,9 @@
 from Grammar import Grammar
-from regex_rules import*
-from Terminal import*
+from regex_rules import *
+from Terminal import Terminal, Epsilon, Eof
 
-from Non_terminal import*
-from Production import*
+from Non_terminal import Non_terminal
+from Production import Production
 
 '''
    Gramática de Expresiones Regulares
@@ -19,19 +19,18 @@ from Production import*
    M -> *
       | ?
       | +
-      | epsilon
-   A -> symbol
+   A -> character
       | (E)
       | [W]
       | ε
    W -> R S
-   S -> W
+   S -> R S
       | epsilon
    R -> B Q
    Q -> - B Q
       | epsilon
-   B -> symbol
-   C -> symbol  
+   B -> character
+   C -> character  
 
 '''
 # Terminales
@@ -45,9 +44,9 @@ opensb = Terminal('[')
 closedsb = Terminal(']')
 bar = Terminal('|')
 character = Terminal('character', 'val')
-empty = Terminal('eps')
 regex_empty = Terminal('ε')
-eof = Terminal('$')
+empty = Epsilon()
+eof = Eof()
 terminals = [clousure, question, rrange, rplus, bar, openb, closedb, opensb, closedsb, character, regex_empty, empty, eof]
 
 
@@ -142,6 +141,6 @@ p14 = Production(C,
                [[(C_rule_symbol_rgx, True)]]
                )
 
-prods = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13]
+prods = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]
 
 regex_grammar = Grammar(terminals, nts, E, prods)

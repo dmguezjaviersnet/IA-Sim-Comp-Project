@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from automaton import*
+from Automaton import Automaton
+
 class Node:
 
     '''Objeto para representar nodos de AST para REGEX'''

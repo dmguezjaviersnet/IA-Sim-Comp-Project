@@ -1,5 +1,7 @@
 
-from automaton import *
+from typing import Dict, List, Set, Tuple
+from Automaton import Automaton
+from tools import EPSILON
 
 class State:
     

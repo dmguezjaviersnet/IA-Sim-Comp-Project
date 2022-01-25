@@ -1,11 +1,13 @@
+from regex_grammar import regex_grammar
+from arth_grammar import arth_grammar, arth_grammar_tokenize
+from test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
 
 from Regex_Engine import Regex_Engine
 from Lexer import Lexer
 from Own_token import Token_Type, Token
-from Terminal import EOF
-from nonr_parser import non_recursive_parse
-from regex_grammar import regex_grammar
-from State import*
+
+from State import State
+from lr1_parser import lr1_parse
 
 
 def test1():
@@ -27,11 +29,12 @@ def test_lexer():
     ('/', Token_Type.div),
     ('\(', Token_Type.open_parenthesis),
     ('\)', Token_Type.closed_parenthesis),
-    ('([a-z]|[0-9])*', Token_Type.character),
+    ('[0-9]+', Token_Type.character),
     ('(\\ )*', Token_Type.space)],
      eof=Token_Type.eof)
 
-    tokens = lex('alpha 288 ')
+    tokens = lex('(3+5)*(4/(5-8)')
+    success, ast = lr1_parse(arth_grammar, tokens)
     
     for i in tokens:
         print(i)
@@ -44,7 +47,7 @@ def main():
     
     # au = re.automaton
     # test_lexer()
-    test_lexer()
+    # test_lexer()
     
     # tokens = Regex_Engine.regexTokenizer('(a|b)*')
     # a1 = [t.token_type for t in tokens]
@@ -74,8 +77,30 @@ def main():
     # print(parsed2)
     # print(parsed)
 
-    ############################### Gramática de prueba (aritmética) #################################
+    ############################### Probando parser LR(1) ##############################
+
+
+    # Testeo Hashing
+    # item1 = Lr1_item(Lr0_item(Non_terminal('P'), (Terminal('b'), Non_terminal('X')), 0), frozenset({'$'}))
+    # item2 = Lr1_item(Lr0_item(Non_terminal('E'), (Terminal('b'), Non_terminal('X')), 0), frozenset({'$'}))
+
+    # item3 = Lr1_item(Lr0_item(Non_terminal('P'), (Terminal('b'), Non_terminal('X')), 0), frozenset({'$'}))
+    # item4 = Lr1_item(Lr0_item(Non_terminal('E'), (Terminal('b'), Non_terminal('X')), 0), frozenset({'$'}))
+
+    # tup1 = (item1, item2)
+    # tup2 = (item3, item4)
+
+    # print(item1 == item2)
+    # print(hash(item1) == hash(item3))
+
+    # print(hash(tup1) == hash(tup2))
+
+    tokens = arth_grammar_tokenize('(3+5)*(4/(5-8))')
+    lr1_parse(arth_grammar, tokens)
+
+    # a = (1, 2)
+    # b = (2, 1)
+    # print(hash(a) == hash(b))
 
 if __name__ == '__main__':
     main()
-

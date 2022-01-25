@@ -8,7 +8,7 @@ def __belongs (lit: str, prod: List[Symbol]) -> bool:
             return True
     return False
 
-def __find_firsts(G: Grammar) -> Dict[str, Set]: # Para calcular los Firsts de cada no-terminal
+def find_firsts(G: Grammar) -> Dict[str, Set]: # Para calcular los Firsts de cada no-terminal
     firsts: dict[str, Set] = {}
     for ter in G.terminals: # Calculando los First de cada terminal
         firsts[ter.identifier] = set() # Inicializando los sets de los Firsts de los terminales
@@ -49,8 +49,8 @@ def __find_firsts(G: Grammar) -> Dict[str, Set]: # Para calcular los Firsts de c
                             changed = True # Indicamos que cambió un First para indicar que hay que volver a analizar las producciones
     return firsts
         
-def __find_first (symbols: List[Symbol], firsts: List[str]) -> Set[str]: ### Para calcular el first de cualquier forma oracional
-    result = set()
+def find_first (symbols: List[Symbol], firsts: Dict[str, Set]) -> Set[str]: ### Para calcular el first de cualquier forma oracional
+    result: Set[str] = set()
     all_eps = True
     for elem in symbols:
         result = result.union(firsts[elem.identifier])
@@ -82,7 +82,7 @@ def __find_follows(G, firsts) -> Dict[str, Set]: # Para calcular los Follows
                     if elem in G.terminals: # Si es un terminal
                         continue # Simplemente pasamos a analizar el próximo elemento de la forma oracional W
 
-                    first1: Set[str] = __find_first(prod[i+1::], firsts) # Computamos el first de la forma oracional W, a partir del elemento detrás del actual
+                    first1: Set[str] = find_first(prod[i+1::], firsts) # Computamos el first de la forma oracional W, a partir del elemento detrás del actual
                     first2 = first1.copy() # Creamos una copia que nos va a hacer falta luego
                     
                     if 'eps' in first1: # Si eps esta en el First(Z) donde Z es la forma oracional que viene detrás de elem
@@ -103,13 +103,13 @@ def __find_follows(G, firsts) -> Dict[str, Set]: # Para calcular los Follows
 def build_LL1_table(G: Grammar) -> Tuple[bool, Dict[str, Dict[str, List[str]]]]: ### Intenta construir la tabla LL (la salida depende de si la grámatica es LL(1))
     
     table: dict[str, dict[str, list[str]]] = {} # Inicializando tabla LL
-    firsts: dict[str, Set] = __find_firsts(G) # Computando Firsts
+    firsts: dict[str, Set] = find_firsts(G) # Computando Firsts
     follows: dict[str, Set] = __find_follows(G, firsts) # Computando Follows
 
     for coll in G.productions: # Por cada collección de no-terminal y su correspondiente lista de producciones
         head: Symbol = coll.head # Almacenamos el no-terminal
         for prod in coll.tails: # Por cada producción X -> W
-            current_first = __find_first(prod, firsts) # Computamos el First(W)
+            current_first = find_first(prod, firsts) # Computamos el First(W)
             for ter in G.terminals: # Por cada posible token (terminales)
                 if ter.identifier != 'eps': # Ignorar eps en la Tabla, no se pone
                     if ter.identifier not in table: # Si aún no hay ningún token t con este identificador en la tabla

@@ -1,6 +1,3 @@
-from typing import overload
-
-
 class Symbol: # Clase para símbolo de una gramática
     
     '''Representa un símbolo en una gramática, sea terminal o no terminal'''
@@ -15,4 +12,13 @@ class Symbol: # Clase para símbolo de una gramática
 
     def __str__(self) -> str:
         return self.identifier
+
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, Symbol):
+            return self.identifier == __o.identifier
+
+        return False
+    
+    def __hash__(self) -> int:
+        return hash(self.identifier)
             

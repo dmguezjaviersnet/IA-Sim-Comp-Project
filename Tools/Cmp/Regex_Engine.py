@@ -1,8 +1,8 @@
-from typing import Callable, Dict
+from typing import Callable, Dict, List
 from Own_token import Token, Token_Type
-from automaton import *
-from nonr_parser import non_recursive_parse
-from regex_grammar import *
+from Automaton import Automaton
+from ll1_parser import ll1_parse
+from regex_grammar import regex_grammar
 
 
 regex_token_builder: Dict[str, Callable] = {
@@ -28,17 +28,14 @@ class Regex_Engine:
         self.regex = regex
         self.automaton: 'Automaton' = self._build_automaton()
 
-    
-
-    
     def _build_automaton(self) -> 'Automaton':
-        tokens = Regex_Engine.regexTokenizer(self.regex)
-        _, ast = non_recursive_parse(regex_grammar, tokens)
+        tokens = Regex_Engine.regex_tokenize(self.regex)
+        _, ast = ll1_parse(regex_grammar, tokens)
         nfa = ast.eval()        
         return nfa
 
     @staticmethod
-    def regexTokenizer(text) -> List[Token]:
+    def regex_tokenize(text) -> List[Token]:
         '''
             Dado una cadena de entrada (que seríá una expresión regular) devuelve los tokens necesarios 
             para ser usado en el parser LL(1) que parsearíá dicha expresión regular.

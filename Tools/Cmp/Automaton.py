@@ -1,6 +1,5 @@
-from typing import Dict, List, Set, Tuple
-# from State import State
-from tools import*
+from typing import List, Set
+from tools import EPSILON
 
 class Automaton:
 

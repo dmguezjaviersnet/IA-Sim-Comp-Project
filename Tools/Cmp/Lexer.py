@@ -1,8 +1,7 @@
-from State import*
+from State import State
 from typing import Tuple
-from Own_token import Token
-from State import *
-from Regex_Engine import *
+from Own_token import Token, Token_Type
+from Regex_Engine import Regex_Engine
 
 class Lexer:
 

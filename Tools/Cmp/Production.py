@@ -1,5 +1,5 @@
 from typing import Callable, List, Tuple
-from Non_terminal import *
+from Non_terminal import Non_terminal
 from Own_symbol import Symbol
 
 class Production: # Clase para representar una producción
