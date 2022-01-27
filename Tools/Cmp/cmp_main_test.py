@@ -9,6 +9,8 @@ from Own_token import Token_Type, Token
 from State import State
 from lr1_parser import lr1_parse
 
+from simorb_grammar import simorb_grammar, simorb_token_string
+from simorb_lexer import simorb_lexer
 
 def test1():
     regexengine = Regex_Engine('(a|b|c)?')
@@ -95,8 +97,8 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
 
-    tokens = arth_grammar_tokenize('(3+5)*(4/(5-8))')
-    lr1_parse(arth_grammar, tokens, arth_grammar_token_string)
+    tokens = simorb_lexer('9+5')
+    lr1_parse(simorb_grammar, tokens, simorb_token_string)
 
     # a = (1, 2)
     # b = (2, 1)

@@ -20,6 +20,7 @@ class Token_Type(Enum):
     float = 11
     boolean = 12
     string = 13
+    id_orbsim = 31
     
     # binarias
     plus = 14
@@ -34,10 +35,11 @@ class Token_Type(Enum):
     # palabras claves
     loop = 20
     func = 21
-    if_simorb = 22
+    if_orbsim = 22
     then = 23
-    else_simorb = 24
+    else_orbsim = 24
     let = 25
+
     assign = 26
 
     # agrupamiento
@@ -45,6 +47,7 @@ class Token_Type(Enum):
     closed_parenthesis = 28
     open_curly_braces = 29
     closed_curly_braces = 30
+
     
     eof = 100
     space = 101

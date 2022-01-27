@@ -2,19 +2,20 @@ from typing import Callable, List
 from Non_terminal import Non_terminal
 from Own_symbol import Symbol
 
-from Tools.Cmp.AST_SL.ProgramNode import ProgramNode
-from Tools.Cmp.AST_SL.StatementNode import StatementNode
-from Tools.Cmp.AST_SL.LetVariable import LetVariable
-from Tools.Cmp.AST_SL.DefFunc import DefFunc
-from Tools.Cmp.AST_SL.ConditionalExprNode import ConditionalExprNode
-from Tools.Cmp.AST_SL.LoopExprNode import LoopExprNode
-from Tools.Cmp.AST_SL.NotNode import NotNode
-from Tools.Cmp.AST_SL.PlusNode import PlusNode
-from Tools.Cmp.AST_SL.MinusNode import MinusNode
-from Tools.Cmp.AST_SL.TimesNode import TimesNode
-from Tools.Cmp.AST_SL.DivNode import DivNode
-from Tools.Cmp.AST_SL.AtomicNode import AtomicNode
-from Tools.Cmp.AST_SL.FunCall import FunCall
+from Tools.Cmp.Orbsim_AST.Program_node import ProgramNode
+from Tools.Cmp.Orbsim_AST.Statement_node import StatementNode
+from Tools.Cmp.Orbsim_AST.Let_variable import LetVariable
+from Tools.Cmp.Orbsim_AST.Def_func import DefFunc
+from Tools.Cmp.Orbsim_AST.Conditional_expr_node import ConditionalExprNode
+from Tools.Cmp.Orbsim_AST.Loop_expr_node import LoopExprNode
+from Tools.Cmp.Orbsim_AST.Not_node import NotNode
+from Tools.Cmp.Orbsim_AST.Plus_node import PlusNode
+from Tools.Cmp.Orbsim_AST.Minus_node import MinusNode
+from Tools.Cmp.Orbsim_AST.Times_node import TimesNode
+from Tools.Cmp.Orbsim_AST.Div_node import DivNode
+from Tools.Cmp.Orbsim_AST.Atomic_node import AtomicNode
+from Tools.Cmp.Orbsim_AST.Fun_call import FunCall
+from Tools.Cmp.Orbsim_AST.Mod_node import Mod_node
 
 
 def eval_rule(rule: Callable, head: Non_terminal, tail: List[Symbol]):
@@ -90,7 +91,7 @@ def term_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = DivNode(tail[0].ast, tail[2].ast)
 
 def term_rule3(head: Symbol, tail: List[Symbol]):
-    head.ast = ModNode(tail[0].ast, tail[2].ast)
+    head.ast = Mod_node(tail[0].ast, tail[2].ast)
 
 def term_rule4(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast

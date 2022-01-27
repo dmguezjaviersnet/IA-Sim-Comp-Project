@@ -188,11 +188,12 @@ productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15,
 
 simorb_grammar = Grammar(terminals, non_terminals, productions)
 
-token_string: Dict[Token_Type, str] = {
+simorb_token_string: Dict[Token_Type, str] = {
     Token_Type.int: 'int',
     Token_Type.float : 'float',
     Token_Type.boolean : 'boolean',
-    Token_Type.string : 'string',   
+    Token_Type.string : 'string',
+    Token_Type.id_orbsim : 'ID',
     
     Token_Type.plus : '+',
     Token_Type.minus : '-',
@@ -203,9 +204,9 @@ token_string: Dict[Token_Type, str] = {
 
     Token_Type.loop : 'loop',
     Token_Type.func : 'func',
-    Token_Type.if_simorb : 'if',
+    Token_Type.if_orbsim : 'if',
     Token_Type.then : 'then',
-    Token_Type.else_simorb : 'else',
+    Token_Type.else_orbsim : 'else',
     Token_Type.let : 'let',
 
     Token_Type.assign : '=',
