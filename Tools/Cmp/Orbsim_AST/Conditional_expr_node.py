@@ -1,10 +1,10 @@
-from ast import Expression
+from Expression_node import Expression_node
 from dataclasses import dataclass
 
 
 
 @dataclass
-class ConditionalExprNode(Expression):
-    if_expr: Expression
-    then_expr: Expression
-    else_expr: Expression
+class Conditional_expr_node(Expression_node):
+    if_expr: 'Expression_node'
+    then_expr: 'Expression_node'
+    else_expr: 'Expression_node'
