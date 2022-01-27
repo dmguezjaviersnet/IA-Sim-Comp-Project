@@ -1,6 +1,6 @@
 from regex_grammar import regex_grammar
 from arth_grammar import arth_grammar, arth_grammar_tokenize
-from test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
+from Tools.Cmp.conf_lr1_grammar import lr1_test_grammar, test_grammar_tokenize
 
 from Regex_Engine import Regex_Engine
 from Lexer import Lexer
