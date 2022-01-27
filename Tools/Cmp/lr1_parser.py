@@ -177,7 +177,7 @@ def __build_lr1_automaton(G: Grammar, lr0_items: List[Lr0_item]) -> Tuple[bool, 
 
     return True, initial_state, [state for _, state in enumerate(lr1_states_hash_table.values())]
 
-def lr1_parse(G: Grammar, tokens: List[Token]) -> Tuple[bool, Any]:
+def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, str]) -> Tuple[bool, Any]:
     lr0_items = __build_lr0_items(G)
     is_lr1, lr1_automaton, states = __build_lr1_automaton(G, lr0_items)
     del globals()['lr1_states_hash_table']
@@ -200,14 +200,14 @@ def lr1_parse(G: Grammar, tokens: List[Token]) -> Tuple[bool, Any]:
             curr_state = states_stack[-1]
             curr_state_id = int(curr_state.id)
             
-            curr_token_symbol_identifier = curr_token.lexeme if curr_token.token_type != Token_Type.character else 'character'
+            curr_token_symbol_identifier = token_string[curr_token.token_type]
             
             if curr_state_id in action_goto_table.terminals_dict[curr_token_symbol_identifier]:
                 action, state_or_prod_id = action_goto_table.terminals_dict[curr_token_symbol_identifier][curr_state_id]
 
                 if action == 'Shift':
                     new_terminal = Terminal(curr_token_symbol_identifier)
-                    if curr_token_symbol_identifier == 'character':
+                    if curr_token_symbol_identifier == 'int':
                         new_terminal.val = int(curr_token.lexeme)
 
                     symbols_stack.append(new_terminal)

@@ -1,30 +1,53 @@
 from enum import Enum
 
 class Token_Type(Enum):
-    # Arth
+
+    ########## Regex
     character = 1
-    plus = 2
-    minus = 3
-    times = 4
-    div = 5
-    open_parenthesis = 6
-    closed_parenthesis = 7
-    number = 8
+    closure = 2
+    union = 3
+    repsilon = 4
+    rplus = 5
+    question = 6
+    rrange = 7
+    open_square_brackets = 8
+    closed_square_brackets = 9
+    
+    ########## Simorb
 
-    # Regex
-    closure = 9
-    union = 10
-    repsilon = 11
-    rplus = 12
-    question = 13
-    rrange = 14
-    open_square_brackets = 15
-    closed_square_brackets = 16
+    # átomos
+    int = 10
+    float = 11
+    boolean = 12
+    string = 13
+    
+    # binarias
+    plus = 14
+    minus = 15
+    times = 16
+    div =  17
+    mod = 18
 
-    assign = 17
+    # unarias
+    neg = 19
 
-    eof = 18
-    space = 19
+    # palabras claves
+    loop = 20
+    func = 21
+    if_simorb = 22
+    then = 23
+    else_simorb = 24
+    let = 25
+    assign = 26
+
+    # agrupamiento
+    open_parenthesis = 27
+    closed_parenthesis = 28
+    open_curly_braces = 29
+    closed_curly_braces = 30
+    
+    eof = 100
+    space = 101
     
 class Token: # Clase para representar los tokens
 

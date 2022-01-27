@@ -17,7 +17,7 @@ from arth_grammar_rules import *
         | / F Y 
         | epsilon
     F -> ( E )
-        | character
+        | int
 
     Gramática aritmética básica
     E -> T + E
@@ -55,7 +55,7 @@ def arth_grammar_tokenize(line: str) -> List[Token]:
             try:
                 number = int(line[i])
             except: print('Invalid syntax')
-            tokens.append(Token(number, Token_Type.character))
+            tokens.append(Token(number, Token_Type.int))
 
     return tokens
 
@@ -73,10 +73,10 @@ add = Terminal('+')
 sub = Terminal('-')
 openb = Terminal('(')
 closedb = Terminal(')')
-character = Terminal('character')
+int = Terminal('int')
 empty = Epsilon()
 eof = Eof()
-terminals = [add, sub, mul, div, openb, closedb, character, empty, eof]
+terminals = [add, sub, mul, div, openb, closedb, int, empty, eof]
 
 # Producciones
 p1 = Production(E,
@@ -90,9 +90,20 @@ p2 = Production(T,
                 )
 
 p3 = Production(F, 
-                [[openb, E, closedb], [character]],
+                [[openb, E, closedb], [int]],
                 [[(F1_rule, True)], [(F2_rule, True)]]
                 )
 prods = [p1, p2, p3]
 
 arth_grammar = Grammar(terminals, nts, E, prods)
+
+arth_grammar_token_string = {
+    Token_Type.int: 'int',
+    Token_Type.plus : '+',
+    Token_Type.minus : '-',
+    Token_Type.times : '*',
+    Token_Type.div : '/',
+    Token_Type.open_parenthesis : '(',
+    Token_Type.closed_parenthesis : ')',
+    Token_Type.eof : '$'
+}

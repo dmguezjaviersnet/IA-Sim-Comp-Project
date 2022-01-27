@@ -1,6 +1,6 @@
 from lr1_parser import lr1_parse
 from Lexer import Lexer
-from arth_grammar import arth_grammar
+from arth_grammar import arth_grammar, arth_grammar_token_string
 from Own_token import Token_Type
 
 def test_parse():
@@ -28,16 +28,16 @@ def test_parse():
     tokens9 = lex('(3 + 5)*(44/(5 - 800))')
     tokens10 = lex('3*(* 4 - 5)')
 
-    success1, ast = lr1_parse(arth_grammar, tokens1)
-    success2, ast = lr1_parse(arth_grammar, tokens2)
-    success3, ast = lr1_parse(arth_grammar, tokens3)
-    success4, ast = lr1_parse(arth_grammar, tokens4)
-    success5, ast = lr1_parse(arth_grammar, tokens5)
-    success6, ast = lr1_parse(arth_grammar, tokens6)
-    success7, ast = lr1_parse(arth_grammar, tokens7)
-    success8, ast = lr1_parse(arth_grammar, tokens8)
-    success9, ast = lr1_parse(arth_grammar, tokens9)
-    success10, ast = lr1_parse(arth_grammar, tokens10)
+    success1, ast = lr1_parse(arth_grammar, tokens1, arth_grammar_token_string)
+    success2, ast = lr1_parse(arth_grammar, tokens2, arth_grammar_token_string)
+    success3, ast = lr1_parse(arth_grammar, tokens3, arth_grammar_token_string)
+    success4, ast = lr1_parse(arth_grammar, tokens4, arth_grammar_token_string)
+    success5, ast = lr1_parse(arth_grammar, tokens5, arth_grammar_token_string)
+    success6, ast = lr1_parse(arth_grammar, tokens6, arth_grammar_token_string)
+    success7, ast = lr1_parse(arth_grammar, tokens7, arth_grammar_token_string)
+    success8, ast = lr1_parse(arth_grammar, tokens8, arth_grammar_token_string)
+    success9, ast = lr1_parse(arth_grammar, tokens9, arth_grammar_token_string)
+    success10, ast = lr1_parse(arth_grammar, tokens10, arth_grammar_token_string)
 
     assert success1 == True
     assert success2 == False

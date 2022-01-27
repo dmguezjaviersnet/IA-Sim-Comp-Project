@@ -1,5 +1,5 @@
 from regex_grammar import regex_grammar
-from arth_grammar import arth_grammar, arth_grammar_tokenize
+from arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
 from test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
 
 from Regex_Engine import Regex_Engine
@@ -96,7 +96,7 @@ def main():
     # print(hash(tup1) == hash(tup2))
 
     tokens = arth_grammar_tokenize('(3+5)*(4/(5-8))')
-    lr1_parse(arth_grammar, tokens)
+    lr1_parse(arth_grammar, tokens, arth_grammar_token_string)
 
     # a = (1, 2)
     # b = (2, 1)

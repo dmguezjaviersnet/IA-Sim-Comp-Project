@@ -1,10 +1,8 @@
-from ast import Expression
+from ExpressionNode import ExpressionNode
 from dataclasses import dataclass
 
-from Tools.Cmp.AST_SL.ExpressionNode import Expression
-
 @dataclass
-class ConditionalExprNode(Expression):
-    if_expr: Expression
-    then_expr: Expression
-    else_expr: Expression
+class ConditionalExprNode(ExpressionNode):
+    if_expr: ExpressionNode
+    then_expr: ExpressionNode
+    else_expr: ExpressionNode
