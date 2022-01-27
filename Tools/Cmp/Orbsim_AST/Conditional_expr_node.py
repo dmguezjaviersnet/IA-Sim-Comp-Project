@@ -1,8 +1,8 @@
-from ExpressionNode import ExpressionNode
+from Expression_node import Expression_node
 from dataclasses import dataclass
 
 @dataclass
-class ConditionalExprNode(ExpressionNode):
-    if_expr: ExpressionNode
-    then_expr: ExpressionNode
-    else_expr: ExpressionNode
+class Conditional_expr_node(Expression_node):
+    if_expr: 'Expression_node'
+    then_expr: 'Expression_node'
+    else_expr: 'Expression_node'
