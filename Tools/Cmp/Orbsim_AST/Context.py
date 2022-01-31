@@ -1,7 +1,11 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, List, Type
+from orbsim_type import OrbsimType
 
-
+class OrbisimSemanticError(Exception):
+    @property 
+    def error(self):
+        return self.args[0]
 @dataclass
 class VarInfo:
     name: str
@@ -25,6 +29,7 @@ class Context:
         self.parent: 'Context' = parent
         self.local_variables = {}
         self.local_functions = {}
+        self.types: Dict[str, Type] = {}
     
     def check_var(self, var: str) -> bool:
         if var  in self.local_variables:
@@ -60,3 +65,24 @@ class Context:
     def create_child_context(self):
         child_context = Context(self)
         return child_context
+    
+    def get_type(self, name: str):
+        if name in self.types:
+            return self.types[name]
+        else:
+            return None
+
+    def type_of(symbol: str):
+        pass
+    
+    def define_symbol(symbol: str, type):
+        ...
+        
+    def create_type(self, name: str, logger: List[str]):
+        if name in self.types:
+            logger.append(f'El tipo ({name}) ya está definido en el contexto')
+            return None
+        else:
+            new_type = OrbsimType(name)
+            self.types[name] = new_type
+            return new_type

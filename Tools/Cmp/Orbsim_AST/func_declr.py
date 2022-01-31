@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 from typing import List
-from Expression_node import Expression_node
+from Tools.Cmp.Orbsim_AST.expression_node import Expression_node
 from Context import Context
 
+__all__ = ['FuncDeclr']
+
 @dataclass
-class Def_func(Expression_node):
+class FuncDeclr(Expression_node):
     identifier: str
     args: List[str]
     body: 'Expression_node'

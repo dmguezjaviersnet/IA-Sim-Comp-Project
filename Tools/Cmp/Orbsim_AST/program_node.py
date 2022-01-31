@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import List
 from Node import Node
-from Statement_node import Statement_node
+from Tools.Cmp.Orbsim_AST.statement_node import Statement_node
 from Context import Context
 
 
+__all__= ['ProgramNode']
+
 @dataclass
-class Program_node(Node):
+class ProgramNode(Node):
     statements: List['Statement_node']
 
     def validate(self, context: 'Context'):

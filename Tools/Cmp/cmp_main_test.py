@@ -1,47 +1,55 @@
-from regex_grammar import regex_grammar
-from arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
-from test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
-
+# from regex_grammar import regex_grammar
+# from arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
+# from test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
+from Tools.Cmp.Orbsim_AST.ast_print_walk import *
+from Tools.Cmp.Orbsim_AST.program_node import*
+from Tools.Cmp.Orbsim_AST.variable_declr import*
+from Tools.Cmp.Orbsim_AST.Integer_node import*
 from Regex_Engine import Regex_Engine
 from Lexer import Lexer
-from Own_token import Token_Type, Token
+# from Own_token import Token_Type, Token
 
-from State import State
-from lr1_parser import lr1_parse
+# from State import State
+# from lr1_parser import lr1_parse
 
 
-def test1():
-    regexengine = Regex_Engine('(a|b|c)?')
-    automaton = regexengine.automaton
-    automaton = State.from_old_model_to_new_model(automaton)
-    automaton = automaton.to_DFA()
-    print(automaton.match_from_dfa('aa'))
-    # assert automaton.match_from_dfa('bbb') == True
-    # assert automaton.match_from_dfa('') == True
-    # assert automaton.match_from_dfa('aaef') == False
+# def test1():
+#     regexengine = Regex_Engine('(a|b|c)?')
+#     automaton = regexengine.automaton
+#     automaton = State.from_old_model_to_new_model(automaton)
+#     automaton = automaton.to_DFA()
+#     print(automaton.match_from_dfa('aa'))
+#     # assert automaton.match_from_dfa('bbb') == True
+#     # assert automaton.match_from_dfa('') == True
+#     # assert automaton.match_from_dfa('aaef') == False
     
     
 
-def test_lexer():
-    lex = Lexer([('\+', Token_Type.plus),
-    ('\-', Token_Type.minus),
-    ('\*', Token_Type.times),
-    ('/', Token_Type.div),
-    ('\(', Token_Type.open_parenthesis),
-    ('\)', Token_Type.closed_parenthesis),
-    ('[0-9]+', Token_Type.character),
-    ('(\\ )*', Token_Type.space)],
-     eof=Token_Type.eof)
+# def test_lexer():
+#     lex = Lexer([('\+', Token_Type.plus),
+#     ('\-', Token_Type.minus),
+#     ('\*', Token_Type.times),
+#     ('/', Token_Type.div),
+#     ('\(', Token_Type.open_parenthesis),
+#     ('\)', Token_Type.closed_parenthesis),
+#     ('[0-9]+', Token_Type.character),
+#     ('(\\ )*', Token_Type.space)],
+#      eof=Token_Type.eof)
 
-    tokens = lex('(3+5)*(4/(5-8)')
-    success, ast = lr1_parse(arth_grammar, tokens)
+#     tokens = lex('(3+5)*(4/(5-8)')
+#     success, ast = lr1_parse(arth_grammar, tokens)
     
-    for i in tokens:
-        print(i)
-    print(':)')
+#     for i in tokens:
+#         print(i)
+#     print(':)')
     
 
 def main():
+    printer = PrintAST()
+    number = Integer_node(1)
+    print(number.val)
+    # let1 = VariableDeclr('a', )
+    # Program_node()
     ############################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     
