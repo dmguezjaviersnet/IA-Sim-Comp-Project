@@ -15,29 +15,6 @@ class Node:
     self.depth = depth
     self.isLeafNode = True 
 
-# def giveMeOctantOfRegion (region: Region, object:obj):
-#   if (region.center.x < object.position.x):
-#     if (region.center.y < object.position.y):
-#       if (region.center.z < object.position.z):
-#         return 0 
-#       else: 
-#         return 1
-#     else:
-#       if (region.center.z < object.position.z):
-#         return 2
-#       else:
-#         return 3 
-#   else:
-#     if (region.center.y < object.position.y): 
-#       if (region.center.z < object.position.z):
-#         return 4 
-#       else:
-#         return 5 
-#     else:
-#       if (region.center.z < object.position.z):
-#         return 6 
-#       else:
-#         return 7
 
 def giveMeOctant (center : Vector3 , position: Vector3):
   newpos = position - center
@@ -84,98 +61,6 @@ diry =[-1,-1,1,1,-1,-1,1,1]
 dirz =[-1,1,-1,1,-1,1,-1,1]
 
 
-# class Octree:
-#   def __init__(self, region: Region, objects: List[obj]):
-#     self.root = self.BuildTree(parent= None, region=region, objects=objects)
-
-#   def BuildTree(self, parent: Node,region: Region, objects: List[obj]):
-#     newRadio = region.radio // 2 
-#     if len(objects) == 0 : return None 
-#     if newRadio < MINRADIUS:
-#       if len(objects) == 0:
-#         return None
-#       else:
-#         return Node(region=region,objects=objects, parent=parent, isLeafNode=True)
-
-#     objs = clasifyObjects(objects= objects, center=region.center)
-#     newNode = Node(region=region,objects=objs[8],parent=parent)
-#     for i in range(8):
-#       if len(objs[i]) == 0:
-#         continue
-#       newNode.isLeafNode = False
-#       newCenter = Vector3(region.center.x + dirx[i] * newRadio,region.center.x + diry[i] * newRadio, region.center.z + dirz[i] * newRadio)
-#       newRegion = Region(center= newCenter,radio= newRadio)
-#       newNode.childs[i] = self.BuildTree(parent=newNode , region= newRegion, objects= objs[i])
-#     return newNode
-
-#   def insertObject (self, object: obj):
-#     self.root = self._insertObject(node=self.root, object=object)
-
-#   def _insertObject(self , node: Node , object: obj):
-#     if not ObjectInside(node.region,object):
-#       pass 
-#     newRadio = node.region.radio // 2
-#     if newRadio < MINRADIUS:
-#       node.objects.append(object)
-#       return node
-#     octant = giveMeOctant(node.region.center, object.position)
-#     if node.childs[octant] is None:
-#       oldCenter = node.region.center
-#       newCenter = Vector3(oldCenter.x + dirx[octant], oldCenter.y +diry[octant] , oldCenter.z + dirz[octant])
-#       newRegion = Region(center=newCenter,radio=newRadio)
-#       node.childs[octant] = Node(newRegion,[],parent=node)
-#     node.childs[octant] = self.insertObject(node.childs[octant],object)
-#     return node
-
-#   def preorden(self, node: Node):
-#     for child in node.childs:
-#       if child != None:
-#         self.preorden(child)
-#     if len(node.objects) > 0:
-#       print('object:' , [str(item) for item in node.objects] , 'Region: ' , node.region)
-  
-#   def moveObject(self, node: Node, object: obj):
-#     if not ObjectInside(node.region,object.position):
-#       if node.parent is None: pass 
-#       else: self.moveObject(node.parent,object)
-#     octant = giveMeOctant(node.region.center,object.position)
-#     if octant == 8: 
-#       node.objects.append(object)
-#       return None
-#     if node.childs[octant] is None:
-#       newRadio = node.region.radio
-#       oldCenter = node.region.center
-#       newCenter = Vector3(oldCenter.x + dirx[octant], oldCenter.y +diry[octant] , oldCenter.z + dirz[octant])
-#       newRegion = Region(center=newCenter,radio=newRadio)
-#       node.childs[octant] = Node(newRegion,[],parent=node)
-#       self.moveObject(node.childs[octant],object)
-
-#   def updateNode(self, node: Node):
-#     for obj in node.objects:
-#       if not ObjectInside(node.region,obj.position):
-#         pass
-
-#   def detectColision(self,node: Node):
-#     if (node.region.radio <= MINRADIUS) and (len(node.objects) > 1) : return True 
-#     for child in node.childs:
-#       if child != None and not self.detectColision(child):
-#         return True
-#     return False 
-
-# o1 = obj(position=Vector3(2,3,1), name= "object1")
-# o2 = obj(position=Vector3(1,1,2), name= "object2")
-# o3 = obj(position=Vector3(-1,-4,2), name= "object3")
-
-
-# lstObj = [o1,o2,o3]
-
-# # r= Region(Vector3(0,0,0),4) 
-
-# # octree = Octree(r,lstObj)
-# # octree.preorden(octree.root)
-# # c = octree.detectColision(octree.root)
-# list = clasifyObjects(lstObj,Vector3(0,0,0))
-# print(list)
 
 
 try:
