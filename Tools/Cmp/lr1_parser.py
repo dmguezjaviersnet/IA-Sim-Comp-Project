@@ -1,18 +1,21 @@
-from typing import Any, Dict, List, Set, Tuple
-from State import State
-from Grammar import Grammar
-from Non_terminal import Non_terminal
-from Own_token import Token, Token_Type
-from Lr0_item import Lr0_item
-from Lr1_item import Lr1_item
-from Own_symbol import Symbol
-from Terminal import Terminal
+from typing import Any, Callable, Dict, FrozenSet, List, Set, Tuple
+from state import State
+from grammar import Grammar
+from non_terminal import Non_terminal
+from own_token import Token, Token_Type
+from lr0_item import Lr0_item
+from lr1_item import Lr1_item
+from own_symbol import Symbol
+from terminal import Terminal
 from ll1_table_builder import find_first, find_firsts
-from Action_Goto_Table import Action_Goto_Table
+from action_goto_table import Action_Goto_Table
 from arth_grammar import eval_rule
 
 action_goto_table: Action_Goto_Table = None
 lr1_states_hash_table = None
+
+_is_atom = lambda token : (token.token_type == Token_Type.int or token.token_type == Token_Type.float or
+    token.token_type == Token_Type.string or token.token_type == Token_Type.boolean or token.token_type == Token_Type.id_orbsim)
 
 def __build_lr0_items(G: Grammar) -> List[Lr0_item]:
     lr0_items: List[Lr0_item] = []
@@ -56,7 +59,8 @@ def __lr1_automaton_clousure(G: Grammar, state: State, lr0_items: List[Lr0_item]
             for lr0_item in lr0_items:
                 if lr0_item.dot == 0 and lr0_item.head.identifier == curr_item_symbol_after_dot.identifier:
                     for elem in remaining_first:
-                        new_lr1_item = Lr1_item(lr0_item, frozenset(elem))
+                        new_look_ahead: FrozenSet[str] = frozenset([elem])
+                        new_lr1_item = Lr1_item(lr0_item, new_look_ahead)
                         new_lr1_item_hash = hash(new_lr1_item)
                         if new_lr1_item_hash not in lr1_items_hash_record:
                             state.lr1_items.append(new_lr1_item)
@@ -192,7 +196,7 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, st
         while (symbols_stack or states_stack) and curr_token_index < len(tokens):
             curr_token = tokens[curr_token_index]
 
-            if (curr_token.token_type == Token_Type.space):
+            if (curr_token.token_type == Token_Type.space or curr_token.token_type == Token_Type.new_line):
                 curr_token_index += 1
                 continue
 
@@ -206,8 +210,9 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, st
 
                 if action == 'Shift':
                     new_terminal = Terminal(curr_token_symbol_identifier)
-                    if curr_token_symbol_identifier == 'int':
-                        new_terminal.val = int(curr_token.lexeme)
+
+                    if _is_atom(curr_token):
+                        new_terminal.val = curr_token.lexeme
 
                     symbols_stack.append(new_terminal)
                     states_stack.append(states[state_or_prod_id - 1])
@@ -222,7 +227,7 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, st
                         tail.append(symbols_stack.pop())
                         prod_length -= 1
 
-                    head_str = prod_str[0]
+                    head_str = prod_str.split(' ')[0]
                     head = Non_terminal(head_str, 'ast')
                     rule, _ = G.map_prodstr_rules[prod_str][2][0]
                     eval_rule(rule, head, tail)

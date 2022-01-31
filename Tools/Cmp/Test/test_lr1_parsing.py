@@ -1,7 +1,7 @@
 from lr1_parser import lr1_parse
-from Lexer import Lexer
+from lexer import Lexer
 from arth_grammar import arth_grammar, arth_grammar_token_string
-from Own_token import Token_Type
+from own_token import Token_Type
 
 def test_parse():
 

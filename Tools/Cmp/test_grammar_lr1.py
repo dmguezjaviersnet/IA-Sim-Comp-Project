@@ -1,9 +1,9 @@
 from typing import Callable, Dict
-from Own_token import Token, Token_Type
-from Grammar import Grammar
-from Non_terminal import Non_terminal
-from Production import Production
-from Terminal import Terminal, Epsilon, Eof
+from own_token import Token, Token_Type
+from grammar import Grammar
+from non_terminal import Non_terminal
+from terminal import Terminal, Epsilon, Eof
+from production import Production
 from arth_grammar_rules import *
 
 

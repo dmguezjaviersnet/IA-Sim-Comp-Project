@@ -1,7 +1,7 @@
-from Regex_Engine import Regex_Engine
-from State import State
-from Own_token import Token_Type
-from Automaton import Automaton
+from regex_engine import Regex_Engine
+from state import State
+from own_token import Token_Type
+from automaton import Automaton
 
 def test_regex_engine1():
     regexengine = Regex_Engine('(a|b|c)*')

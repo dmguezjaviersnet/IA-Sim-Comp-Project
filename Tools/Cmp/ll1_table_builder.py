@@ -1,6 +1,6 @@
 from typing import Dict, List, Set, Tuple
-from Own_symbol import Symbol
-from Grammar import Grammar
+from own_symbol import Symbol
+from grammar import Grammar
 
 def __belongs (lit: str, prod: List[Symbol]) -> bool:
     for elem in prod:

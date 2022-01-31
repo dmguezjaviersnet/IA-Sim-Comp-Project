@@ -1,16 +1,13 @@
 from regex_grammar import regex_grammar
 from arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
 from test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
-
-from Regex_Engine import Regex_Engine
-from Lexer import Lexer
-from Own_token import Token_Type, Token
-
-from State import State
+from regex_engine import Regex_Engine
+from lexer import Lexer
+from own_token import Token_Type, Token
+from state import State
 from lr1_parser import lr1_parse
-
-from simorb_grammar import simorb_grammar, simorb_token_string
-from simorb_lexer import simorb_lexer
+from orbsim_grammar import simorb_grammar, simorb_token_string
+from orbsim_lexer import orbsim_lexer
 
 def test1():
     regexengine = Regex_Engine('(a|b|c)?')
@@ -97,7 +94,16 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
 
-    tokens = simorb_lexer('9+5')
+    tokens = orbsim_lexer('''func Sum(a, b) {
+        let c = a+b;
+        
+        if (!a+b)
+            then ret false;
+        
+        ret true;
+        }'''
+    )
+
     lr1_parse(simorb_grammar, tokens, simorb_token_string)
 
     # a = (1, 2)

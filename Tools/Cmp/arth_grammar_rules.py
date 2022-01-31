@@ -1,11 +1,11 @@
 from typing import Callable, List
-from Own_symbol import Symbol
-from ClassASTDesign.Number import Number
-from ClassASTDesign.Sum import Sum
-from ClassASTDesign.Sub import Sub
-from ClassASTDesign.Mul import Mul
-from ClassASTDesign.Div import Div
-from Non_terminal import Non_terminal
+from own_symbol import Symbol
+from testing_ast.Number import Number
+from testing_ast.Sum import Sum
+from testing_ast.Sub import Sub
+from testing_ast.Mul import Mul
+from testing_ast.Div import Div
+from non_terminal import Non_terminal
 
 def eval_rule(rule: Callable, head: Non_terminal, tail: List[Symbol]):
     rule(head, tail)

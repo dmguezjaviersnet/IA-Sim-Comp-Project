@@ -1,6 +1,6 @@
 from secrets import token_bytes
-from Lexer import Lexer
-from Own_token import Token, Token_Type
+from lexer import Lexer
+from own_token import Token, Token_Type
 
 def test_lexer():
     lex = Lexer([('\+', Token_Type.plus),

@@ -1,9 +1,9 @@
 from typing import Callable, Dict
-from Own_token import Token, Token_Type
-from Grammar import Grammar
-from Non_terminal import Non_terminal
-from Production import Production
-from Terminal import Terminal, Epsilon, Eof
+from own_token import Token, Token_Type
+from grammar import Grammar
+from non_terminal import Non_terminal
+from terminal import Terminal, Epsilon, Eof
+from production import Production
 from arth_grammar_rules import *
 
 '''
@@ -98,7 +98,7 @@ prods = [p1, p2, p3]
 arth_grammar = Grammar(terminals, nts, E, prods)
 
 arth_grammar_token_string = {
-    Token_Type.int: 'int',
+    Token_Type.character: 'int',
     Token_Type.plus : '+',
     Token_Type.minus : '-',
     Token_Type.times : '*',

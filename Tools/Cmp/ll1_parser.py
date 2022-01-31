@@ -1,10 +1,10 @@
 from typing import Any, Callable, List, Tuple
-from Grammar import Grammar
+from grammar import Grammar
 from ll1_table_builder import build_LL1_table
-from Non_terminal import Non_terminal
-from Own_symbol import Symbol
-from Own_token import Token, Token_Type
-from Terminal import Terminal
+from non_terminal import Non_terminal
+from own_symbol import Symbol
+from own_token import Token, Token_Type
+from terminal import Terminal
 from arth_grammar_rules import eval_rule
 
 
@@ -64,17 +64,18 @@ def ll1_parse(G: Grammar, tokens: List[Token]) -> Tuple[bool, Any]: # Parser pre
                 stack.pop() # Sacamos el elemento inicial de la gramática de la pila
 
             elif isinstance(current_symbol, Terminal) or current_symbol == 'eps': # Si el símbolo es un terminal o es vacío
-                if current_symbol.identifier == 'character': # Y es un caracter
+                if current_symbol.identifier == 'any_character': # Y es un caracter
                     current_symbol.val = current_token.lexeme # Almacenamos su valor
 
                 stack.pop() # Sacamos de la pila el terminal
-                __eval_rules(head, prod, G.map_prodstr_rules[prod_str][2], True) # Evaluar reglas sintetizadas
+                if (current_symbol == prod[len(prod) - 1]):
+                    __eval_rules(head, prod, G.map_prodstr_rules[prod_str][2], True) # Evaluar reglas sintetizadas
 
                 if current_symbol.identifier == 'eps':  # Si era epsilon
                     continue # Entonces no se consume ningún token
 
                 current_token_index += 1  # Consumir el Token
-                if  ((current_token.token_type == Token_Type.character and current_symbol.identifier != 'character') or
+                if  ((current_token.token_type == Token_Type.character and current_symbol.identifier != 'any_character') or
                      (current_token.is_operator() and current_symbol.identifier != current_token.lexeme)):
 
                     return False, None
@@ -95,7 +96,7 @@ def ll1_parse(G: Grammar, tokens: List[Token]) -> Tuple[bool, Any]: # Parser pre
                 prod = [] # Producción
                 if current_token.token_type == Token_Type.character:  # Si el token es un número
                     prod = __new_nodes(
-                        ll_table['character'][current_symbol.identifier]) # Almacenar la producción
+                        ll_table['any_character'][current_symbol.identifier]) # Almacenar la producción
                     rule_key = __append_ids(rule_key, prod) # Construir la llave que nos permita obtener las reglas de la producción que se aplicó
 
                 else:  # Si el token es un operador
