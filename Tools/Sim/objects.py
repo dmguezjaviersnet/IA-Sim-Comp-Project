@@ -39,7 +39,7 @@ class obj:
     while True:
       yield env.timeout(200)
       self.position = Vector3.random()
-      print ('El objeto %s se ha movido a la posicion %s' %(str(self.unique_id), str(self.position)))
+      # print ('El objeto %s se ha movido a la posicion %s' %(str(self.unique_id), str(self.position)))
 
 
   def __str__(self) -> str:
