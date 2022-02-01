@@ -101,7 +101,7 @@ arth_grammar_token_string = {
     Token_Type.character: 'int',
     Token_Type.plus : '+',
     Token_Type.minus : '-',
-    Token_Type.times : '*',
+    Token_Type.mul : '*',
     Token_Type.div : '/',
     Token_Type.open_parenthesis : '(',
     Token_Type.closed_parenthesis : ')',

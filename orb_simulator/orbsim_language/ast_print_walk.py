@@ -1,7 +1,7 @@
 import visitor as visitor
 from orbsim_ast.program_node import ProgramNode
-from orbsim_ast.func_declr import*
-from orbsim_ast.variable_declr import VariableDeclr
+from orb_simulator.orbsim_language.orbsim_ast.func_declr_node import*
+from orb_simulator.orbsim_language.orbsim_ast.variable_declr_node import VariableDeclr
 from orbsim_ast.atomic_node import AtomicNode
 
 class PrintAST:

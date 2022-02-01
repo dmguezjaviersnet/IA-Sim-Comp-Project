@@ -1,5 +1,7 @@
 from enum import Enum
 
+from numpy import product
+
 class Token_Type(Enum):
 
     ########## Regex
@@ -26,7 +28,7 @@ class Token_Type(Enum):
     # binarias
     plus = 14
     minus = 15
-    times = 16
+    mul = 16
     div =  17
     mod = 18
 

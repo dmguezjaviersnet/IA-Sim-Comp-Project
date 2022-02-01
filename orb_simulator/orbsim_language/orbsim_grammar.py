@@ -24,18 +24,40 @@ program -> <list-statement>
 <print-statement> -> "print" <expression>
 <arg-list> -> ID "," <arg-list>
             | ID
-<expression> -> <unary-expr>
-              | <binary-expr>
-<unary-expr> -> "!" <expression>
-<binary-expr> -> <expression> "+" <term>
-              | <expression> "-" <term>
-              | <term>
+<expression> -> or_expr
+              |
+<or-expr> -> <and-expr> "||" <or-expr>
+           | <and-expr>
+<and-expr> -> <not-expr> "&&" <and-expr>
+            | <not-expr>
+<not-expr> -> ! <not-expr>
+            | <compare-expr>
+<compare-expr> -> <arth-expr> <compare-op> <compare-expr>
+               | <arth-expr>
+<compare-op> ->  ">"
+               | "<"
+               | ">="
+               | "<="
+               | "=="
+               | "!="
+# <bitwise-or> -> <bitwise-xor> "|" <bitwise-or>
+#                 | <bitwise-xor>
+# <bitwise-xor> -> <bitwise-and> "^" <bitwise-xor>
+#               | <bitwise-and>
+# <bitwise-and> -> <shift> "&" <bitwise-and>
+#                | <shift>
+# <shift> -> <arth-exp> "<<" <shift>
+#         | <arth-exp> ">>" <shift>
+#         | <arth-expr>
+<arth-expr> -> <arth-expr> + <term>
+             | <arth-expr> - <term>
+             | <term>
 <term> -> <term> "*" <factor> 
         | <term> "/" <factor>
         | <term> "%" <factor> 
         | <factor>
 <factor> -> <atom>
-          | "(" <expression ")"
+          | "(" <expression> ")"
 <atom> -> INT
         | FLOAT 
         | STRING
@@ -64,6 +86,14 @@ closed_curly_braces = Terminal('}')
 open_parenthesis = Terminal('(')
 closed_parenthesis = Terminal(')')
 neg = Terminal('!')
+logic_or = Terminal('||')
+logic_and = Terminal('&&')
+not_equals = Terminal('!=')
+equals = Terminal('==')
+greater_or_equal = Terminal('>=')
+less_equal = Terminal('<=')
+greater = Terminal('>')
+less = Terminal('<')
 addition = Terminal('+')
 substraction = Terminal('-')
 product = Terminal('*')
@@ -79,7 +109,8 @@ id_orbsim = Terminal('id_orbsim', 'val')
 
 terminals = [let_keyword, func_keyword, loop_keyword, if_keyword, then_keyword, else_keyword, print_keyword,
             stmt_separator, expr_separator, assign, open_curly_braces, closed_curly_braces, open_parenthesis,
-            closed_parenthesis, neg, addition, substraction, product, division, module, int, float, boolean, 
+            closed_parenthesis, neg, logic_or, logic_and, not_equals, equals, greater_or_equal, less_equal,
+            greater, less, addition, substraction, product, division, module, int, float, boolean, 
             string, id_orbsim, eof]
 
 # No terminales
@@ -93,9 +124,14 @@ conditional_stmt = Non_terminal('conditional_stmt', 'ast')
 loop_stmt = Non_terminal('loop_stmt', 'ast')
 print_stmt = Non_terminal('print_stmt', 'ast')
 arg_list = Non_terminal('arg_list', 'ast')
+
 expression = Non_terminal('expression', 'ast')
-unary_expr = Non_terminal('unary_expr', 'ast')
-binary_expr = Non_terminal('binary_expr', 'ast')
+or_expr = Non_terminal('or_expr', 'ast')
+and_expr = Non_terminal('and_expr', 'ast')
+not_expr = Non_terminal('not_expr', 'ast')
+compare_expr = Non_terminal('compare_expr', 'ast')
+compare_op = Non_terminal('compare_op', 'ast')
+arth_expr = Non_terminal('arth_expr', 'ast')
 term = Non_terminal('term', 'ast')
 factor = Non_terminal('factor', 'ast')
 atom = Non_terminal('atom', 'ast')
@@ -103,7 +139,8 @@ func_call = Non_terminal('func_call', 'ast')
 expr_list = Non_terminal('expr_list', 'ast')
 
 non_terminals = [program, stmt_list, statement, let_stmt, def_func_stmt, conditional_stmt, loop_stmt, print_stmt,
-                arg_list, expression, unary_expr, binary_expr, term, factor, atom, func_call, expr_list]
+                arg_list, expression,or_expr, and_expr, not_expr, compare_expr, compare_op, arth_expr, term, factor,
+                atom, func_call, expr_list]
 
 # Producciones
 
@@ -148,51 +185,79 @@ p8 = Production(arg_list,
                 )
 
 p9 = Production(expression,
-                [[unary_expr], [binary_expr]],
-                [[(expression_rule1, True)], [(expression_rule2, True)]]
+                [[or_expr]],
+                [[(expression_rule1, True)]]
                 )
 
-p10 = Production(unary_expr,
-                [[neg, expression]],
-                [[(unary_expr_rule1, True)]]
+p10 = Production(or_expr,
+                [[and_expr, logic_or, or_expr], [and_expr]],
+                [[(or_expr_rule1, True)], [(or_expr_rule2, True)]]
                 )
 
-p11 = Production(binary_expr,
-                [[expression, addition, term], [expression, substraction, term], [term]],
-                [[(binary_expr_rule1, True)], [(binary_expr_rule2, True)], [(binary_expr_rule3, True)]]
+p11 = Production(and_expr,
+                [[not_expr, logic_and, and_expr], [not_expr]],
+                [[(and_expr_rule1, True)], [(and_expr_rule2, True)]]
                 )
 
-p12 = Production(term,
+p12 = Production(not_expr,
+                [[neg, not_expr], [compare_expr]],
+                [[(not_expr_rule1, True)], [(not_expr_rule2, True)]]
+                )
+
+p13 = Production(compare_expr, 
+                [[arth_expr, compare_op, compare_expr], [arth_expr]],
+                [[(compare_expr_rule1, True)], [(compare_expr_rule2, True)]]
+                )
+
+p14 = Production(compare_op,
+                [[equals], [not_equals], [greater_or_equal], [less_equal], [greater], [less]],
+                [[(compare_op_rule, True)], [(compare_op_rule, True)], [(compare_op_rule, True)], 
+                 [(compare_op_rule, True)], [(compare_op_rule, True)], [(compare_op_rule, True)]]
+                )
+
+p15 = Production(arth_expr,
+                [[arth_expr, addition, term], [arth_expr, substraction, term], [term]],
+                [[(arth_expr_rule1, True)], [(arth_expr_rule2, True)], [(arth_expr_rule3, True)]]
+                )
+
+p16 = Production(term,
                 [[term, product, factor], [term, division, factor], [term, module, factor], [factor]],
                 [[(term_rule1, True)], [(term_rule2, True)], [(term_rule3, True)], [(term_rule4, True)]]
                 )
 
-p13 = Production(factor, 
+p17 = Production(factor,
                 [[atom], [open_parenthesis, expression, closed_parenthesis]],
                 [[(factor_rule1, True)], [(factor_rule2, True)]]
                 )
 
-p14 = Production(atom,
-                [[int], [float], [string], [boolean], [id_orbsim], [func_call]],
+p18 = Production(atom,
+                [[int], [float], [boolean], [string], [id_orbsim], [func_call]],
                 [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)], 
                  [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)]]
                 )
 
-p15 = Production(func_call,
+p19 = Production(func_call,
                 [[id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(func_call_rule, True)]]
                 )
 
-p16 = Production(expr_list,
+p20 = Production(expr_list,
                 [[expression, stmt_separator, expr_list], [expression]],
                 [[expr_list_rule1, True], [expr_list_rule2, True]]
                 )
 
-productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16]
+productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20]
 
 orbsim_grammar = Grammar(terminals, non_terminals, program, productions)
 
 orbsim_token_string: Dict[Token_Type, str] = {
+    Token_Type.loop : 'loop',
+    Token_Type.func : 'func',
+    Token_Type.if_orbsim : 'if',
+    Token_Type.then : 'then',
+    Token_Type.else_orbsim : 'else',
+    Token_Type.let : 'let',
+    
     Token_Type.int: 'int',
     Token_Type.float : 'float',
     Token_Type.boolean : 'boolean',
@@ -201,17 +266,17 @@ orbsim_token_string: Dict[Token_Type, str] = {
     
     Token_Type.plus : '+',
     Token_Type.minus : '-',
-    Token_Type.times : '*',
+    Token_Type.mul : '*',
     Token_Type.div : '/',
     Token_Type.mod : '%',
     Token_Type.neg : '!',
 
-    Token_Type.loop : 'loop',
-    Token_Type.func : 'func',
-    Token_Type.if_orbsim : 'if',
-    Token_Type.then : 'then',
-    Token_Type.else_orbsim : 'else',
-    Token_Type.let : 'let',
+    Token_Type.equals: '==',
+    Token_Type.not_equals: '!=',
+    Token_Type.greater_or_equal_than: '>=',
+    Token_Type.less_or_equal_than: '<=',
+    Token_Type.greater_than: '>',
+    Token_Type.less_than: '<',
 
     Token_Type.assign : '=',
     Token_Type.open_parenthesis : '(',

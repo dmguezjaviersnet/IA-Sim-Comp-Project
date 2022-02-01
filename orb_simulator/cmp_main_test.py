@@ -93,15 +93,9 @@ def main():
     # print(hash(item1) == hash(item3))
 
     # print(hash(tup1) == hash(tup2))
-
-    tokens = orbsim_lexer('''func Sum(a, b) {
-        let c = a+b;
-        
-        if (!a+b)
-            then ret false;
-        
-        ret true;
-        }'''
+    tokens = orbsim_lexer('''
+            let a = 2 + 3;
+        '''
     )
 
     lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
