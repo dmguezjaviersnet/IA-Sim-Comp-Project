@@ -1,4 +1,4 @@
-from orbsim_language.orbsim_ast.arth_expr_node import ArthExprNode
+from orbsim_language.orbsim_ast.binary_expr_node import BinaryExprNode
 
-class AndNode(ArthExprNode):
+class AndNode(BinaryExprNode):
     pass
