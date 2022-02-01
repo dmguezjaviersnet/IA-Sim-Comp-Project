@@ -1,4 +1,4 @@
-from orbsim_language.orbsim_ast.comp_expr_node import CompExpr
+from orbsim_language.orbsim_ast.comp_expr_node import CompExprNode
 
-class NotEqualNode(CompExpr):
+class NotEqualNode(CompExprNode):
     pass

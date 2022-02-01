@@ -4,7 +4,7 @@ from orbsim_language.orbsim_ast.statement_node import StatementNode
 from orbsim_language.context import Context
 
 @dataclass
-class VariableDeclr(StatementNode):
+class VariableDeclrNode(StatementNode):
     identifier: str
     expr: 'ExpressionNode'
 

@@ -3,14 +3,14 @@ from orbsim_language.orbsim_ast.atomic_node import AtomicNode
 from orbsim_language.orbsim_ast.attribute_def_node import AttributeDef
 from orbsim_language.orbsim_ast.boolean_node import BooleanNode
 from orbsim_language.orbsim_ast.class_declr_node import ClassDeclr
-from orb_simulator.orbsim_language.orbsim_ast.conditional_node import ConditionalExprNode
+from orbsim_language.orbsim_ast.conditional_node import ConditionalNode
 from orbsim_language.orbsim_ast.div_node import DivNode
 from orbsim_language.orbsim_ast.equal_node import EqualNode
 from orbsim_language.orbsim_ast.expression_node import ExpressionNode
 from orbsim_language.orbsim_ast.float_node import FloatNode
-from orbsim_language.orbsim_ast.fun_call_node import FunCall
+from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
 from orbsim_language.orbsim_ast.func_declr_node import FuncDeclr
-from orbsim_language.orbsim_ast.greater_equal_node import GreaterEqual
+from orbsim_language.orbsim_ast.greater_equal_node import GreaterEqualNode
 from orbsim_language.orbsim_ast.greater_than_node import GreaterThanNode
 from orbsim_language.orbsim_ast.integer_node import IntegerNode
 from orbsim_language.orbsim_ast.less_equal_node import LessEqual
@@ -29,7 +29,7 @@ from orbsim_language.orbsim_ast.statement_node import StatementNode
 from orbsim_language.orbsim_ast.string_node import StringNode
 from orbsim_language.orbsim_ast.product_node import ProductNode
 from orbsim_language.orbsim_ast.unary_expr_node import UnaryExprNode
-from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclr
+from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
 from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.not_equal_node import NotEqualNode
 from orbsim_language.orbsim_ast.print_node import PrintNode
