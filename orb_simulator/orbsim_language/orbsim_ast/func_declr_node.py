@@ -7,7 +7,7 @@ from orbsim_language.orbsim_ast.statement_node import StatementNode
 __all__ = ['FuncDeclr']
 
 @dataclass
-class FuncDeclr(StatementNode):
+class FuncDeclrNode(StatementNode):
     identifier: str
     args: List[str]
     body: List['StatementNode']

@@ -26,9 +26,9 @@ class TypeCollector:
         for st in node.statements:
             self.visit(st)
     
-    @visitor.when(ClassDeclr)
-    def visit(self, node: ClassDeclr):
-        self.context.create_type(node.name, self.logger)
+    # @visitor.when(ClassDeclr)
+    # def visit(self, node: ClassDeclr):
+    #     self.context.create_type(node.name, self.logger)
 
         
     
