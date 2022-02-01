@@ -24,13 +24,16 @@ class FuncInfo:
         return self.name == other.name and self.args == other.args
 
 
-class Context:
+class Scope:
+    '''
+        Para la correcta definición de variables y 
+        métodos(el contexto de las variables y métodos)
+    '''
 
-    def __init__(self, parent: 'Context' = None):
-        self.parent: 'Context' = parent
+    def __init__(self, parent: 'Scope' = None):
+        self.parent: 'Scope' = parent
         self.local_variables = {}
         self.local_functions = {}
-        self.types: Dict[str, Type] = {}
     
     def check_var(self, var: str) -> bool:
         if var  in self.local_variables:
@@ -48,8 +51,7 @@ class Context:
             return self.parent.check_fun(fun, args)
         
         return False
-
-
+    
     def define_var(self, var: str) -> bool:
         if not self.check_var(var):
             self.local_variables[var] = VarInfo(var)
@@ -62,6 +64,20 @@ class Context:
             self.local_functionsp[(fun, args)] = FuncInfo(fun, args)
             return True
         return False
+    
+    def create_child_scope(self):
+        child_scope = Scope(self)
+        return child_scope
+
+class Context:
+    '''
+        Para la correcta definición de los tipos (contexto de los tipos)
+    '''
+
+    def __init__(self, parent: 'Context' = None):
+        self.parent: 'Context' = parent   
+        self.types: Dict[str, Type] = {}
+        
 
     def create_child_context(self):
         child_context = Context(self)
@@ -77,7 +93,7 @@ class Context:
         pass
     
     def define_symbol(symbol: str, type):
-        ...
+        pass
         
     def create_type(self, name: str, logger: List[str]):
         if name in self.types:
