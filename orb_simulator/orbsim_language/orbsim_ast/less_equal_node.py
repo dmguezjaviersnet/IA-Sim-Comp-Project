@@ -1,4 +1,4 @@
-from orbsim_language.orbsim_ast.binary_expr_node import BinaryExprNode
+from orbsim_language.orbsim_ast.comp_expr_node import CompExprNode
 
-class LessEqual(BinaryExprNode):
+class LessEqualNode(CompExprNode):
     pass
