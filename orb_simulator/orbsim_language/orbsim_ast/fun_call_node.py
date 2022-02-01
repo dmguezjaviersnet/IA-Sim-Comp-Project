@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List
 
 @dataclass
-class FunCall:
+class FunCall(ExpressionNode):
     identifier: str
     args: List['ExpressionNode']
 

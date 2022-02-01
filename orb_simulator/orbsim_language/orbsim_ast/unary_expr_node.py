@@ -4,5 +4,4 @@ from dataclasses import dataclass
 @dataclass
 class UnaryExprNode(ExpressionNode):
     expr: 'ExpressionNode'
-    operator: str
 
