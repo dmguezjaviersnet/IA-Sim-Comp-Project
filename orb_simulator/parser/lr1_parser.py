@@ -227,6 +227,7 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, st
                         tail.append(symbols_stack.pop())
                         prod_length -= 1
 
+                    tail = tail[::-1]
                     head_str = prod_str.split(' ')[0]
                     head = Non_terminal(head_str, 'ast')
                     rule, _ = G.map_prodstr_rules[prod_str][2][0]

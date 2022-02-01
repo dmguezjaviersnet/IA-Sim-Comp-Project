@@ -159,7 +159,7 @@ p3 = Production(statement,
                 )
 
 p4 = Production(let_stmt,
-                [[let_keyword, id_orbsim, assign, expression, stmt_separator]],
+                [[let_keyword, id_orbsim, assign, expression]],
                 [[(let_stmt_rule, True)]]
                 )
 
@@ -174,8 +174,10 @@ p6 = Production(loop_stmt,
                 )
 
 p7 = Production(conditional_stmt,
-                [[if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, stmt_list], 
-                 [if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, stmt_list, else_keyword, stmt_list]],
+                [[if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, open_curly_braces,
+                 stmt_list, closed_curly_braces], 
+                 [if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, open_curly_braces,
+                 stmt_list, closed_curly_braces, else_keyword, stmt_list]],
                 [[(conditional_stmt_rule1, True)], [(conditional_stmt_rule2, True)]]
                 )
 

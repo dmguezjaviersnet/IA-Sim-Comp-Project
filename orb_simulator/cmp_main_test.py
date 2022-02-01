@@ -94,7 +94,7 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
-            let a = 2 + 3;
+            func Fibo 
         '''
     )
 

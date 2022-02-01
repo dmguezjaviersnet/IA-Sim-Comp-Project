@@ -12,13 +12,13 @@ from orbsim_language.orbsim_ast import ProductNode, DivNode, AtomicNode
 from orbsim_language.orbsim_ast import FunCall, ModNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = ProgramNode(tail.ast)
+    head.ast = ProgramNode(tail[0].ast)
 
 def stmt_list_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = [StatementNode()] + tail[1].ast
+    head.ast = [tail[0].ast] + tail[2].ast
 
 def stmt_list_rule2(head: Symbol, tail: List[Symbol]):
-    head.ast = [StatementNode()]
+    head.ast = [tail[0].ast]
 
 def stmt_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
@@ -45,13 +45,13 @@ def loop_rule(head: Symbol, tail: List[Symbol]):
     head.ast = LoopExprNode(tail[2].ast, tail[5].ast)
 
 def conditional_stmt_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = ConditionalExprNode(tail[2].ast, tail[6].ast, tail[10].ast)
-
-def conditional_stmt_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = ConditionalExprNode(tail[2].ast, tail[6].ast, None)
 
+def conditional_stmt_rule2(head: Symbol, tail: List[Symbol]):
+    head.ast = ConditionalExprNode(tail[2].ast, tail[6].ast, tail[10].ast)
+
 def arg_list_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = [tail[2].val] + tail[0].ast
+    head.ast = [tail[0].val] + tail[2].ast
 
 def arg_list_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].val]
