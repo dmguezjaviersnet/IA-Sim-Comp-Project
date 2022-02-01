@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 from orbsim_language.orbsim_ast.statement_node import StatementNode
-from orbsim_language.orbsim_ast.attribute_def import AttributeDef
-from orbsim_language.orbsim_ast.method_def import MethodDef
+from orbsim_language.orbsim_ast.attribute_def_node import AttributeDef
+from orbsim_language.orbsim_ast.method_def_node import MethodDef
 
 @dataclass
 class ClassDeclr(StatementNode):

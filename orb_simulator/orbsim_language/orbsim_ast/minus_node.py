@@ -1,4 +1,4 @@
-from orbsim_language.orbsim_ast.binary_expr_node import BinaryExprNode
+from orbsim_language.orbsim_ast.arth_expr_node import ArthExprNode
 
-class MinusNode(BinaryExprNode):
+class MinusNode(ArthExprNode):
     pass

@@ -15,7 +15,7 @@ orbsim_lexer = Lexer([
     ('\'    \'', Token_Type.string),
     ('\+', Token_Type.plus),
     ('\-', Token_Type.minus),
-    ('\*', Token_Type.times),
+    ('\*', Token_Type.mul),
     ('/', Token_Type.div),
     ('%', Token_Type.mod),
     ('=', Token_Type.assign),

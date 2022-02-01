@@ -1,12 +1,14 @@
-from typing import Callable, List
-from parser.non_terminal import Non_terminal
+from typing import List
 from parser.own_symbol import Symbol
-
-from orbsim_language.orbsim_ast import VariableNode
 from orbsim_language.orbsim_ast import ProgramNode, StatementNode, VariableDeclr
 from orbsim_language.orbsim_ast import FuncDeclr, ConditionalExprNode, LoopExprNode
+from orbsim_language.orbsim_ast import OrNode, AndNode, GreaterEqual, LessEqual
+from orbsim_language.orbsim_ast import GreaterThanNode, LessThanNode, EqualNode, NotEqualNode
+from orbsim_language.orbsim_ast import FuncDeclr, ConditionalExprNode, LoopExprNode
+from orbsim_language.orbsim_ast import FuncDeclr, ConditionalExprNode, LoopExprNode
+from orbsim_language.orbsim_ast import VariableNode
 from orbsim_language.orbsim_ast import NotNode, PlusNode, MinusNode, FloatNode, IntegerNode
-from orbsim_language.orbsim_ast import TimesNode, DivNode, AtomicNode
+from orbsim_language.orbsim_ast import ProductNode, DivNode, AtomicNode
 from orbsim_language.orbsim_ast import FunCall, ModNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
@@ -57,23 +59,60 @@ def arg_list_rule2(head: Symbol, tail: List[Symbol]):
 def expression_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
 
-def expression_rule2(head: Symbol, tail: List[Symbol]):
+def or_expr_rule1(head: Symbol, tail: List[Symbol]):
+    head.ast = OrNode(tail[0].ast, tail[2].ast)
+
+def or_expr_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
 
-def unary_expr_rule1(head: Symbol, tail: List[Symbol]):
+def and_expr_rule1(head: Symbol, tail: List[Symbol]):
+    head.ast = AndNode(tail[0].ast, tail[2].ast)
+
+def and_expr_rule2(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[0].ast
+
+def not_expr_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = NotNode(tail[1].ast)
 
-def binary_expr_rule1(head: Symbol, tail: List[Symbol]):
+def not_expr_rule2(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[0].ast
+
+def compare_expr_rule1(head: Symbol, tail: List[Symbol]):
+    if tail[1].ast == '>':
+        head.ast = GreaterThanNode(tail[0].ast, tail[2].ast)
+    
+    elif tail[1].ast == '<':
+        head.ast = LessThanNode(tail[0].ast, tail[2].ast)
+    
+    elif tail[1].ast == '>=':
+        head.ast = GreaterEqual(tail[0].ast, tail[2].ast)
+    
+    elif tail[1].ast == '<=':
+        head.ast = LessEqual(tail[0].ast, tail[2].ast)
+    
+    elif tail[1].ast == '==':
+        head.ast = EqualNode(tail[0].ast, tail[2].ast)
+    
+    elif tail[1].ast == '!=':
+        head.ast = NotEqualNode(tail[0].ast, tail[2].ast)
+
+def compare_expr_rule2(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[0].ast
+
+def compare_op_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = tail[0].identifier
+
+def arth_expr_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = PlusNode(tail[0].ast, tail[2].ast)
 
-def binary_expr_rule2(head: Symbol, tail: List[Symbol]):
+def arth_expr_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = MinusNode(tail[0].ast, tail[2].ast)
 
-def binary_expr_rule3(head: Symbol, tail: List[Symbol]):
+def arth_expr_rule3(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
 
 def term_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = TimesNode(tail[0].ast, tail[2].ast)
+    head.ast = ProductNode(tail[0].ast, tail[2].ast)
 
 def term_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = DivNode(tail[0].ast, tail[2].ast)
