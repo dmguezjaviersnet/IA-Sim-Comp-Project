@@ -4,6 +4,7 @@ from   orbsim_language.orbsim_ast.program_node import ProgramNode
 from   orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from   orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
 from   orbsim_language.orbsim_ast.variable_node import VariableNode
+from   orbsim_language.orbsim_ast.fun_call_node import FunCallNode
 class TypeChecker:
     context: Context
     @visitor.on('node')
@@ -33,6 +34,9 @@ class TypeChecker:
         if not scope.check_var(node.identifier):
             ...
 
-            
+    @visitor.when(FunCallNode)
+    def visit(self, node: FunCallNode, scope: 'Scope'):
+        if not scope.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
+            ...
 
-    
+    # @visitor.when()

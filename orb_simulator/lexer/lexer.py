@@ -1,7 +1,8 @@
 from automaton.state import State
-from typing import Tuple
+from typing import List, Tuple
 from parser.own_token import Token, Token_Type
 from lexer.regex_engine import Regex_Engine
+from errors import OrbisimLexerError
 
 class Lexer:
 
@@ -13,6 +14,7 @@ class Lexer:
         self.regexs =  self._build_regex_automatons(regex_table)
         self.eof = eof 
         self.automaton = self._build_automaton()
+        self.errors = List[str]
 
     
     def _build_automaton(self):
@@ -62,23 +64,28 @@ class Lexer:
 
             else:
               break
-
+        
+        if endState:
+            return endState
+        else:
+            raise OrbisimLexerError('')
         return  endState if endState else None
     
     def _tokenizer(self, text):
 
         while text:
             qf = self._walk(text)
-            lexeme = qf.lexeme
+            
 
             if qf == None:
-                pass # exception :(
+                
             
-            text = text[len(lexeme):]
-            ends = [state.tag for state in qf.substates if state.tag]
-            ends.sort()
-
-            yield lexeme, ends[0][1]
+            else:
+                lexeme = qf.lexeme
+                text = text[len(lexeme):]
+                ends = [state.tag for state in qf.substates if state.tag]
+                ends.sort()
+                yield lexeme, ends[0][1]
 
         yield '$', self.eof
 
