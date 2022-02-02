@@ -21,29 +21,30 @@ from orbsim_language.orbsim_grammar import orbsim_grammar, orbsim_token_string
     
     
 
-# def test_lexer():
-#     lex = Lexer([('\+', Token_Type.plus),
-#     ('\-', Token_Type.minus),
-#     ('\*', Token_Type.times),
-#     ('/', Token_Type.div),
-#     ('\(', Token_Type.open_parenthesis),
-#     ('\)', Token_Type.closed_parenthesis),
-#     ('[0-9]+', Token_Type.character),
-#     ('(\\ )*', Token_Type.space)],
-#      eof=Token_Type.eof)
+def test_lexer():
+    lex = Lexer([('\+', Token_Type.plus),
+    ('\-', Token_Type.minus),
+    ('\*', Token_Type.mul),
+    ('/', Token_Type.div),
+    ('\(', Token_Type.open_parenthesis),
+    ('\)', Token_Type.closed_parenthesis),
+    ('[0-9]+', Token_Type.character),
+    ('(\\ )+', Token_Type.space)],
+     eof=Token_Type.eof)
 
-#     tokens = lex('(3+5)*(4/(5-8)')
-#     success, ast = lr1_parse(arth_grammar, tokens)
+    tokens = lex('(3+5)*(4/(5-8)')
     
-#     for i in tokens:
-#         print(i)
-#     print(':)')
+    # success, ast = lr1_parse(arth_grammar, tokens)
+    
+    for i in tokens:
+        print(i)
+    print(':)')
     
 
 def main():
     ############################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
-    
+    test_lexer()
     # au = re.automaton
     # test_lexer()
     # test_lexer()

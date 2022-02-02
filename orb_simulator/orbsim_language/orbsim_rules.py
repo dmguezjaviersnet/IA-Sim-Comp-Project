@@ -1,11 +1,12 @@
 from typing import List
 from parser.own_symbol import Symbol
-from orbsim_language.orbsim_ast import ProgramNode, VariableDeclrNode
+from orbsim_language.orbsim_ast import ProgramNode, StatementNode, VariableDeclrNode
 from orbsim_language.orbsim_ast import FuncDeclrNode, ConditionalNode, LoopNode
 from orbsim_language.orbsim_ast import OrNode, AndNode, GreaterEqualNode, LessEqualNode
 from orbsim_language.orbsim_ast import GreaterThanNode, LessThanNode, EqualNode, NotEqualNode
+from orbsim_language.orbsim_ast import VariableNode
 from orbsim_language.orbsim_ast import NotNode, PlusNode, MinusNode, FloatNode, IntegerNode
-from orbsim_language.orbsim_ast import ProductNode, DivNode, AtomicNode, RetNode
+from orbsim_language.orbsim_ast import ProductNode, DivNode, AtomicNode
 from orbsim_language.orbsim_ast import FunCallNode, ModNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
@@ -23,9 +24,6 @@ def stmt_rule(head: Symbol, tail: List[Symbol]):
 def let_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = VariableDeclrNode(tail[1].val, tail[3].ast)
 
-def ret_stmt_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = RetNode(tail[1].ast)
-
 def def_func_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = FuncDeclrNode(tail[1].val, [elem for elem in tail[3]], tail[6].ast)
 
@@ -33,10 +31,10 @@ def loop_rule(head: Symbol, tail: List[Symbol]):
     head.ast = LoopNode(tail[2].ast, tail[5].ast)
 
 def conditional_stmt_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, None)
+    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, tail[10].ast)
 
 def conditional_stmt_rule2(head: Symbol, tail: List[Symbol]):
-    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, tail[10].ast)
+    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, None)
 
 def arg_list_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].val] + tail[2].ast
