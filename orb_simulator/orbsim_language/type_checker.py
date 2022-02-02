@@ -1,7 +1,9 @@
 import orbsim_language.visitor as visitor
 from   orbsim_language.context import Context, Scope
 from   orbsim_language.orbsim_ast.program_node import ProgramNode
-from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
+from   orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
+from   orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
+from   orbsim_language.orbsim_ast.variable_node import VariableNode
 class TypeChecker:
     context: Context
     @visitor.on('node')
@@ -17,6 +19,20 @@ class TypeChecker:
 
     @visitor.when(FuncDeclrNode)
     def visit(self, node: FuncDeclrNode, scope: 'Scope'):
-        
+        scope.define_fun(node.identifier, len(node.args))
+        for st in node.body:
+            self.visit(st, scope)
+    
+    @visitor.when(VariableDeclrNode)
+    def visit(self, node: VariableDeclrNode, scope: 'Scope'):
+        scope.define_var(node.identifier)
+        self.visit(node.expr, scope)
+
+    @visitor.when(VariableNode)
+    def visit(self, node: VariableNode, scope: 'Scope'):
+        if not scope.check_var(node.identifier):
+            ...
+
+            
 
     

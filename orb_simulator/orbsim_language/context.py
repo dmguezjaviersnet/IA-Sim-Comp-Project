@@ -59,9 +59,9 @@ class Scope:
         
         return False
 
-    def define_fun(self, fun: str, args: List[str]) -> bool:
+    def define_fun(self, fun: str, args: int) -> bool:
         if not self.check_fun(fun, args):
-            self.local_functionsp[(fun, args)] = FuncInfo(fun, args)
+            self.local_functions[(fun, args)] = FuncInfo(fun, args)
             return True
         return False
     
