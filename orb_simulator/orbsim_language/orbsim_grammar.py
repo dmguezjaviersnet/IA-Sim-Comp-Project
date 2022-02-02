@@ -174,7 +174,8 @@ p5 = Production(let_stmt,
                 )
 
 p6 = Production (def_func_stmt,
-                [[func_keyword, id_orbsim, open_parenthesis, arg_list, closed_parenthesis, open_curly_braces, stmt_list, closed_curly_braces]],
+                [[func_keyword, id_orbsim, open_parenthesis, arg_list, closed_parenthesis,
+                 open_curly_braces, stmt_list, closed_curly_braces]],
                 [[(def_func_stmt_rule, True)]]
                 )
 
@@ -254,8 +255,8 @@ p20 = Production(func_call,
                 )
 
 p21 = Production(expr_list,
-                [[expression, stmt_separator, expr_list], [expression]],
-                [[expr_list_rule1, True], [expr_list_rule2, True]]
+                [[expression, expr_separator, expr_list], [expression]],
+                [[(expr_list_rule1, True)], [(expr_list_rule2, True)]]
                 )
 
 productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21]
@@ -269,6 +270,7 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.then : 'then',
     Token_Type.else_orbsim : 'else',
     Token_Type.let : 'let',
+    Token_Type.return_orbsim : 'ret',
     
     Token_Type.int: 'int',
     Token_Type.float : 'float',

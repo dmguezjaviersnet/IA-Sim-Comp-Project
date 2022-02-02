@@ -4,7 +4,7 @@ from orbsim_language.orbsim_ast import ProgramNode, StatementNode, VariableDeclr
 from orbsim_language.orbsim_ast import FuncDeclrNode, ConditionalNode, LoopNode
 from orbsim_language.orbsim_ast import OrNode, AndNode, GreaterEqualNode, LessEqualNode
 from orbsim_language.orbsim_ast import GreaterThanNode, LessThanNode, EqualNode, NotEqualNode
-from orbsim_language.orbsim_ast import VariableNode
+from orbsim_language.orbsim_ast import VariableNode, RetNode
 from orbsim_language.orbsim_ast import NotNode, PlusNode, MinusNode, FloatNode, IntegerNode
 from orbsim_language.orbsim_ast import ProductNode, DivNode, AtomicNode
 from orbsim_language.orbsim_ast import FunCallNode, ModNode
@@ -24,17 +24,20 @@ def stmt_rule(head: Symbol, tail: List[Symbol]):
 def let_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = VariableDeclrNode(tail[1].val, tail[3].ast)
 
+def ret_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = RetNode(tail[1].ast)
+
 def def_func_stmt_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = FuncDeclrNode(tail[1].val, [elem for elem in tail[3]], tail[6].ast)
+    head.ast = FuncDeclrNode(tail[1].val, [elem for elem in tail[3].ast], tail[6].ast)
 
 def loop_rule(head: Symbol, tail: List[Symbol]):
     head.ast = LoopNode(tail[2].ast, tail[5].ast)
 
 def conditional_stmt_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, tail[10].ast)
+    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, None)
 
 def conditional_stmt_rule2(head: Symbol, tail: List[Symbol]):
-    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, None)
+    head.ast = ConditionalNode(tail[2].ast, tail[6].ast, tail[10].ast)
 
 def arg_list_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].val] + tail[2].ast
@@ -131,7 +134,7 @@ def atom_rule5(head: Symbol, tail: List[Symbol]):
     head.ast = AtomicNode(tail[0].val)
 
 def atom_rule6(head: Symbol, tail: List[Symbol]):
-    head.ast = VariableDeclrNode(tail[0].val)
+    head.ast = tail[0].ast
 
 def func_call_rule(head: Symbol, tail: List[Symbol]):
     head.ast = FunCallNode(tail[0].val, tail[2].ast)

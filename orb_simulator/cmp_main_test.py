@@ -101,9 +101,9 @@ def main():
                 }
                 
                 else {
-                    ret Fibonacci(number-1) + Fibonacci(number-1);
+                    ret Fibonacci(number-1) + Fibonacci(number-2);
                 };
-            }
+            };
         '''
     )
 
