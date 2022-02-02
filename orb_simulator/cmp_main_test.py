@@ -1,3 +1,4 @@
+from distutils.log import error
 from lexer.regex_grammar import regex_grammar
 from test_language.arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
 from test_language.test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
@@ -29,10 +30,11 @@ def test_lexer():
     ('\(', Token_Type.open_parenthesis),
     ('\)', Token_Type.closed_parenthesis),
     ('[0-9]+', Token_Type.character),
-    ('(\\ )+', Token_Type.space)],
+    ('(\\ )+', Token_Type.space),
+    ('([a-z]|[A-Z]|[0-9]|\\! | \\@| \\# | \\$| \\%| \\^| \\&| \\*| \\( | \\) | \\~ | \\/  | \\- | \\+ )*', Token_Type.error)],
      eof=Token_Type.eof)
 
-    tokens = lex('(3+5)*(4/(5-8)')
+    tokens = lex('aaaaaKoooo(3+5)*(4/(5-8)')
     
     # success, ast = lr1_parse(arth_grammar, tokens)
     

@@ -68,6 +68,7 @@ class Token_Type(Enum):
     new_line = 102
     stmt_separator = 104
     expr_separator = 105
+    error = 106
     
 class Token: # Clase para representar los tokens
 
