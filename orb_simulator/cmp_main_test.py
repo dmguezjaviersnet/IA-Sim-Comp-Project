@@ -94,7 +94,15 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
-            func Fibo 
+            func Fibonacci(number) {
+                if(number == 0 || number == 1) then {
+                    ret 1;
+                }
+                
+                else {
+                    ret Fibonacci(number-1) + Fibonacci(number-1);
+                };
+            }
         '''
     )
 

@@ -33,7 +33,7 @@ class Token_Type(Enum):
     mod = 18
 
     equals = 32
-    not_equals = 32
+    not_equals = 40
     less_than = 33
     greater_than = 34
     greater_or_equal_than = 35
