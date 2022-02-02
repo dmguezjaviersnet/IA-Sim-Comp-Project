@@ -6,5 +6,5 @@ from orbsim_language.context import Context
 class VariableNode(ExpressionNode):
     identifier: str
 
-    def validate(self, context: Context):
+    def validate(self, context: 'Context'):
         return context.check_var(self.identifier)

@@ -1,6 +1,7 @@
 from orbsim_language.orbsim_ast.and_node import AndNode
 from orbsim_language.orbsim_ast.atomic_node import AtomicNode
 from orbsim_language.orbsim_ast.attribute_def_node import AttributeDef
+from orbsim_language.orbsim_ast.binary_expr_node import BinaryExprNode
 from orbsim_language.orbsim_ast.boolean_node import BooleanNode
 from orbsim_language.orbsim_ast.class_declr_node import ClassDeclr
 from orbsim_language.orbsim_ast.conditional_node import ConditionalNode
@@ -33,4 +34,5 @@ from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
 from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.not_equal_node import NotEqualNode
 from orbsim_language.orbsim_ast.print_node import PrintNode
+from orbsim_language.orbsim_ast.ret_node import RetNode
 

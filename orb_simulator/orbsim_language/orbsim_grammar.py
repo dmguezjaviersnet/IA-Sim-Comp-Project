@@ -1,9 +1,9 @@
 from typing import Dict
 from parser.production import Production
-from parser.terminal import Terminal, Eof, Epsilon
+from parser.terminal import Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
-from parser.own_token import Token, Token_Type
+from parser.own_token import Token_Type
 from orbsim_language.orbsim_rules import *
 
 # Gramática del DSL
@@ -16,7 +16,9 @@ program -> <list-statement>
            | <conditional-statement>
            | <loop-statement>
            | <print-statement>
-<let-statement> -> "let" ID "=" <expression> ;
+           | <ret-statement>
+<ret-statement> -> "ret" <expression>
+<let-statement> -> "let" ID "=" <expression>
 <def-func> -> "func" ID "(" <args-list> ")" "{" <list-statement> "}"
 <loop-statement> -> "loop" "(" <expression> ")" "{" <list-statement> "}"
 <conditional-statement> -> "if" "(" <expression> ")" "then "{" <list-statement> "}" "else" "{" <list-statement> "}"
@@ -77,6 +79,7 @@ if_keyword = Terminal('if')
 then_keyword = Terminal('then')
 else_keyword = Terminal('else')
 print_keyword = Terminal('print')
+ret_keyword = Terminal('ret')
 
 stmt_separator = Terminal(';')
 expr_separator = Terminal(',')
@@ -111,7 +114,7 @@ terminals = [let_keyword, func_keyword, loop_keyword, if_keyword, then_keyword, 
             stmt_separator, expr_separator, assign, open_curly_braces, closed_curly_braces, open_parenthesis,
             closed_parenthesis, neg, logic_or, logic_and, not_equals, equals, greater_or_equal, less_equal,
             greater, less, addition, substraction, product, division, module, int, float, boolean, 
-            string, id_orbsim, eof]
+            string, id_orbsim, eof, ret_keyword]
 
 # No terminales
 
@@ -122,6 +125,7 @@ let_stmt = Non_terminal('let_stmt', 'ast')
 def_func_stmt = Non_terminal('def_func_stmt', 'ast')
 conditional_stmt = Non_terminal('conditional_stmt', 'ast')
 loop_stmt = Non_terminal('loop_stmt', 'ast')
+ret_stmt = Non_terminal('ret_stmt', 'ast')
 print_stmt = Non_terminal('print_stmt', 'ast')
 arg_list = Non_terminal('arg_list', 'ast')
 
@@ -140,7 +144,7 @@ expr_list = Non_terminal('expr_list', 'ast')
 
 non_terminals = [program, stmt_list, statement, let_stmt, def_func_stmt, conditional_stmt, loop_stmt, print_stmt,
                 arg_list, expression,or_expr, and_expr, not_expr, compare_expr, compare_op, arth_expr, term, factor,
-                atom, func_call, expr_list]
+                atom, func_call, expr_list, ret_stmt]
 
 # Producciones
 
@@ -154,99 +158,108 @@ p2 = Production(stmt_list,
                 )
 
 p3 = Production(statement,
-                [[let_stmt], [def_func_stmt], [conditional_stmt], [loop_stmt], [print_stmt]],
-                [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule3, True)], [(stmt_rule4, True)], [(stmt_rule5, True)]]
+                [[let_stmt], [def_func_stmt], [conditional_stmt], [loop_stmt], [print_stmt], [ret_stmt]],
+                [[(stmt_rule, True)], [(stmt_rule, True)], [(stmt_rule, True)], [(stmt_rule, True)],
+                 [(stmt_rule, True)], [(stmt_rule, True)]]
                 )
 
-p4 = Production(let_stmt,
-                [[let_keyword, id_orbsim, assign, expression, stmt_separator]],
+p4 = Production(ret_stmt,
+                [[ret_keyword, expression]],
+                [[(ret_stmt_rule, True)]]
+                )
+
+p5 = Production(let_stmt,
+                [[let_keyword, id_orbsim, assign, expression]],
                 [[(let_stmt_rule, True)]]
                 )
 
-p5 = Production (def_func_stmt,
-                [[func_keyword, id_orbsim, open_parenthesis, arg_list, closed_parenthesis, open_curly_braces, stmt_list, closed_curly_braces]],
+p6 = Production (def_func_stmt,
+                [[func_keyword, id_orbsim, open_parenthesis, arg_list, closed_parenthesis,
+                 open_curly_braces, stmt_list, closed_curly_braces]],
                 [[(def_func_stmt_rule, True)]]
                 )
 
-p6 = Production(loop_stmt,
+p7 = Production(loop_stmt,
                 [[loop_keyword, open_parenthesis, expression, closed_parenthesis, open_curly_braces, stmt_list, closed_curly_braces]],
                 [[(loop_rule, True)]]
                 )
 
-p7 = Production(conditional_stmt,
-                [[if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, stmt_list], 
-                 [if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, stmt_list, else_keyword, stmt_list]],
+p8 = Production(conditional_stmt,
+                [[if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, open_curly_braces,
+                 stmt_list, closed_curly_braces], 
+                 [if_keyword, open_parenthesis, expression, closed_parenthesis, then_keyword, open_curly_braces,
+                 stmt_list, closed_curly_braces, else_keyword, open_curly_braces, stmt_list, closed_curly_braces]],
                 [[(conditional_stmt_rule1, True)], [(conditional_stmt_rule2, True)]]
                 )
 
-p8 = Production(arg_list,
+p9 = Production(arg_list,
                 [[id_orbsim, expr_separator, arg_list], [id_orbsim]],
                 [[(arg_list_rule1, True)], [(arg_list_rule2, True)]]
                 )
 
-p9 = Production(expression,
+p10 = Production(expression,
                 [[or_expr]],
                 [[(expression_rule1, True)]]
                 )
 
-p10 = Production(or_expr,
+p11 = Production(or_expr,
                 [[and_expr, logic_or, or_expr], [and_expr]],
                 [[(or_expr_rule1, True)], [(or_expr_rule2, True)]]
                 )
 
-p11 = Production(and_expr,
+p12 = Production(and_expr,
                 [[not_expr, logic_and, and_expr], [not_expr]],
                 [[(and_expr_rule1, True)], [(and_expr_rule2, True)]]
                 )
 
-p12 = Production(not_expr,
+p13 = Production(not_expr,
                 [[neg, not_expr], [compare_expr]],
                 [[(not_expr_rule1, True)], [(not_expr_rule2, True)]]
                 )
 
-p13 = Production(compare_expr, 
+p14 = Production(compare_expr, 
                 [[arth_expr, compare_op, compare_expr], [arth_expr]],
                 [[(compare_expr_rule1, True)], [(compare_expr_rule2, True)]]
                 )
 
-p14 = Production(compare_op,
+p15 = Production(compare_op,
                 [[equals], [not_equals], [greater_or_equal], [less_equal], [greater], [less]],
                 [[(compare_op_rule, True)], [(compare_op_rule, True)], [(compare_op_rule, True)], 
                  [(compare_op_rule, True)], [(compare_op_rule, True)], [(compare_op_rule, True)]]
                 )
 
-p15 = Production(arth_expr,
+p16 = Production(arth_expr,
                 [[arth_expr, addition, term], [arth_expr, substraction, term], [term]],
                 [[(arth_expr_rule1, True)], [(arth_expr_rule2, True)], [(arth_expr_rule3, True)]]
                 )
 
-p16 = Production(term,
+p17 = Production(term,
                 [[term, product, factor], [term, division, factor], [term, module, factor], [factor]],
                 [[(term_rule1, True)], [(term_rule2, True)], [(term_rule3, True)], [(term_rule4, True)]]
                 )
 
-p17 = Production(factor,
+p18 = Production(factor,
                 [[atom], [open_parenthesis, expression, closed_parenthesis]],
                 [[(factor_rule1, True)], [(factor_rule2, True)]]
                 )
 
-p18 = Production(atom,
+p19 = Production(atom,
                 [[int], [float], [boolean], [string], [id_orbsim], [func_call]],
                 [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)], 
                  [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)]]
                 )
 
-p19 = Production(func_call,
+p20 = Production(func_call,
                 [[id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(func_call_rule, True)]]
                 )
 
-p20 = Production(expr_list,
-                [[expression, stmt_separator, expr_list], [expression]],
-                [[expr_list_rule1, True], [expr_list_rule2, True]]
+p21 = Production(expr_list,
+                [[expression, expr_separator, expr_list], [expression]],
+                [[(expr_list_rule1, True)], [(expr_list_rule2, True)]]
                 )
 
-productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20]
+productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21]
 
 orbsim_grammar = Grammar(terminals, non_terminals, program, productions)
 
@@ -257,6 +270,7 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.then : 'then',
     Token_Type.else_orbsim : 'else',
     Token_Type.let : 'let',
+    Token_Type.return_orbsim : 'ret',
     
     Token_Type.int: 'int',
     Token_Type.float : 'float',
@@ -269,7 +283,10 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.mul : '*',
     Token_Type.div : '/',
     Token_Type.mod : '%',
+
     Token_Type.neg : '!',
+    Token_Type.logical_or: '||',
+    Token_Type.logical_and: '&&',
 
     Token_Type.equals: '==',
     Token_Type.not_equals: '!=',
