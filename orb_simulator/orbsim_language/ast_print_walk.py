@@ -1,8 +1,8 @@
 import visitor as visitor
-from orbsim_ast.program_node import ProgramNode
-from orb_simulator.orbsim_language.orbsim_ast.func_declr_node import*
-from orb_simulator.orbsim_language.orbsim_ast.variable_declr_node import VariableDeclr
-from orbsim_ast.atomic_node import AtomicNode
+from orbsim_language.orbsim_ast.program_node import ProgramNode
+from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
+from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclr
+from orbsim_language.orbsim_ast.atomic_node import AtomicNode
 
 class PrintAST:
 
@@ -16,8 +16,8 @@ class PrintAST:
         statements = '\n'.join(self.visit(child, tabs + 1) for child in node.statements)
         return f'{ans}\n{statements}'
     
-    @visitor.when(FuncDeclr)
-    def visit(self, node: FuncDeclr, tabs = 0):
+    @visitor.when(FuncDeclrNode)
+    def visit(self, node: FuncDeclrNode, tabs = 0):
         params = ', '.join(node.args)
         ans = '\t' * tabs + f'-->*FuncDeclarationNode: def {node.identifier}({params}) -> <expr>'
         body = self.visit(node.body, tabs + 1)

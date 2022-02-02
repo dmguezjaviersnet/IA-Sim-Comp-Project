@@ -2,10 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Type
 from orbsim_language.orbsim_type import OrbsimType
 
-class OrbisimSemanticError(Exception):
-    @property 
-    def error(self):
-        return self.args[0]
+
         
 @dataclass
 class VarInfo:

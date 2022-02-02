@@ -9,13 +9,13 @@ from orbsim_language.orbsim_ast.equal_node import EqualNode
 from orbsim_language.orbsim_ast.expression_node import ExpressionNode
 from orbsim_language.orbsim_ast.float_node import FloatNode
 from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
-from orbsim_language.orbsim_ast.func_declr_node import FuncDeclr
+from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from orbsim_language.orbsim_ast.greater_equal_node import GreaterEqualNode
 from orbsim_language.orbsim_ast.greater_than_node import GreaterThanNode
 from orbsim_language.orbsim_ast.integer_node import IntegerNode
-from orbsim_language.orbsim_ast.less_equal_node import LessEqual
+from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
 from orbsim_language.orbsim_ast.less_than_node import LessThanNode
-from orbsim_language.orbsim_ast.loop_node import LoopExprNode
+from orbsim_language.orbsim_ast.loop_node import LoopNode
 from orbsim_language.orbsim_ast.method_def_node import MethodDef
 from orbsim_language.orbsim_ast.minus_node import MinusNode
 from orbsim_language.orbsim_ast.mod_node import ModNode

@@ -14,7 +14,7 @@ class Lexer:
         self.regexs =  self._build_regex_automatons(regex_table)
         self.eof = eof 
         self.automaton = self._build_automaton()
-        self.errors = List[str]
+        self.errors:List[str] = []
 
     
     def _build_automaton(self):
@@ -52,8 +52,9 @@ class Lexer:
         state = self.automaton
         endState = state if state.is_final_state else None
         lexeme = ''
-
+        move_cursor = 0
         for symbol in text:
+            move_cursor +=1
             if state.has_a_transition(symbol):
                 lexeme += symbol
                 state = state[symbol][0]
@@ -68,24 +69,24 @@ class Lexer:
         if endState:
             return endState
         else:
-            raise OrbisimLexerError('')
-        return  endState if endState else None
+            raise OrbisimLexerError(f'Token {text[:move_cursor]} no reconocido por el lenguaje Orbisim')
     
     def _tokenizer(self, text):
 
         while text:
-            qf = self._walk(text)
             
-
-            if qf == None:
-                
-            
-            else:
+            try:
+                qf = self._walk(text)
                 lexeme = qf.lexeme
                 text = text[len(lexeme):]
                 ends = [state.tag for state in qf.substates if state.tag]
                 ends.sort()
                 yield lexeme, ends[0][1]
+            except OrbisimLexerError as err:
+                self.errors.append(err.error_info)
+
+
+                
 
         yield '$', self.eof
 
