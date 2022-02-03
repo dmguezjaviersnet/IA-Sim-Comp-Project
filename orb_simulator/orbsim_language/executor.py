@@ -8,6 +8,9 @@ from orbsim_language.orbsim_ast.boolean_node import BooleanNode
 from orbsim_language.orbsim_ast.integer_node import IntegerNode
 from orbsim_language.orbsim_ast.float_node import FloatNode
 from orbsim_language.orbsim_ast.string_node import StringNode
+from orbsim_language.orbsim_ast.print_node import PrintNode
+from orbsim_language.orbsim_ast.not_node import NotNode
+from orbsim_language.orbsim_ast.plus_node import PlusNode
 class Executor:
 
     def __init__(self):
@@ -59,4 +62,21 @@ class Executor:
     @visitor.when(StringNode)
     def execute(self, node: 'StringNode', scope: 'Scope'):
         return str(node.val)
+
+    @visitor.when(PrintNode)
+    def execute(self, node: 'PrintNode', scope: 'Scope'):
+        eval_expr = self.execute(node.expr)
+        print(eval_expr) # temporal hasta que pongamos una consolita en la UI
     
+    @visitor.when(NotNode)
+    def execute(self, node: 'NotNode', scope: 'Scope'):
+       eval_expr = self.visit(node.expr)
+       return not eval_expr
+    
+    @visitor.when(PlusNode)
+    def execute(self, node: PlusNode, scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left + eval_right
+    
+
