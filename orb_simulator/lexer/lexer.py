@@ -82,8 +82,8 @@ class Lexer:
                 ends = [state.tag for state in qf.substates if state.tag]
                 ends.sort()
                 yield lexeme, ends[0][1]
-            except OrbisimLexerError as err:
-                self.errors.append(err.error_info)
+            except OrbisimLexerError:
+                pass
 
 
                 

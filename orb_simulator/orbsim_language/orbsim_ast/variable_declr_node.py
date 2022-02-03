@@ -6,7 +6,9 @@ from orbsim_language.context import Context
 @dataclass
 class VariableDeclrNode(StatementNode):
     identifier: str
+    type: str
     expr: 'ExpressionNode'
+    
 
     def validate(self, context: 'Context') -> bool:
         if not self.expr.validate(context):

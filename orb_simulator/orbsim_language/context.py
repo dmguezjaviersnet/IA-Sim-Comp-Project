@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, List, Type
 from orbsim_language.orbsim_type import OrbsimType
-
+from errors import OrbisimSemanticError
 
         
 @dataclass

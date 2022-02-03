@@ -2,6 +2,10 @@ class OrbisimSemanticError(Exception):
     @property 
     def error_info(self):
         return self.args[0]
+class OrbisimExecutionError(Exception):
+    @property 
+    def error_info(self):
+        return self.args[0]
 
 class OrbisimLexerError(Exception):
     @property 
