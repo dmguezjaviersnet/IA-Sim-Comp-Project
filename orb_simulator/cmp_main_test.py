@@ -44,7 +44,7 @@ def test_lexer():
     
 
 def main():
-    ############################### Gramática de Regex #################################
+    ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     test_lexer()
     # au = re.automaton
@@ -97,20 +97,20 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
-            func Fibonacci(number) {
+            func fibonacci(number) {
                 if(number == 0 || number == 1) then {
                     ret 1;
                 }
                 
                 else {
-                    ret Fibonacci(number-1) + Fibonacci(number-2);
+                    ret fibonacci(number-1) + fibonacci(number-2);
                 };
             };
         '''
     )
 
     lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
-
+    
     # a = (1, 2)
     # b = (2, 1)
     # print(hash(a) == hash(b))

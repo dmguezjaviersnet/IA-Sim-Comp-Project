@@ -2,8 +2,6 @@ from dataclasses import dataclass
 from typing import Dict, List, Type
 from orbsim_language.orbsim_type import OrbsimType
 
-
-        
 @dataclass
 class VarInfo:
     name: str

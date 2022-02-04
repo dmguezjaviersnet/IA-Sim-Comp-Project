@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
-from orbsim_language.context import Context
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclr
+from orbsim_language.context import Context
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
 
