@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from typing import Dict, List, Type
 from orbsim_language.orbsim_type import OrbsimType
+from errors import OrbisimSemanticError
 
+        
 @dataclass
 class VarInfo:
     name: str
@@ -69,14 +71,9 @@ class Context:
         Para la correcta definición de los tipos (contexto de los tipos)
     '''
 
-    def __init__(self, parent: 'Context' = None):
-        self.parent: 'Context' = parent   
+    def __init__(self, parent: 'Context' = None): 
         self.types: Dict[str, Type] = {}
         
-
-    def create_child_context(self):
-        child_context = Context(self)
-        return child_context
     
     def get_type(self, name: str):
         if name in self.types:
@@ -84,16 +81,11 @@ class Context:
         else:
             return None
 
-    def type_of(symbol: str):
-        pass
-    
-    def define_symbol(symbol: str, type):
-        pass
+
         
-    def create_type(self, name: str, logger: List[str]):
+    def create_type(self, name: str):
         if name in self.types:
-            logger.append(f'El tipo ({name}) ya está definido en el contexto')
-            return None
+            raise OrbisimSemanticError(f'Ya hay un tipo con el nombre {name} definido en el contexto')
         else:
             new_type = OrbsimType(name)
             self.types[name] = new_type

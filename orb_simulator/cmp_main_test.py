@@ -9,7 +9,10 @@ from automaton.state import State
 from parser.lr1_parser import lr1_parse
 from orbsim_language.orbsim_lexer import orbsim_lexer
 from orbsim_language.orbsim_grammar import orbsim_grammar, orbsim_token_string
+from orbsim_language.ast_print_walk import PrintAST
+from orbsim_language.type_collector import TypeCollector
 
+from orbisim_ui import OrbisimUI
 # def test1():
 #     regexengine = Regex_Engine('(a|b|c)?')
 #     automaton = regexengine.automaton
@@ -20,7 +23,8 @@ from orbsim_language.orbsim_grammar import orbsim_grammar, orbsim_token_string
 #     # assert automaton.match_from_dfa('') == True
 #     # assert automaton.match_from_dfa('aaef') == False
     
-    
+
+# ('([a-z]|[A-Z]|[0-9]|\\! | \\@| \\# | \\$| \\%| \\^| \\&| \\*| \\( | \\) | \\~ | \\/  | \\- | \\+ )*', Token_Type.error)
 
 def test_lexer():
     lex = Lexer([('\+', Token_Type.plus),
@@ -29,12 +33,11 @@ def test_lexer():
     ('/', Token_Type.div),
     ('\(', Token_Type.open_parenthesis),
     ('\)', Token_Type.closed_parenthesis),
-    ('[0-9]+', Token_Type.character),
-    ('(\\ )+', Token_Type.space),
-    ('([a-z]|[A-Z]|[0-9]|\\! | \\@| \\# | \\$| \\%| \\^| \\&| \\*| \\( | \\) | \\~ | \\/  | \\- | \\+ )*', Token_Type.error)],
+    ('[0-9]+', Token_Type.int ),
+    ('(\\ )+', Token_Type.space)],
      eof=Token_Type.eof)
 
-    tokens = lex('aaaaaKoooo(3+5)*(4/(5-8)')
+    tokens = lex('aaaaaKoooo(3+5)*(4/(5-8) 124')
     
     # success, ast = lr1_parse(arth_grammar, tokens)
     
@@ -46,7 +49,9 @@ def test_lexer():
 def main():
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
-    test_lexer()
+    # test_lexer()
+    # ui = OrbisimUI()
+    # print(ui.code_text)
     # au = re.automaton
     # test_lexer()
     # test_lexer()
@@ -114,6 +119,7 @@ def main():
     # a = (1, 2)
     # b = (2, 1)
     # print(hash(a) == hash(b))
+    collector = TypeCollector()
 
 if __name__ == '__main__':
     main()

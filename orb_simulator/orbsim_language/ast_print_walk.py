@@ -1,8 +1,8 @@
-import visitor as visitor
-from orbsim_language.orbsim_ast import ProgramNode
-from orbsim_language.orbsim_ast import FuncDeclrNode
-from orbsim_language.orbsim_ast import VariableDeclrNode
-from orbsim_language.orbsim_ast import AtomicNode
+import orbsim_language.visitor as visitor
+from orbsim_language.orbsim_ast.program_node import ProgramNode
+from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
+from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
+from orbsim_language.orbsim_ast.atomic_node import AtomicNode
 
 class PrintAST:
 
@@ -33,5 +33,6 @@ class PrintAST:
     def visit(self, node: AtomicNode, tabs = 0):
         return '\t' * tabs + f'-->*{node.__class__.__name__}: {node.val}'
 
+    
         
         

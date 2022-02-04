@@ -17,7 +17,7 @@ from orbsim_language.orbsim_ast.integer_node import IntegerNode
 from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
 from orbsim_language.orbsim_ast.less_than_node import LessThanNode
 from orbsim_language.orbsim_ast.loop_node import LoopNode
-from orbsim_language.orbsim_ast.method_def_node import MethodDef
+from orb_simulator.orbsim_language.orbsim_ast.method_declr_node import MethodDef
 from orbsim_language.orbsim_ast.minus_node import MinusNode
 from orbsim_language.orbsim_ast.mod_node import ModNode
 from orbsim_language.orbsim_ast.node import Node
@@ -35,4 +35,5 @@ from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.not_equal_node import NotEqualNode
 from orbsim_language.orbsim_ast.print_node import PrintNode
 from orbsim_language.orbsim_ast.ret_node import RetNode
+from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 

@@ -6,4 +6,4 @@ from orbsim_language.orbsim_lexer import orbsim_lexer
 # from orbsim_language.semantic_checker import *
 # from orbsim_language.type_builder import TypeBuilder
 # from orbsim_language.type_checker import *
-# from orbsim_language.type_collector import TypeCollector
+from orbsim_language.type_collector import TypeCollector
