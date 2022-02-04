@@ -10,6 +10,8 @@ from parser.lr1_parser import lr1_parse
 from orbsim_language.orbsim_lexer import orbsim_lexer
 from orbsim_language.orbsim_grammar import orbsim_grammar, orbsim_token_string
 from orbsim_language.ast_print_walk import PrintAST
+from orbsim_language.type_collector import TypeCollector
+
 from orbisim_ui import OrbisimUI
 # def test1():
 #     regexengine = Regex_Engine('(a|b|c)?')
@@ -48,7 +50,7 @@ def main():
     ############################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
-    ui = OrbisimUI()
+    # ui = OrbisimUI()
     # print(ui.code_text)
     # au = re.automaton
     # test_lexer()
@@ -112,16 +114,17 @@ def main():
     #     '''
     # )
     
-    text = ui.code_text
-    tokens = orbsim_lexer(text)
-    a = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
-    astp = PrintAST().visit(a)
-    ui.print_ast(astp)
+    # text = ui.code_text
+    # tokens = orbsim_lexer(text)
+    # a = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
+    # astp = PrintAST().visit(a)
+    # ui.print_ast(astp)
     # print('\o/')
     # print(text)
     # a = (1, 2)
     # b = (2, 1)
     # print(hash(a) == hash(b))
+    collector = TypeCollector()
 
 if __name__ == '__main__':
     main()

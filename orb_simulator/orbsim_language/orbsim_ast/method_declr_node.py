@@ -7,5 +7,5 @@ class MethodDeclrNode(StatementNode):
     return_type: str
     arg_names = List[str]
     arg_types = List[str]
-    body: 'ExpressionNode'
+    body: List['StatementNode']
 

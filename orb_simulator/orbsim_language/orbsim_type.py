@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 from typing import Dict, List
-
+from orbsim_language.orbsim_ast.expression_node import ExpressionNode
+from orbsim_language.orbsim_ast.statement_node import StatementNode
 @dataclass
 class Attribute:
     name: str
     type: 'OrbsimType'
+    expr: 'ExpressionNode'
 
 
 @dataclass
@@ -12,6 +14,7 @@ class Method:
     name: str
     return_type: 'OrbsimType'
     arguments: List['Attribute']
+    body: List['StatementNode']
     
 
 class OrbsimType:

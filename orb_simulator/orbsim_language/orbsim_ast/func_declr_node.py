@@ -9,6 +9,7 @@ __all__ = ['FuncDeclrNode']
 @dataclass
 class FuncDeclrNode(StatementNode):
     identifier: str
+    type: str
     args: List[str]
     body: List['StatementNode']
 

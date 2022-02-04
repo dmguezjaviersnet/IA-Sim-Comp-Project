@@ -4,10 +4,10 @@ from orbsim_language.context import Context
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclr
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
-
+from errors import OrbisimSemanticError
 class TypeCollector:
     context: Context = Context()
-    logger: List[str] = []
+    log: List[str] = []  # donde se van guardando los errores
     
 
     @visitor.on('node')
@@ -17,18 +17,21 @@ class TypeCollector:
     @visitor.when(ProgramNode)
     def visit(self, node: ProgramNode):
         self.context: Context =  Context()
-        self.context.create_type('String', self.logger)
+        self.context.create_type('String')
         
-        self.context.create_type('Bool', self.logger)
-        self.context.create_type('Integer', self.logger)
-        self.context.create_type('Float', self.logger)
+        self.context.create_type('Bool')
+        self.context.create_type('Integer')
+        self.context.create_type('Float')
 
         for st in node.statements:
             self.visit(st)
     
-    # @visitor.when(ClassDeclr)
-    # def visit(self, node: ClassDeclr):
-    #     self.context.create_type(node.name, self.logger)
+    @visitor.when(ClassDeclr)
+    def visit(self, node: ClassDeclr):
+        try:
+            self.context.create_type(node.name)
+        except OrbisimSemanticError as err:
+            self.log.append(err.error_info)
 
         
     

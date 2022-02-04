@@ -11,6 +11,20 @@ from orbsim_language.orbsim_ast.string_node import StringNode
 from orbsim_language.orbsim_ast.print_node import PrintNode
 from orbsim_language.orbsim_ast.not_node import NotNode
 from orbsim_language.orbsim_ast.plus_node import PlusNode
+from orbsim_language.orbsim_ast.minus_node import MinusNode
+from orbsim_language.orbsim_ast.div_node import DivNode
+from orbsim_language.orbsim_ast.mod_node import ModNode
+from orbsim_language.orbsim_ast.product_node import ProductNode
+from orbsim_language.orbsim_ast.equal_node import EqualNode
+from orbsim_language.orbsim_ast.not_equal_node import NotEqualNode
+from orbsim_language.orbsim_ast.greater_than_node import GreaterThanNode
+from orbsim_language.orbsim_ast.greater_equal_node import GreaterEqualNode
+from orbsim_language.orbsim_ast.less_than_node import LessThanNode
+from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
+from orbsim_language.orbsim_ast.and_node import AndNode
+from orbsim_language.orbsim_ast.or_node import OrNode
+from orbsim_language.orbsim_ast.ret_node import RetNode
+
 class Executor:
 
     def __init__(self):
@@ -74,9 +88,86 @@ class Executor:
        return not eval_expr
     
     @visitor.when(PlusNode)
-    def execute(self, node: PlusNode, scope: 'Scope'):
+    def execute(self, node: 'PlusNode', scope: 'Scope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left + eval_right
     
+    @visitor.when(MinusNode)
+    def execute(self, node: 'MinusNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left - eval_right
+    
+    @visitor.when(DivNode)
+    def execute(self, node: 'DivNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left / eval_right
+    
+    @visitor.when(ProductNode)
+    def execute(self, node: 'ProductNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left * eval_right
+    
+    @visitor.when(ModNode)
+    def execute(self, node: 'ModNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left % eval_right
+    
+    @visitor.when(EqualNode)
+    def execute(self, node: 'EqualNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left == eval_right
 
+    @visitor.when(NotEqualNode)
+    def execute(self, node: 'NotEqualNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left != eval_right
+
+    @visitor.when(GreaterThanNode)
+    def execute(self, node: 'GreaterThanNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left > eval_right
+    
+    @visitor.when(GreaterEqualNode)
+    def execute(self, node: 'GreaterEqualNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left >= eval_right
+    
+    @visitor.when(LessThanNode)
+    def execute(self, node: 'LessThanNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left < eval_right
+    
+    @visitor.when(LessEqualNode)
+    def execute(self, node: 'LessEqualNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left <= eval_right
+    
+    @visitor.when(AndNode)
+    def execute(self, node: 'AndNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left and eval_right
+    
+    @visitor.when(OrNode)
+    def execute(self, node: 'OrNode', scope: 'Scope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left or eval_right
+
+    @visitor.when(RetNode)
+    def execute(self, node: RetNode, scope: 'Scope'):
+        eval_expr = self.execute(node.expr, scope)
+        return eval_expr
+
+    
