@@ -1,64 +1,3 @@
-from typing import *
-from Vector3 import *
-from elements3d import * 
-from objects import *
-
-MINRADIUS =1
-
-
-class Node:
-  def __init__(self, region: Region, objects: List[obj] ,parent , depth:int=0, isLeafNode:bool = True ):
-    self.objects = objects
-    self.region = region
-    self.childs = [None for i in range(8)]
-    self.parent = parent
-    self.depth = depth
-    self.isLeafNode = True 
-
-
-def giveMeOctant (center : Vector3 , position: Vector3):
-  newpos = position - center
-  newpos = newpos.sig()
-  if newpos.x == 0 or newpos.y == 0 or newpos.z == 0:
-    return None
-  xx = newpos.x if newpos.x > 0 else 0
-  yy = newpos.y if newpos.y > 0 else 0
-  zz = newpos.z if newpos.z > 0 else 0
-  return xx * 4 | yy * 2 | zz
-
-def checkRange (c:int , r:int ,p:int):
-  return (p <= (c + r)) and (p >= (c - r)) 
-
-
-# dado una region y un punto determina si el punto esta dentro del objeto 
-def ObjectInside(region: Region , vector: Vector3):
-  inside = True 
-  inside = inside and checkRange(region.center.x,region.radio,vector.x)
-  inside = inside and checkRange(region.center.y,region.radio,vector.y)
-  inside = inside and checkRange(region.center.z,region.radio,vector.z)
-  return inside 
-
-# Dada una lista de objetos y un punto como centro de referencia 
-# de alguna region retorna una lista de listas de objetos de 
-# cardinalidad 9, el ultimo posición del array es para los 
-# objetos que están sobre algún plano principal de la region en cuestión
-def clasifyObjects (objects: List [obj] , center: Vector3):
-  #building list for clasify objects
-  clasifyList = dict() 
-  for obj in objects:
-    octant = giveMeOctant(center=center,position=obj.position)
-    if octant is None:
-      if clasifyList.has_key(8):  clasifyList[8].append(obj)
-      else : clasifyList[8] = [obj]
-    else: 
-      if clasifyList.has_key(octant):  clasifyList[octant].append(obj)
-      clasifyList[octant] = clasifyList[octant] + [obj]
-  return clasifyList
-
-
-dirx= [-1,-1,-1,-1,1,1,1,1]
-diry =[-1,-1,1,1,-1,-1,1,1]
-dirz =[-1,1,-1,1,-1,1,-1,1]
 
 
 
@@ -305,7 +244,7 @@ class Octree(object):
     # metodo privado patra iterar primero en profundidad
     @staticmethod
     def __iterateDepthFirst(root):
-        """private metodo para la busqueda en el octree con busqueda primero en profundidad"""
+        """metodo privado para la busqueda en el octree con busqueda primero en profundidad"""
 
         for branch in root.branches:
             if branch is None:
