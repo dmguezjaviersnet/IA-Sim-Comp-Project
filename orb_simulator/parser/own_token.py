@@ -24,6 +24,7 @@ class Token_Type(Enum):
     boolean = 12
     string = 13
     id_orbsim = 31
+    type_id_orbsim = 50
     
     # binarias
     plus = 14
@@ -41,18 +42,30 @@ class Token_Type(Enum):
     
     logical_or = 37
     logical_and = 38
+    
+    bitwise_or = 46
+    bitwise_xor = 51
+    bitwise_and = 45
+    bitwise_not = 47
+    bitwise_shift_left = 48
+    bitwise_shift_right = 49
 
     # unarias
     neg = 19
 
     # palabras claves
-    loop = 20
+    let = 25
     func = 21
+    class_orbsim = 44
     if_orbsim = 22
     then = 23
     else_orbsim = 24
-    let = 25
+    loop = 20
     return_orbsim = 39
+    make_orbsim = 41
+    continue_orbsim = 42
+    break_orbsim = 43
+    print_orbsim = 44
 
     assign = 26
 
