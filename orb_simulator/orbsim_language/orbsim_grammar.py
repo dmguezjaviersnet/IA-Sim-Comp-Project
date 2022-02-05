@@ -4,7 +4,7 @@ from parser.terminal import Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2
+from orbsim_language.orbsim_rules import assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2 
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
@@ -355,12 +355,12 @@ p10 = Production(let_stmt,
 
 p11 = Production(assign_stmt,
                 [[id_orbsim, assign, expression]],
-                [[(let_stmt_rule, True)]]
+                [[(assign_stmt_rule, True)]]
                 )
 
 p12 = Production(loop_stmt,
                 [[loop_keyword, open_parenthesis, expression, closed_parenthesis, open_curly_braces, loop_body_stmt_list,
-                 closed_curly_braces, stmt_separator]],
+                 closed_curly_braces]],
                 [[(loop_stmt_rule, True)]]
                 )
 
