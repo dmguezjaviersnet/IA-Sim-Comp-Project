@@ -1,6 +1,6 @@
 from lexer import Lexer
 from parser.own_token import Token_Type
-# ('([a-z]|[A-Z]|[0-9]|\\! | \\@| \\# | \\$| \\%| \\^| \\&| \\*| \\( | \\) | \\~ | \\/  | \\- | \\+ )*', Token_Type.error)
+
 orbsim_lexer = Lexer([
     ('loop', Token_Type.loop),
     ('func', Token_Type.func),
@@ -48,5 +48,5 @@ orbsim_lexer = Lexer([
     (',', Token_Type.expr_separator),
     ('(\\ )+', Token_Type.space),
     ('(\\n)+', Token_Type.new_line)],
-    # ('([a-z]|[A-Z]|[0-9] | ! | @ | # | $ | % | ^ | & | *| \( | \) | ~ | /  | \- | \+ )+', Token_Type.error)],
+    # ('([a-z]|[A-Z]|[0-9]|\\! | \\@| \\# | \\$| \\%| \\^| \\&| \\*| \\( | \\) | \\~ | \\/  | \\- | \\+ )*', Token_Type.error)
     eof=Token_Type.eof)

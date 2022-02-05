@@ -56,7 +56,7 @@ class Token_Type(Enum):
     # palabras claves
     let = 25
     func = 21
-    class_orbsim = 44
+    class_orbsim = 52
     if_orbsim = 22
     then = 23
     else_orbsim = 24

@@ -1,4 +1,3 @@
-from distutils.log import error
 from lexer.regex_grammar import regex_grammar
 from test_language.arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
 from test_language.test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
@@ -102,13 +101,26 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
-            func fibonacci(number) {
-                if(number == 0 || number == 1) then {
-                    ret 1;
-                }
-                
-                else {
-                    ret fibonacci(number-1) + fibonacci(number-2);
+            class MyClass {
+                Int attr1;
+                Bool attr2;
+
+                func String fibonacci (number) {
+                    if (number == 1 || number == 0) then {
+                        ret 1;
+                    }
+
+                    else {
+                        ret fibonacci(number - 1) + fibonacci(number - 2);
+                    };
+                };
+
+                func Bool even (number) {
+                    if (number % 2 == 0) then {
+                        ret true;
+                    };
+
+                    ret false;
                 };
             };
         '''

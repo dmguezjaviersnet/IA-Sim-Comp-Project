@@ -7,4 +7,3 @@ from orbsim_language.orbsim_ast.statement_node import StatementNode
 class AttributeDef(StatementNode):
     name: str
     type: str
-    init: ExpressionNode
