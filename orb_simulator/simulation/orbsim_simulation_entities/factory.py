@@ -2,9 +2,9 @@ import random
 import simpy
 import uuid
 import math
-from satellite import Satellite
-from elements_3d import Vector3
-from conf_varaibles import T_BUILD_SATELLITE
+from orbsim_simulation_entities.satellite import Satellite
+from orbsim_simulation_entities.elements_3d import Vector3
+from orbsim_simulation_entities.conf_variables import T_BUILD_SATELLITE
 
 
 class Factory():

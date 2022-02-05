@@ -1,10 +1,10 @@
 import random 
 import math
 import simpy
-from octree import Octree
-from objects import * 
-from agent import * 
-from elements3d import *
+from orbsim_simulation_structs import Octree
+from orbsim_simulation_entities import Agent 
+from simulation.objects import *
+from orbsim_simulation_entities import Vector3
 
 NUMERO_INICIAL_OBJETOS = 10
 TOTAL_COHETES = 1000

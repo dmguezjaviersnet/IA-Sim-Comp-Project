@@ -1,5 +1,5 @@
 from typing import *
-from elements3d import Vector3
+from  orbsim_simulation_entities import Vector3
 import uuid
 import simpy
 

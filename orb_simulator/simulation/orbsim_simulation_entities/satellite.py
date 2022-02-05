@@ -1,5 +1,5 @@
 from orbsim_simulation_entities.elements_3d import Vector3
-from orbsim_obj import OrbsimObj
+from orbsim_simulation_entities.orbsim_obj import OrbsimObj
 
 class Satellite(OrbsimObj):
   def __init__(self, position: Vector3, unique_id, weith: float = 1, diameter: int = 1, name=None):

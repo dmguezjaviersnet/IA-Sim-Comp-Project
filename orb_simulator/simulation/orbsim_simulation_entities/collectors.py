@@ -1,5 +1,5 @@
 from agent import Agent
-from elements_3d import Vector3
+from orbsim_simulation_entities.elements_3d import Vector3
 from enum import Enum
 
 class STATUSCOLLECTOR(Enum):
