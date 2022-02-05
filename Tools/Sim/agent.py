@@ -197,3 +197,39 @@ class Person(Agent):
       # crear un nuevo proceso para llamar a lanzar el cohete 
       yield env.process(curr_launch.launchrocket(curr_rocket,objects))
       print('+++ ^^^ La persona %s mando a lanzar el cohete %s en el minuto %.2f' % (str(self.unique_id),str(curr_rocket), env.now))
+
+
+class STATUSCOLLECTOR(Enum):
+  FULL = 0 
+  EXHAUSTED = 1
+  HALFFULL =2 
+class Collectors(Agent):
+  def __init__(self, loc: Vector3, unique_id, params) -> None:
+    super().__init__(loc, unique_id, params)
+    self.status = STATUSCOLLECTOR.HALFFULL
+  
+
+  def _getdetermination():
+    det = [(STATUSCOLLECTOR.FULL , 'empty'),
+          (STATUSCOLLECTOR.EXHAUSTED, 'descend'),
+          (STATUSCOLLECTOR.HALFFULL,'collect')]
+    return det
+
+  def _rejuvenate(self):
+    pass
+
+  def _emptyCollector():
+    pass
+
+  def _collect(self):
+    pass
+
+  def collectgarbage(self):
+    determ = self._getdetermination()
+    for status in determ:
+      if status[0] == STATUSCOLLECTOR.FULL:
+        self._emptyCollector()
+      elif status[0] == STATUSCOLLECTOR.EXHAUSTED:
+        self._rejuvenate()
+      elif status[0] == STATUSCOLLECTOR.HALFFULL:
+        self._collect()
