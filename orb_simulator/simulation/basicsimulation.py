@@ -2,6 +2,7 @@ import random
 import math
 from typing import List
 import simpy
+from sympy import O
 from orbsim_simulation_structs import Octree
 from orbsim_simulation_entities import Agent , OrbsimObj, Factory , Vector3 , Launchpad
 import uuid
@@ -9,7 +10,7 @@ import uuid
 # from orbsim_simulation_entities import Vector3
 
 
-NUMERO_INICIAL_OBJETOS = 10
+NUMERO_INICIAL_OBJETOS = 100
 TOTAL_COHETES = 1000
 NUMERO_PLATAFORMAS = 1 
 NUMERO_FABRICAS = 2
@@ -63,7 +64,9 @@ def checkcollitions (objects : List[OrbsimObj]):
 
   WORLD_SIZE = 100
 
-  octree = Octree(worldSize=WORLD_SIZE)
+  origin = Vector3.Zero()
+
+  octree = Octree(worldSize=WORLD_SIZE,origin=origin)
 
   collitionsObj = []
 
@@ -71,9 +74,9 @@ def checkcollitions (objects : List[OrbsimObj]):
   for item in objects:
     octree.insertNode(item.position, item)
 
-  # for node in octree.iterateDepthFirst():
-  #   if len(node.data) > 1 :
-  #     collitionsObj += node.data
+  for node in octree.iterateDepthFirst():
+    if len(node.data) > 1 :
+      collitionsObj += node.data
 
   return collitionsObj
 
@@ -93,20 +96,20 @@ creatingInitialObject(OBJECTS)
 creatingInitialFactories(FACTORIES)
 creatingInitialLaunchpad(LAUNCHPAD)
 
-# creatingProcessToMOveObjects(env,OBJECTS.items)
+creatingProcessToMOveObjects(env,OBJECTS.items)
 
-# env.process(principal(env,LAUNCHPAD,FACTORIES,OBJECTS))
-# env.run()
-
-
+env.process(principal(env,LAUNCHPAD,FACTORIES,OBJECTS))
+env.run()
 
 
-for item in OBJECTS.items:
-  print (item)
 
-collections = checkcollitions(OBJECTS.items)
 
-print('-'*10, 'Collections', '-'* 10)
+# for item in OBJECTS.items:
+#   print (item)
 
-for item in collections:
-  print(item)
+# collections = checkcollitions(OBJECTS.items)
+
+# print('-'*10, 'Collections', '-'* 10)
+
+# for item in collections:
+#   print(item)

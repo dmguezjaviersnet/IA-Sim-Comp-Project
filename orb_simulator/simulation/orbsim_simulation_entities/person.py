@@ -7,8 +7,8 @@ from orbsim_simulation_entities.agent import Agent
 from orbsim_simulation_entities.elements_3d import Vector3
 from orbsim_simulation_entities.factory import Factory
 from orbsim_simulation_entities.launchpad import Launchpad
+from config_variables import T_WAITING_TO_INTERACT
 
-s
 # Esta clase representa a una persona que es un agente
 # que va a interactuar con los demas agentes de la simulacion 
 class Person(Agent):

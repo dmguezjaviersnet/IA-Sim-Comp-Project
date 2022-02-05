@@ -26,8 +26,8 @@ class Node(object):
     half = size / 2
 
     ## Las coordenadad de los extremos del nodo
-    self.lower = (position.x - half, position.y - half, position.z - half)
-    self.upper = (position.x + half, position.y + half, position.z + half)
+    self.lower = Vector3(position.x - half, position.y - half, position.z - half)
+    self.upper = Vector3(position.x + half, position.y + half, position.z + half)
 
     def __str__(self):
       data_str = u", ".join((str(x) for x in self.data))
@@ -93,25 +93,25 @@ class Octree(object):
       branch = self.__findBranch(parent, position)
 
       # inicializamos un nuevo centro 
-      newCenter = (0, 0, 0)
+      newCenter = Vector3.Zero()
 
       # tratamos de calcular el nuevo centro del octante donde se ubicara el objeto 
       if branch == 0:
-        newCenter = (pos[0] - offset, pos[1] - offset, pos[2] - offset )
+        newCenter = Vector3(pos.x - offset, pos.y - offset, pos.z - offset )
       elif branch == 1:
-        newCenter = (pos[0] - offset, pos[1] - offset, pos[2] + offset )
+        newCenter = Vector3(pos.x - offset, pos.y - offset, pos.z + offset )
       elif branch == 2:
-        newCenter = (pos[0] - offset, pos[1] + offset, pos[2] - offset )
+        newCenter = Vector3(pos.x - offset, pos.y + offset, pos.z - offset )
       elif branch == 3:
-        newCenter = (pos[0] - offset, pos[1] + offset, pos[2] + offset )
+        newCenter = Vector3(pos.x - offset, pos.y + offset, pos.z + offset )
       elif branch == 4:
-        newCenter = (pos[0] + offset, pos[1] - offset, pos[2] - offset )
+        newCenter = Vector3(pos.x + offset, pos.y - offset, pos.z - offset )
       elif branch == 5:
-        newCenter = (pos[0] + offset, pos[1] - offset, pos[2] + offset )
+        newCenter = Vector3(pos.x + offset, pos.y - offset, pos.z + offset )
       elif branch == 6:
-        newCenter = (pos[0] + offset, pos[1] + offset, pos[2] - offset )
+        newCenter = Vector3(pos.x + offset, pos.y + offset, pos.z - offset )
       elif branch == 7:
-        newCenter = (pos[0] + offset, pos[1] + offset, pos[2] + offset )
+        newCenter = Vector3(pos.x + offset, pos.y + offset, pos.z + offset )
 
       # se retorna un nuevo nodo con las nuevas dimensiones 
       return Node(newCenter, size, parent.depth + 1, [objData])

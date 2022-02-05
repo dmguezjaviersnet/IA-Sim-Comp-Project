@@ -21,6 +21,12 @@ class Vector3:
   def __str__(self) -> str:
     return '(' + str(self.x) +  ',' + str(self.y) +  ',' + str(self.z) + ')'
 
+  def __lt__(self, other: 'Vector3'): 
+    return self.x < other.x and self.y < other.y and self.z < other.z
+
+  def __gt__(self, other: 'Vector3'): 
+    return self.x > other.x and self.y > other.y and self.z > other.z
+
   def sig(self):
     return Vector3( sig(self.x), sig(self.y), sig(self.z))
 
