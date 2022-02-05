@@ -5,9 +5,9 @@ from orbsim_language.orbsim_ast.attribute_def_node import AttributeDef
 from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 
 @dataclass
-class ClassDeclr(StatementNode):
+class ClassDeclrNode(StatementNode):
     name: str
     attributes: List['AttributeDef']
     methods: List['MethodDeclrNode']
-    parent: 'ClassDeclr' = None # por si hereda de otra clase (se acepta herencia simple)
+    parent: 'ClassDeclrNode' = None # por si hereda de otra clase (se acepta herencia simple)
 
