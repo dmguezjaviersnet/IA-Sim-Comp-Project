@@ -3,7 +3,8 @@ import math
 from typing import List
 import simpy
 from orbsim_simulation_structs import Octree
-from orbsim_simulation_entities import Agent , OrbsimObj, factory , Vector3
+from orbsim_simulation_entities import Agent , OrbsimObj, Factory , Vector3 , Launchpad
+import uuid
 
 # from orbsim_simulation_entities import Vector3
 
@@ -15,6 +16,14 @@ NUMERO_FABRICAS = 2
 MIN_ESPERA_COHETE = 200 
 MAX_ESPERA_COHETE = 300
 T_LLEGADAS = 20 
+
+
+def generateObj():
+  rnd = Vector3.random()
+  obj_id = uuid.uuid4()
+  obj = OrbsimObj(position=rnd,unique_id= obj_id)
+  return obj
+
 
 
 def principal (env: simpy.Environment,launchpads: simpy.Store , factories : simpy.Store , objects: simpy.Store):
@@ -40,13 +49,13 @@ def creatingInitialObject (store: simpy.Store):
 # guardando en un store una cantidad NUMERO_FABRICAS inicial de 
 # fabricas para que puedan interactuar inicialmente con el environment 
 def creatingInitialFactories (store: simpy.Store):
-  for item in [factory(Vector3.random()) for i in range (NUMERO_FABRICAS)]:
+  for item in [Factory(Vector3.random()) for i in range (NUMERO_FABRICAS)]:
     store.put(item)
   
 # guardando en un store una cantidad NUMERO_PLATAFORMAS inicial de
 # fabricas para que puedan interactuar inicialmente con el environmet  
 def creatingInitialLaunchpad(store: simpy.Store):
-  for item in [launchpad(env) for i in range(NUMERO_PLATAFORMAS)]:
+  for item in [Launchpad(env) for i in range(NUMERO_PLATAFORMAS)]:
     store.put(item)
 
 
@@ -88,6 +97,8 @@ creatingInitialLaunchpad(LAUNCHPAD)
 
 # env.process(principal(env,LAUNCHPAD,FACTORIES,OBJECTS))
 # env.run()
+
+
 
 
 for item in OBJECTS.items:

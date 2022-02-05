@@ -1,3 +1,4 @@
+from typing import List
 from orbsim_simulation_entities.elements_3d import Vector3
 from orbsim_simulation_entities.orbsim_obj import OrbsimObj
 from orbsim_simulation_entities.satellite import Satellite
