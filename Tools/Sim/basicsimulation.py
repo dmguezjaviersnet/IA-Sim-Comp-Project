@@ -4,9 +4,9 @@ import simpy
 from octree import Octree
 from objects import * 
 from agent import * 
-from elements3d import * 
+from elements3d import *
 
-NUMERO_INICIAL_OBJETOS = 100
+NUMERO_INICIAL_OBJETOS = 10
 TOTAL_COHETES = 1000
 NUMERO_PLATAFORMAS = 1 
 NUMERO_FABRICAS = 2
@@ -48,7 +48,7 @@ def creatingInitialLaunchpad(store: simpy.Store):
     store.put(item)
 
 
-def checkcollitions (objects : List[obj]):
+def checkcollitions (objects : List[OrbsimObj]):
 
   WORLD_SIZE = 100
 
@@ -71,7 +71,7 @@ def checkcollitions (objects : List[obj]):
 
 
 # poner a moverse a los objetos que fueron creados inicialmente en la simulacion 
-def creatingProcessToMOveObjects(env: simpy.Environment , objects: List[obj]):
+def creatingProcessToMOveObjects(env: simpy.Environment , objects: List[OrbsimObj]):
   for item in objects:
     env.process(item.move(env))
 
