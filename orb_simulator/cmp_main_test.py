@@ -101,27 +101,10 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
-            class MyClass {
-                Int attr1;
-                Bool attr2;
-
-                func String fibonacci (number) {
-                    if (number == 1 || number == 0) then {
-                        ret 1;
-                    }
-
-                    else {
-                        ret fibonacci(number - 1) + fibonacci(number - 2);
-                    };
-                };
-
-                func Bool even (number) {
-                    if (number % 2 == 0) then {
-                        ret true;
-                    };
-
-                    ret false;
-                };
+            let Int max = 10;
+            let Int min = 0;
+            loop (min != max){
+                min = min + 1;
             };
         '''
     )
