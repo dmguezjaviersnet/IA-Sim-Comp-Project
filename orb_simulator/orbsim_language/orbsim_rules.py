@@ -8,7 +8,7 @@ from orbsim_language.orbsim_ast import AssingNode, AttributeDef, NotNode, PlusNo
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode
 from orbsim_language.orbsim_ast import DivNode, AtomicNode, PrintNode, FunCallNode, ModNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
-from orbsim_language.orbsim_ast import ClassDeclr
+from orbsim_language.orbsim_ast import ClassDeclrNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ProgramNode(tail[0].ast)
@@ -20,7 +20,7 @@ def stmt_list_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].ast]
 
 def stmt_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = ClassDeclr(tail[1].val, [elem for elem in tail[3].ast if isinstance(elem, AttributeDef)],
+    head.ast = ClassDeclrNode(tail[1].val, [elem for elem in tail[3].ast if isinstance(elem, AttributeDef)],
                         [elem for elem in tail[3].ast if isinstance(elem, FuncDeclrNode)]
                         ) 
 
@@ -54,7 +54,7 @@ def func_body_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
 
 def let_stmt_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = VariableDeclrNode(tail[1].val, tail[3].ast)
+    head.ast = VariableDeclrNode(tail[2].val, tail[1].val, tail[4].ast)
 
 def assign_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = AssingNode(tail[2].ast)

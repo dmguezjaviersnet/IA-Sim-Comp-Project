@@ -30,7 +30,7 @@ class TypeChecker:
     @visitor.when(VariableDeclrNode)
     def visit(self, node: VariableDeclrNode, scope: 'Scope'):
         try:
-            var_type = self.context.get_type(node.type) # dame el tipo si existe de esta variable
+            var_type = self.context.get_type(node.type) # dame el tipo si existe de esta variable en caso que esté definido en el context
             
         except OrbisimSemanticError as err:
             self.log.append(err.error_info)
