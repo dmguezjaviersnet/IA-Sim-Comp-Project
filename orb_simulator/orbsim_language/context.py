@@ -2,22 +2,26 @@ from dataclasses import dataclass
 from typing import Dict, List, Type
 from orbsim_language.orbsim_type import OrbsimType
 from errors import OrbisimSemanticError
-
-        
+from orbsim_language.orbsim_type import OrbsimType
+from orbsim_language.orbsim_ast.expression_node import ExpressionNode
 @dataclass
-class VarInfo:
+class VariableInfo:
     name: str
+    type: OrbsimType
+    expr: ExpressionNode
 
-    def __eq__(self, other: 'VarInfo') -> bool:
+    def __eq__(self, other: 'VariableInfo') -> bool:
         return self.name == other.name
 
 
 @dataclass
-class FuncInfo:
+class FunctionInfo:
     name: str
+    return_type: OrbsimType
     args: List[str]
+    arg_types: List[OrbsimType]
 
-    def __eq__(self, other: 'FuncInfo') -> bool:
+    def __eq__(self, other: 'FunctionInfo') -> bool:
         return self.name == other.name and self.args == other.args
 
 
@@ -32,7 +36,10 @@ class Scope:
         self.local_variables = {}
         self.local_functions = {}
     
-    def check_var(self, var: str) -> bool:
+    def check_var(self, var: str) -> bool: 
+        '''
+            Dice si una variable está definida o no en el programa
+        '''
         if var  in self.local_variables:
             return True
         if self.parent != None:
@@ -40,7 +47,7 @@ class Scope:
         return False
     
 
-    def check_fun(self, fun: str, args: List[str]):
+    def check_fun(self, fun: str, args: int):
         if (fun, args) in self.local_functions:
             return True
         
@@ -49,16 +56,16 @@ class Scope:
         
         return False
     
-    def define_var(self, var: str) -> bool:
-        if not self.check_var(var):
-            self.local_variables[var] = VarInfo(var)
+    def define_var(self, var_id: str, type: OrbsimType, expr: 'ExpressionNode') -> bool:
+        if not self.check_var(var_id):
+            self.local_variables[var_id] = VariableInfo(var_id, type. expr)
             return True
         
         return False
 
-    def define_fun(self, fun: str, args: int) -> bool:
-        if not self.check_fun(fun, args):
-            self.local_functions[(fun, args)] = FuncInfo(fun, args)
+    def define_fun(self, fun_name: str, args: List[str], arg_types: List[OrbsimType] ) -> bool:
+        if not self.check_fun(fun_name, len(args)):
+            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, args, arg_types)
             return True
         return False
     
@@ -79,7 +86,7 @@ class Context:
         if name in self.types:
             return self.types[name]
         else:
-            return None
+            raise OrbisimSemanticError(f'El tipo {name} no se encuentra definido en el contexto')
 
 
         
