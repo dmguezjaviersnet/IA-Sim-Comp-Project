@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict, List, Type
-from orbsim_language.orbsim_type import OrbsimType
+# from orbsim_language.orbsim_type import OrbsimType
 from errors import OrbisimSemanticError
 from orbsim_language.orbsim_type import OrbsimType
 from orbsim_language.orbsim_ast.expression_node import ExpressionNode
@@ -94,6 +94,7 @@ class Context:
         if name in self.types:
             raise OrbisimSemanticError(f'Ya hay un tipo con el nombre {name} definido en el contexto')
         else:
-            new_type = OrbsimType(name)
-            self.types[name] = new_type
-            return new_type
+            # new_type = OrbsimType(name)
+            # self.types[name] = new_type
+            # return new_type
+            pass

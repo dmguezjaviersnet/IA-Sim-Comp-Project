@@ -1,11 +1,26 @@
-from ast import expr
 from typing import Dict
 from parser.production import Production
 from parser.terminal import Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import *
+from orbsim_language.orbsim_rules import class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2
+from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
+from orbsim_language.orbsim_rules import func_body_stmt_list_rule2 
+from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
+from orbsim_language.orbsim_rules import arth_expr_rule2, arth_expr_rule3, atom_rule1, atom_rule2, atom_rule3, atom_rule4
+from orbsim_language.orbsim_rules import atom_rule5, atom_rule6, bitwise_and_expr_rule1, bitwise_and_expr_rule2
+from orbsim_language.orbsim_rules import bitwise_or_expr_rule1, bitwise_or_expr_rule2, bitwise_shift_expr_rule1
+from orbsim_language.orbsim_rules import bitwise_shift_expr_rule2, bitwise_shift_expr_rule3, bitwise_xor_expr_rule1
+from orbsim_language.orbsim_rules import bitwise_xor_expr_rule2, compare_expr_rule1, compare_expr_rule2, compare_op_rule
+from orbsim_language.orbsim_rules import conditional_body_stmt_list_rule1, conditional_body_stmt_list_rule2
+from orbsim_language.orbsim_rules import conditional_body_stmt_rule, conditional_stmt_rule1, conditional_stmt_rule2
+from orbsim_language.orbsim_rules import expr_list_rule1, expr_list_rule2, expression_rule1, factor_rule1, factor_rule2
+from orbsim_language.orbsim_rules import func_body_stmt_rule, func_call_rule, let_stmt_rule, loop_body_stmt_list_rule1
+from orbsim_language.orbsim_rules import loop_body_stmt_list_rule2, loop_body_stmt_rule, loop_stmt_rule, not_expr_rule1
+from orbsim_language.orbsim_rules import not_expr_rule2, or_expr_rule1, or_expr_rule2, program_rule, ret_stmt_rule
+from orbsim_language.orbsim_rules import stmt_list_rule1, stmt_list_rule2, stmt_rule1, stmt_rule2, term_rule1, term_rule2
+from orbsim_language.orbsim_rules import term_rule3, term_rule4
 
 # Gramática del DSL
 '''
@@ -213,18 +228,18 @@ division = Terminal('/')
 module = Terminal('%')
 eof = Eof()
 
-type = Terminal('type', 'val')
 int = Terminal('int_val', 'val')
 float = Terminal('float_val', 'val')
 boolean = Terminal('boolean_val', 'val')
 string = Terminal('string_val', 'val')
 id_orbsim = Terminal('id_orbsim', 'val')
+type_id = Terminal('type_id', 'val')
 
 terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword, then_keyword, else_keyword, print_keyword,
             break_keyword, continue_keyword, ret_keyword, make_keyword, stmt_separator, expr_separator, assign,
             open_curly_braces, closed_curly_braces, open_parenthesis, closed_parenthesis, neg, logic_or, logic_and,
             not_equals, equals, greater_or_equal, less_equal, greater, less, addition, substraction, product, division,
-            module, int, float, boolean, string, id_orbsim, eof, type, bitwise_or, bitwise_xor, bitwise_and,
+            module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and,
             bitwise_shift_left, bitwise_shift_right]
 
 # No terminales
@@ -288,52 +303,53 @@ p2 = Production(stmt_list,
                 )
 
 p3 = Production(statement,
-                [[class_keyword, open_curly_braces, class_body_stmt_list, closed_curly_braces, stmt_separator], 
+                [[class_keyword, type_id, open_curly_braces, class_body_stmt_list, closed_curly_braces], 
                  [let_stmt], 
                  [def_func_stmt], 
                  [conditional_stmt], 
                  [loop_stmt], 
                  [print_stmt],
                  [assign_stmt]], 
-                [[(stmt_rule, True)], [(stmt_rule, True)], [(stmt_rule, True)], 
-                 [(stmt_rule, True)], [(stmt_rule, True)], [(stmt_rule, True)], [(stmt_rule, True)]]
+                [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], 
+                 [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)]]
                 )
 
 p4 = Production(class_body_stmt_list,
                 [[class_body_stmt, stmt_separator, class_body_stmt_list],
                  [class_body_stmt, stmt_separator]],
-                 [[(atom_rule1, True)], [(atom_rule1, True)]]
+                 [[(class_body_stmt_list_rule1, True)], [(class_body_stmt_list_rule2, True)]]
                 )
 
 p5 = Production(class_body_stmt,
                 [[attr_stmt], 
                  [def_func_stmt]], 
-                [[(stmt_rule, True)], [(stmt_rule, True)]]
+                [[(class_body_stmt_rule, True)], [(class_body_stmt_rule, True)]]
                 )
 
 p6 = Production(attr_stmt,
-                [[type, id_orbsim]],
-                [[(atom_rule1, True)]]
+                [[type_id, id_orbsim]],
+                [[(attr_stmt_rule, True)]]
                 )
 
 p7 = Production (def_func_stmt,
-                [[func_keyword, id_orbsim, open_parenthesis, arg_list, closed_parenthesis,
+                [[func_keyword, type_id, id_orbsim, open_parenthesis, arg_list, closed_parenthesis,
                  open_curly_braces, func_body_stmt_list, closed_curly_braces]],
                 [[(def_func_stmt_rule, True)]]
                 )
 
 p8 = Production (func_body_stmt_list,
                 [[func_body_stmt, stmt_separator, func_body_stmt_list], [func_body_stmt, stmt_separator]],
-                [[(def_func_stmt_rule, True)], [(atom_rule1, True)]]
+                [[(func_body_stmt_list_rule1, True)], [(func_body_stmt_list_rule2, True)]]
                 )
 
 p9 = Production (func_body_stmt,
                 [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt]],
-                [[(let_stmt_rule, True)], [(let_stmt_rule, True)], [(atom_rule1, True)], [(atom_rule1, True)], [(atom_rule1, True)]]
+                [[(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)],
+                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)]]
                 )
 
 p10 = Production(let_stmt,
-                [[let_keyword, type, id_orbsim, assign, expression]],
+                [[let_keyword, type_id, id_orbsim, assign, expression]],
                 [[(let_stmt_rule, True)]]
                 )
 
@@ -345,17 +361,18 @@ p11 = Production(assign_stmt,
 p12 = Production(loop_stmt,
                 [[loop_keyword, open_parenthesis, expression, closed_parenthesis, open_curly_braces, loop_body_stmt_list,
                  closed_curly_braces, stmt_separator]],
-                [[(loop_rule, True)]]
+                [[(loop_stmt_rule, True)]]
                 )
 
 p13 = Production(loop_body_stmt_list,
-                [[loop_body_stmt, stmt_separator], [loop_body_stmt, stmt_separator, loop_body_stmt_list]],
-                [[(atom_rule1, True)], [(atom_rule1, True)]]
+                [[loop_body_stmt, stmt_separator, loop_body_stmt_list], [loop_body_stmt, stmt_separator]],
+                [[(loop_body_stmt_list_rule1, True)], [(loop_body_stmt_list_rule2, True)]]
                 )
 
 p14 = Production(loop_body_stmt,
                 [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [flow_stmt]],
-                [[(atom_rule1, True)], [(atom_rule1, True)], [(atom_rule1, True)], [(atom_rule1, True)], [(atom_rule1, True)]]
+                [[(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)],
+                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)]]
                 )
 
 p15 = Production(flow_stmt,
@@ -373,13 +390,14 @@ p16 = Production(conditional_stmt,
                 )
 
 p17 = Production(conditional_body_stmt_list,
-                [[conditional_stmt, stmt_separator], [conditional_stmt, stmt_separator, conditional_body_stmt_list]],
-                [[(atom_rule1, True)], [(atom_rule1, True)]]
+                [[conditional_body_stmt, stmt_separator, conditional_body_stmt_list], [conditional_body_stmt, stmt_separator]],
+                [[(conditional_body_stmt_list_rule1, True)], [(conditional_body_stmt_list_rule2, True)]]
                 )
 
 p18 = Production(conditional_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_body_stmt], [conditional_stmt]],
-                [[(atom_rule1, True)], [(atom_rule1, True)], [(atom_rule1, True)], [(atom_rule1, True)]]
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt]],
+                [[(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)],
+                 [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)]]
                 )
 
 p19 = Production(ret_stmt,
@@ -389,7 +407,7 @@ p19 = Production(ret_stmt,
 
 p20 = Production(print_stmt,
                 [[print_keyword, expression]],
-                [[[(atom_rule1, True)]]]
+                [[(atom_rule1, True)]]
                 )
 
 p21 = Production(arg_list,
@@ -430,22 +448,22 @@ p27 = Production(compare_op,
 
 p28 = Production(bitwise_or_expr,
                 [[bitwise_xor_expr, bitwise_or, bitwise_or_expr], [bitwise_xor_expr]],
-                [[(arth_expr_rule1, True)], [(arth_expr_rule2, True)]]
+                [[(bitwise_or_expr_rule1, True)], [(bitwise_or_expr_rule2, True)]]
                 )
 
 p29 = Production(bitwise_xor_expr,
                 [[bitwise_and_expr, bitwise_xor, bitwise_xor_expr], [bitwise_and_expr]],
-                [[(arth_expr_rule1, True)], [(arth_expr_rule2, True)]]
+                [[(bitwise_xor_expr_rule1, True)], [(bitwise_xor_expr_rule2, True)]]
                 )
 
 p30 = Production(bitwise_and_expr,
                 [[shift_expr, bitwise_and, bitwise_and_expr], [shift_expr]],
-                [[(arth_expr_rule1, True)], [(arth_expr_rule2, True)]]
+                [[(bitwise_and_expr_rule1, True)], [(bitwise_and_expr_rule2, True)]]
                 )
 
 p31 = Production(shift_expr,
                 [[arth_expr, bitwise_shift_left, shift_expr], [arth_expr, bitwise_shift_right, shift_expr], [arth_expr]],
-                [[(arth_expr_rule1, True)], [(arth_expr_rule2, True)], [(atom_rule1, True)]]
+                [[(bitwise_shift_expr_rule1, True)], [(bitwise_shift_expr_rule2, True)], [(bitwise_shift_expr_rule3, True)]]
                 )
 
 p32 = Production(arth_expr,
@@ -480,7 +498,7 @@ p37 = Production(method_call,
                 )
 
 p38 = Production(make_instance,
-                [[make_keyword, type, open_parenthesis, expr_list, closed_parenthesis]],
+                [[make_keyword, type_id, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(func_call_rule, True)]]
                 )
 
@@ -513,7 +531,7 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.boolean : 'boolean_val',
     Token_Type.string : 'string_val',
     Token_Type.id_orbsim : 'id_orbsim',
-    Token_Type.type_id_orbsim : 'type',
+    Token_Type.type_id_orbsim : 'type_id',
     
     Token_Type.plus : '+',
     Token_Type.minus : '-',
