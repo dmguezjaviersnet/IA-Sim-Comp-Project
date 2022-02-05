@@ -50,7 +50,7 @@ def main():
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
-    # ui = OrbisimUI()
+    ui = OrbisimUI()
     # print(ui.code_text)
     # au = re.automaton
     # test_lexer()

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from orbsim_language.orbsim_ast import ProgramNode, ClassDeclr
+from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
@@ -26,8 +26,8 @@ class TypeCollector:
         for st in node.statements:
             self.visit(st)
     
-    @visitor.when(ClassDeclr)
-    def visit(self, node: ClassDeclr):
+    @visitor.when(ClassDeclrNode)
+    def visit(self, node: ClassDeclrNode):
         try:
             self.context.create_type(node.name)
         except OrbisimSemanticError as err:
