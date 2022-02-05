@@ -3,9 +3,12 @@ import random
 import math
 import simpy
 from typing import List
+from orbsim_simulation_entities.agent import Agent
 from orbsim_simulation_entities.elements_3d import Vector3
+from orbsim_simulation_entities.factory import Factory
+from orbsim_simulation_entities.launchpad import Launchpad
 
-
+s
 # Esta clase representa a una persona que es un agente
 # que va a interactuar con los demas agentes de la simulacion 
 class Person(Agent):
@@ -14,7 +17,7 @@ class Person(Agent):
 
   # Para interactuar con las demas agentes y generar nuevos objetos simulacion
   # digamos satelites para poder annadir mas elementos a la simulacion 
-  def toInteract (self, env: simpy.Environment, factories: List[factory], launchpads : List[launchpad],objects = simpy.Store):
+  def toInteract (self, env: simpy.Environment, factories: List[Factory], launchpads : List[Launchpad],objects = simpy.Store):
     while True:
       R = random.random()
       delay = - T_WAITING_TO_INTERACT * math.log(R)
