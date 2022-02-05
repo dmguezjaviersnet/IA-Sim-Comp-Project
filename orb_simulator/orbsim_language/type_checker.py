@@ -36,14 +36,14 @@ class TypeChecker:
             self.log.append(err.error_info)
         
         if not scope.define_var(node.identifier, var_type, node.expr):
-            self.log.append(f'Ya existe una variable definida con el nombre {node.identifier}')
+            self.log.append(f'SemanticError: Ya existe una variable definida con el nombre {node.identifier}')
             
         self.visit(node.expr, scope)
 
     @visitor.when(VariableNode)
     def visit(self, node: VariableNode, scope: 'Scope'):
         if not scope.check_var(node.identifier):
-            self.log(f'La variable{node.identifier} no se encuentra definida en el programa')
+            self.log(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
         
 
     @visitor.when(FunCallNode)
