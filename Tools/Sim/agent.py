@@ -1,6 +1,5 @@
 from logging import root
 import random
-from typing import *
 import math
 from enum import Enum
 from objects import *

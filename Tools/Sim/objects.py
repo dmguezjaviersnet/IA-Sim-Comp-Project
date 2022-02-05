@@ -43,7 +43,7 @@ class obj:
 
 
   def __str__(self) -> str:
-    return 'name: ' + str(self.name) + ' weith: ' + str(self.weith) + ' position: ' + str(self.position) + '  diameter: ' + str(self.radius)
+    return 'name: ' + str(self.name) + ' weith: ' + str(self.weith) + ' position: ' + str(self.position) + '  diameter: ' + str(self.diameter)
 
 # Esta clase me repesenta un Cohete en la simulacion , un cohete puede
 # contener una lista de satelite 
