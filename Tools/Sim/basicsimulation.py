@@ -17,30 +17,7 @@ MAX_ESPERA_COHETE = 300
 T_LLEGADAS = 200
 
 
-def lanzar(cohete):
-  R = random.random()
-  tiempo = MAX_ESPERA_COHETE - MIN_ESPERA_COHETE
-  tiempo_lanzamiento  = MIN_ESPERA_COHETE + (tiempo * R)
-  yield env.timeout(tiempo_lanzamiento)
-  print("\o/  %s lanzado con exito en %.2f minutos" %(cohete,tiempo_lanzamiento)) 
-
-def launch_rocket(env,name,plataformas):
-  llega = env.now
-  print('---> %s llego a plataforma en minuto %.2f' %(name,llega))
-  with plataformas.request() as request:
-    yield request 
-    pasa = env.now
-    espera = pasa - llega
-    print('*** %s pasa a la plataforma de lanzamiento en el minuto %.2f habiendo esperado %.2f minutos ' %(name,llega,espera))
-    yield env.process(lanzar(name))
-
 def principal (env: simpy.Environment,launchpads: simpy.Store , factories : simpy.Store , objects: simpy.Store):
-  # llegada = 0
-  # for i in range(TOTAL_COHETES):
-  #   R = random.random()
-  #   llegada = -T_LLEGADAS * math.log(R)
-  #   yield env.timeout(llegada)
-  #   env.process(launch_rocket(env,'Cohete %d' % (i+1), plataformas))
   for i in range (TOTAL_COHETES):
     R = random.random()
     delay = -300 * math.log(R)
@@ -50,27 +27,30 @@ def principal (env: simpy.Environment,launchpads: simpy.Store , factories : simp
     curr_launchpad = random.choice(launchpads.items)
     env.process(curr_launchpad.launchrocket(curr_rocket,objects))
 
-
+# environment para correr la simulacion 
 env = simpy.Environment()
-# plataformas = simpy.Resource(env,NUMERO_PLATAFORMAS)
- 
 
-# env.process(principal(env,LAUNCHPAD))
-# env.run()
 
+# guardando en un store objetos random para tener una cantidad 
+# NUMERO_INICIAL_OBJETOS en la simulacion antes de que empiece a correr
 def creatingInitialObject (store: simpy.Store):
   for  item in [generateObj() for i in range (NUMERO_INICIAL_OBJETOS)]:
     store.put(item)
 
+# guardando en un store una cantidad NUMERO_FABRICAS inicial de 
+# fabricas para que puedan interactuar inicialmente con el environment 
 def creatingInitialFactories (store: simpy.Store):
   for item in [factory(Vector3.random()) for i in range (NUMERO_FABRICAS)]:
     store.put(item)
   
+# guardando en un store una cantidad NUMERO_PLATAFORMAS inicial de
+# fabricas para que puedan interactuar inicialmente con el environmet  
 def creatingInitialLaunchpad(store: simpy.Store):
   for item in [launchpad(env) for i in range(NUMERO_PLATAFORMAS)]:
     store.put(item)
 
 
+# poner a moverse a los objetos que fueron creados inicialmente en la simulacion 
 def creatingProcessToMOveObjects(env: simpy.Environment , objects: List[obj]):
   for item in objects:
     env.process(item.move(env))

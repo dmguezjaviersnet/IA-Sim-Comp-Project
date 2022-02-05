@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+Tools/Sim/AnotherImplementations/otherOctree.py
+Tools/Sim/AnotherImplementations/otherQuadtree.py
+Tools/Sim/test21.py
+Tools/Sim/test3.py
+Tools/Sim/test.py

@@ -18,3 +18,42 @@ Para tener una representacion geometrica de nuestro entorno tomamos como referen
 #### Como detectar las colisiones?
 Decidimos que para detectar las colisiones determinamos que si un nodo del octree se encuentra en un punto donde ya no puede hace mas pequnno el espacio para representar mas objetos, y ademas en ese nodo existen mas de un objeto entonces  hay una colision entre los objetos que hay en ese nodo. 
 Ademas de comprobar si colisionan los objetos que se encuntran sobre los ejes de alguno de los octantes que representan el espacio. 
+
+
+
+# Elementos del lenguaje a implementar 
+
+### Buid-In 
+1. run -> empezar o continuar la simulacion 
+2. stop -> detemer la simulacion
+3. restart -> empezar desde el principio la simulacion 
+
+4. int -> entero (puede ser el int de python )
+5. float -> flotante (puede ser el float de python )
+
+
+6. agent -> repsesenta un agente (puede ser visto como un objeto pero con peculiaridades)
+7. obj -> repesenta un tipo objeto que son los obejetos de la simulacion 
+8. tash -> representa basura (puede ser interpretado como un objeto )
+9. callectors -> representa los recolectores de la basura
+10. entities -> repesenta las entidades bajas de la simulacion 
+
+### Definicion de objetos
+
+1. masa -> la masa del objeto
+2. posicion -> la posicion del objeto , (puede ser un "vector2d" o "vector3d")
+3. diametro -> diametro del objeto (un foat)
+4. move() -> un metodo que determina el proximo movimiento del objeto
+
+### definicion de agentes
+
+1. Todos los elementos de objecto (una clase mas baja en la gerarquia )
+2. nextaction() -> un metodo que determina la proxima accion (puede ser sobrescrito)
+3. freeze ()-> detine al agente y lo deja inmovil 
+4. env -> el enviroment en que el agente se desenvuelve (esto es una referencia a una environment con el que interactua el agente)
+5. live -> vida del agente (inicialmente 100)
+
+### Definicion de Entities
+1. posicion -> la posicion de la entidad
+2. rool -> capacidad de interaccion con los agentes
+3. quality -> un ranking que define la calidad de la entidad
