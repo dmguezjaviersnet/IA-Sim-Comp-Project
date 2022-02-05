@@ -1,20 +1,18 @@
 import random 
 import math
-from pkg_resources import Environment 
 import simpy
 from octree import Octree
 from objects import * 
-import uuid 
 from agent import * 
-from elements3d import * 
+from elements3d import *
 
-NUMERO_INICIAL_OBJETOS = 1
+NUMERO_INICIAL_OBJETOS = 10
 TOTAL_COHETES = 1000
 NUMERO_PLATAFORMAS = 1 
 NUMERO_FABRICAS = 2
 MIN_ESPERA_COHETE = 200 
 MAX_ESPERA_COHETE = 300
-T_LLEGADAS = 200
+T_LLEGADAS = 20 
 
 
 def principal (env: simpy.Environment,launchpads: simpy.Store , factories : simpy.Store , objects: simpy.Store):
@@ -50,8 +48,30 @@ def creatingInitialLaunchpad(store: simpy.Store):
     store.put(item)
 
 
+def checkcollitions (objects : List[OrbsimObj]):
+
+  WORLD_SIZE = 100
+
+  octree = Octree(worldSize=WORLD_SIZE)
+
+  collitionsObj = []
+
+  #insert objetct in octree 
+  for item in objects:
+    position = (item.position.x,
+                item.position.y,
+                item.position.z)
+    octree.insertNode(position, item)
+
+  # for node in octree.iterateDepthFirst():
+  #   if len(node.data) > 1 :
+  #     collitionsObj += node.data
+
+  return collitionsObj
+
+
 # poner a moverse a los objetos que fueron creados inicialmente en la simulacion 
-def creatingProcessToMOveObjects(env: simpy.Environment , objects: List[obj]):
+def creatingProcessToMOveObjects(env: simpy.Environment , objects: List[OrbsimObj]):
   for item in objects:
     env.process(item.move(env))
 
@@ -69,3 +89,14 @@ creatingProcessToMOveObjects(env,OBJECTS.items)
 
 env.process(principal(env,LAUNCHPAD,FACTORIES,OBJECTS))
 env.run()
+
+
+# for item in OBJECTS.items:
+#   print (item)
+
+# collections = checkcollitions(OBJECTS.items)
+
+# print('-'*10, 'Collections', '-'* 10)
+
+# for item in collections:
+#   print(item)

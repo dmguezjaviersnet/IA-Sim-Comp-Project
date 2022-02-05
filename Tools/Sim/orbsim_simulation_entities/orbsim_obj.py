@@ -1,11 +1,11 @@
-from typing import *
-from elements3d import Vector3
-import uuid
 import simpy
+from orbsim_simulation_entities.elements_3d import Vector3
 
 
 # Esta clase me representa un objeto de la simulacion, es la clase
 # mas "abstracta" de la representacion de los objetos del environment 
+
+
 class OrbsimObj:
   def __init__(self, position:Vector3, unique_id, weith:float=1, diameter:int=1,name=None):
     '''
@@ -44,34 +44,3 @@ class OrbsimObj:
 
   def __str__(self) -> str:
     return 'name: ' + str(self.name) + ' weith: ' + str(self.weith) + ' position: ' + str(self.position) + '  diameter: ' + str(self.diameter)
-
-# Esta clase me repesenta un Cohete en la simulacion , un cohete puede
-# contener una lista de satelite 
-class Rocket(OrbsimObj):
-  def __init__(self, position: Vector3, unique_id, weith: float = 1, diameter: int = 1, name=None, fuel:float= 100 , satellites: List['Satellite']=[]):
-    super().__init__(position, unique_id, weith=weith, diameter=diameter, name=name)
-
-    # este es el combustible del cohete 
-    self.fuel: float = fuel
-
-    # esta es la lista de satelites que contiene el cohete 
-    self.satellites: Satellite = satellites
-
-    # esta es la vida del cohete 
-    self.life = 100
-
-# Esta clase me representa un satelite en la simulacion 
-class Satellite(OrbsimObj):
-  def __init__(self, position: Vector3, unique_id, weith: float = 1, diameter: int = 1, name=None):
-    super().__init__(position, unique_id, weith=weith, diameter=diameter, name=name)
-    '''
-    inicializacion de los satelites , se llama a la clase padre 
-    para inicializar los valores que se pasan en los parametros 
-    '''
-
-# esto es para generar objetos aleatorios de la simulacion 
-def generateObj ():
-  unique_id = uuid.uuid4()
-  position = Vector3.random()
-  new_obj = OrbsimObj(position=position,unique_id= unique_id)
-  return new_obj

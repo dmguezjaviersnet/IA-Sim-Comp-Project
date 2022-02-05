@@ -1,27 +1,5 @@
-from typing import List
-from enum import Enum
 
 import random
-class RocketStatus(Enum):
-   
-    GOOD = 0
-    BAD = 1
-    REGULAR = 2
-
-class Rocket:
-    def __init__(self, weight: float, fuel:int , satellites: List['Satellite'] = []) -> None:
-        self.weight = weight
-        self.fuel = fuel
-        self.satellites = satellites
-        self.status = RocketStatus.GOOD
-        self.life = 100
-        self.windResistence = 20
-        self.speed = 0
-
-class Satellite:
-    def __init__(self, usefulLife: int):
-        self.usefulLife = usefulLife
-
 class Junk:
 
     def __init__(self, size: float, position):
@@ -45,4 +23,3 @@ class EnvironmentMap:
 
     def __init__(self, maxX, maxY, maxZ):
         ...
-
