@@ -28,7 +28,8 @@ from orbsim_language.orbsim_ast.ret_node import RetNode
 from orbsim_language.context import Context, Scope, ExScope
 from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
-
+from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
+from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
 class Executor:
 
     def __init__(self, context: 'Context'):
@@ -55,7 +56,17 @@ class Executor:
         # else:
         #     instance = self.visit(node.expr, scope)
         # return instance
-    
+    @visitor.when(FuncDeclrNode)
+    def execute(self, node: FuncDeclrNode, scope: 'ExScope'):
+        ret_type = self.context.get_type(node.return_type)
+        arg_types = [self.context.get_type(t) for t in node.arg_types]
+        scope.define_fun(node.identifier, ret_type, arg_types, node.body)
+
+    @visitor.when(FunCallNode)
+    def execute(self, node: FunCallNode, scope: 'ExScope'):
+        ...
+        
+
     @visitor.when(LoopNode)
     def execute(self, node: 'LoopNode', scope: 'ExScope'):
         while self.execute(node.condition, scope):

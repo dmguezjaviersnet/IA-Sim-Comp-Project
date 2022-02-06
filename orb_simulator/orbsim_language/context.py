@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Type
 # from orbsim_language.orbsim_type import OrbsimType
 from errors import OrbisimSemanticError
+from orbsim_language.orbsim_ast.body_node import BodyNode
 from orbsim_language.orbsim_type import OrbsimType
 from orbsim_language.orbsim_ast.expression_node import ExpressionNode
 
@@ -26,6 +27,7 @@ class FunctionInfo:
     return_type: OrbsimType
     args: List[str]
     arg_types: List[OrbsimType]
+    body: BodyNode
 
     def __eq__(self, other: 'FunctionInfo') -> bool:
         return self.name == other.name and self.args == other.args
@@ -68,9 +70,9 @@ class ExScope:
         
         return False
 
-    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType]) -> bool:
+    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType], body: BodyNode) -> bool:
         if not self.check_fun(fun_name, len(return_type)):
-            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types)
+            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types, body: BodyNode )
             return True
         return False
     
