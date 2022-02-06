@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from typing import Dict, List
+
+from numpy import imag
 from orbsim_language.orbsim_ast import ExpressionNode
 from orbsim_language.orbsim_ast import StatementNode
-
+from errors import OrbisimSemanticError
 @dataclass
 class Attribute:
     name: str
@@ -19,9 +21,12 @@ class Method:
     
 
 class OrbsimType:
-    name: str
-    attributes:  Dict[str, 'Attribute'] = {}
-    methods: Dict[str, 'Method'] = {}
+
+    def __init__(self, name: str):
+        self.name = name
+        self.attributes:  Dict[str, 'Attribute'] = {}
+        self.methods: Dict[str, 'Method'] = {}
+    
 
     def get_attribute(self, name: str) -> 'Attribute':
         return self.attributes[name]
@@ -31,7 +36,7 @@ class OrbsimType:
     
     def define_attribute(self, name: str, type: 'OrbsimType') -> bool:
         if name in self.attributes:
-            return False
+            raise OrbisimSemanticError(f'Ya existe un atributo definido con en {type.name} con este nombre')
         self.attributes[name] = Attribute(name, type)
         return True
     

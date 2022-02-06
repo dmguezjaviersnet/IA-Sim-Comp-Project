@@ -1,3 +1,4 @@
+from orbsim_language.orbsim_ast.body_node import BodyNode
 import orbsim_language.visitor as visitor
 from orbsim_language.orbsim_ast.program_node import ProgramNode
 from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
@@ -24,150 +25,171 @@ from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
 from orbsim_language.orbsim_ast.and_node import AndNode
 from orbsim_language.orbsim_ast.or_node import OrNode
 from orbsim_language.orbsim_ast.ret_node import RetNode
+from orbsim_language.context import Context, Scope, ExScope
+from orbsim_language.orbsim_ast.variable_node import VariableNode
+from orbsim_language.orbsim_ast.assign_node import AssingNode
 
 class Executor:
 
-    def __init__(self):
-        pass
+    def __init__(self, context: 'Context'):
+        self.context: 'Context' = context
+        # self.scope: 'ExScope' = ExScope()
 
     @visitor.on('node')
     def execute(self, node):
         pass
     
     @visitor.when(ProgramNode)
-    def execute(self, node: 'ProgramNode', scope: 'Scope'):
+    def execute(self, node: 'ProgramNode', scope: 'ExScope'):
         for st in node.statements:
             self.execute(st, scope)
     
     @visitor.when(VariableDeclrNode)
-    def execute(self, node:'VariableDeclrNode',  scope: 'Scope'):
-        def_values = {'string': '', 'int': 0, 'bool': False}
-        if not node.expr and node.type in def_values:
-            instance  = def_values[node.type]
-        else:
-            instance = self.visit(node.expr, scope)
-        return instance
+    def execute(self, node:'VariableDeclrNode',  scope: 'ExScope'):
+        # def_values = {'string': '', 'int': 0, 'bool': False}
+        ex_expr = self.execute(node.expr, scope)
+        var_type =  self.context.get_type(node.type)
+        scope.define_var(node.identifier, var_type, ex_expr)
+        # if not node.expr and node.type in def_values:
+        #     instance  = def_values[node.type]
+        # else:
+        #     instance = self.visit(node.expr, scope)
+        # return instance
     
     @visitor.when(LoopNode)
-    def execute(self, node: 'LoopNode', scope: 'Scope'):
-        while self.visit(node.condition, scope):
-            self.visit(node.body, scope.create_child_scope())
+    def execute(self, node: 'LoopNode', scope: 'ExScope'):
+        while self.execute(node.condition, scope):
+            new_scope = scope.create_child_scope()
+            self.execute(node.body, new_scope)
     
     @visitor.when(ConditionalNode)
-    def execute(self, node: 'ConditionalNode', scope: 'Scope'):
-        if self.visit(node.if_expr, scope):
-            return self.visit(node.then_expr, scope.create_child_scope())
-        return self.visit(node.else_expr, scope.create_child_scope())
+    def execute(self, node: 'ConditionalNode', scope: 'ExScope'):
+        if self.execute(node.if_expr, scope):
+            return self.execute(node.then_expr, scope.create_child_scope())
+        return self.execute(node.else_expr, scope.create_child_scope())
     
+    @visitor.when(BodyNode)
+    def execute(self, node: 'BodyNode', scope: 'ExScope'):
+        for st in node.statements:
+            self.execute(st, scope)
+
     @visitor.when(IntegerNode)
-    def execute(self, node: 'IntegerNode', scope: 'Scope'):
+    def execute(self, node: 'IntegerNode', scope: 'ExScope'):
         return int(node.val)
     
     @visitor.when(BooleanNode)
-    def execute(self, node: 'BooleanNode', scope: 'Scope'):
+    def execute(self, node: 'BooleanNode', scope: 'ExScope'):
         if node.val == 'true':
             return True
         return False
     
     @visitor.when(FloatNode)
-    def execute(self, node: 'FloatNode', scope: 'Scope'):
+    def execute(self, node: 'FloatNode', scope: 'ExScope'):
         return float(node.val)
     
     @visitor.when(StringNode)
-    def execute(self, node: 'StringNode', scope: 'Scope'):
+    def execute(self, node: 'StringNode', scope: 'ExScope'):
         return str(node.val)
 
     @visitor.when(PrintNode)
-    def execute(self, node: 'PrintNode', scope: 'Scope'):
-        eval_expr = self.execute(node.expr)
+    def execute(self, node: 'PrintNode', scope: 'ExScope'):
+        eval_expr = self.execute(node.expr, scope)
         print(eval_expr) # temporal hasta que pongamos una consolita en la UI
     
     @visitor.when(NotNode)
-    def execute(self, node: 'NotNode', scope: 'Scope'):
-       eval_expr = self.visit(node.expr)
+    def execute(self, node: 'NotNode', scope: 'ExScope'):
+       eval_expr = self.execute(node.expr, scope)
        return not eval_expr
     
     @visitor.when(PlusNode)
-    def execute(self, node: 'PlusNode', scope: 'Scope'):
+    def execute(self, node: 'PlusNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left + eval_right
     
     @visitor.when(MinusNode)
-    def execute(self, node: 'MinusNode', scope: 'Scope'):
+    def execute(self, node: 'MinusNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left - eval_right
     
     @visitor.when(DivNode)
-    def execute(self, node: 'DivNode', scope: 'Scope'):
+    def execute(self, node: 'DivNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left / eval_right
     
     @visitor.when(ProductNode)
-    def execute(self, node: 'ProductNode', scope: 'Scope'):
+    def execute(self, node: 'ProductNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left * eval_right
     
     @visitor.when(ModNode)
-    def execute(self, node: 'ModNode', scope: 'Scope'):
+    def execute(self, node: 'ModNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left % eval_right
     
     @visitor.when(EqualNode)
-    def execute(self, node: 'EqualNode', scope: 'Scope'):
+    def execute(self, node: 'EqualNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left == eval_right
 
     @visitor.when(NotEqualNode)
-    def execute(self, node: 'NotEqualNode', scope: 'Scope'):
+    def execute(self, node: 'NotEqualNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left != eval_right
 
     @visitor.when(GreaterThanNode)
-    def execute(self, node: 'GreaterThanNode', scope: 'Scope'):
+    def execute(self, node: 'GreaterThanNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left > eval_right
     
     @visitor.when(GreaterEqualNode)
-    def execute(self, node: 'GreaterEqualNode', scope: 'Scope'):
+    def execute(self, node: 'GreaterEqualNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left >= eval_right
     
     @visitor.when(LessThanNode)
-    def execute(self, node: 'LessThanNode', scope: 'Scope'):
+    def execute(self, node: 'LessThanNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left < eval_right
     
     @visitor.when(LessEqualNode)
-    def execute(self, node: 'LessEqualNode', scope: 'Scope'):
+    def execute(self, node: 'LessEqualNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left <= eval_right
     
     @visitor.when(AndNode)
-    def execute(self, node: 'AndNode', scope: 'Scope'):
+    def execute(self, node: 'AndNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left and eval_right
     
     @visitor.when(OrNode)
-    def execute(self, node: 'OrNode', scope: 'Scope'):
+    def execute(self, node: 'OrNode', scope: 'ExScope'):
         eval_left = self.execute(node.left, scope)
         eval_right = self.execute(node.right, scope)
         return eval_left or eval_right
 
     @visitor.when(RetNode)
-    def execute(self, node: RetNode, scope: 'Scope'):
+    def execute(self, node: RetNode, scope: 'ExScope'):
         eval_expr = self.execute(node.expr, scope)
         return eval_expr
 
+    @visitor.when(VariableNode)
+    def execute(self, node: VariableNode, scope: 'ExScope'):
+        val = scope.get_variable_val(node.identifier)
+        return val
     
+    @visitor.when(AssingNode)
+    def execute(self, node: AssingNode, scope: 'ExScope'):
+        new_value = self.execute(node.expr, scope)
+        scope.assing_new_variable_val(node.var_id, new_value)

@@ -1,4 +1,5 @@
 from lexer.regex_grammar import regex_grammar
+from orbsim_language.context import ExScope, Scope
 from test_language.arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
 from test_language.test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
 from lexer.regex_engine import Regex_Engine
@@ -10,6 +11,9 @@ from orbsim_language.orbsim_lexer import orbsim_lexer
 from orbsim_language.orbsim_grammar import orbsim_grammar, orbsim_token_string
 from orbsim_language.ast_print_walk import PrintAST
 from orbsim_language.type_collector import TypeCollector
+from orbsim_language.type_builder import TypeBuilder
+from orbsim_language.type_checker import TypeChecker
+from orbsim_language.executor import Executor
 
 from orbisim_ui import OrbisimUI
 # def test1():
@@ -49,7 +53,7 @@ def main():
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
-    ui = OrbisimUI()
+    # ui = OrbisimUI()
     # print(ui.code_text)
     # au = re.automaton
     # test_lexer()
@@ -101,20 +105,40 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
-            let Int max = 10;
-            let Int min = 0;
-            loop (min != max){
-                min = min + 1;
+            let Int max = -4 ;
+            let Int b = max - 5;
+            let Int count = 0;
+            loop (count < 10){
+                b = 2 * b ;
+                count = count + 1;
             };
+            let Bool condition = true;
+            let Bool number = 2;
+            if ((number % 2) == 0) then {
+                max = max + 1;
+            }
+            else{
+                max = max - 1;
+            };
+            print(b);
+            print(max);
         '''
     )
 
-    lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
+    _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
+    collector = TypeCollector()
+    collector.visit(ast)
+    builder = TypeBuilder(collector.context, collector.log)
+    builder.visit(ast)
+    checker =  TypeChecker(builder.context, builder.log)
+    checker.visit(ast, Scope())
+    exe =  Executor(checker.context)
+    exe.execute(ast, ExScope())
     
     # a = (1, 2)
     # b = (2, 1)
     # print(hash(a) == hash(b))
-    collector = TypeCollector()
+    
 
 if __name__ == '__main__':
     main()

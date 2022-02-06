@@ -8,8 +8,12 @@ from   orbsim_language.orbsim_ast.variable_node import VariableNode
 from   orbsim_language.orbsim_ast.fun_call_node import FunCallNode
 from errors import OrbisimSemanticError
 class TypeChecker:
-    context: Context
-    log: List[str]
+    
+
+    def __init__(self, context: Context =Context(), log: List[str] = []):
+        self.context: Context = context
+        self.log: List[str]   = context
+        
     @visitor.on('node')
     def visit(self, node):
         pass
@@ -23,9 +27,24 @@ class TypeChecker:
 
     @visitor.when(FuncDeclrNode)
     def visit(self, node: FuncDeclrNode, scope: 'Scope'):
-        scope.define_fun(node.identifier, len(node.args))
+        try:
+            fun_ret_type = self.context.get_type(node.return_type)
+        except OrbisimSemanticError as err:
+            self.log.append(err.error_info)
+        
+        arg_types = []
+        for t in node.arg_types:
+            try:
+                arg_type = self.context.get_type(t)
+                arg_types.append(arg_type)
+            except OrbisimSemanticError as err:
+                self.log(err.error_info)
+        if len(arg_types) == len(node.arg_types):
+            if not scope.define_fun(node.identifier, fun_ret_type, node.args, arg_types):
+                self.log(f'Ya está definida una función con nombre {node.identifier}')
+
         for st in node.body:
-            self.visit(st, scope)
+            self.visit(st, scope.create_child_scope())
     
     @visitor.when(VariableDeclrNode)
     def visit(self, node: VariableDeclrNode, scope: 'Scope'):
@@ -49,6 +68,9 @@ class TypeChecker:
     @visitor.when(FunCallNode)
     def visit(self, node: FunCallNode, scope: 'Scope'):
         if not scope.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
-            ...
+            self.log(f'SemanticError: No existe una función con nombre {node.identifier}')
+    
+    # @visitor.when()
+       
 
     # @visitor.when()

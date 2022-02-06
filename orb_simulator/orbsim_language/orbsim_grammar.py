@@ -6,7 +6,7 @@ from parser.grammar import Grammar
 from parser.own_token import Token_Type
 from orbsim_language.orbsim_rules import assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
-from orbsim_language.orbsim_rules import func_body_stmt_list_rule2 
+from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule 
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
 from orbsim_language.orbsim_rules import arth_expr_rule2, arth_expr_rule3, atom_rule1, atom_rule2, atom_rule3, atom_rule4
 from orbsim_language.orbsim_rules import atom_rule5, atom_rule6, bitwise_and_expr_rule1, bitwise_and_expr_rule2
@@ -407,7 +407,7 @@ p19 = Production(ret_stmt,
 
 p20 = Production(print_stmt,
                 [[print_keyword, expression]],
-                [[(atom_rule1, True)]]
+                [[(print_stmt_rule, True)]]
                 )
 
 p21 = Production(arg_list,
