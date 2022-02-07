@@ -63,6 +63,6 @@ class Launchpad:
     # al espacio para hacer que todos los satelites que trae el
     # cohete entre en sus orbitas correspondientes
     for curr_satellite in rocket.satellites:
-      storeobjects.put(curr_satellite)
+      storeobjects.append(curr_satellite)
       print('+++ %s lanzado con exito a la orbita en el minuto %.2f' % (str(curr_satellite.unique_id),self.env.now))
-      self.env.process(curr_satellite.move(self.env))
+      #yield self.env.process(curr_satellite.move(self.env))
