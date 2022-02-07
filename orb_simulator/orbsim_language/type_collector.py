@@ -22,8 +22,8 @@ class TypeCollector:
     @visitor.when(ProgramNode)
     def visit(self, node: ProgramNode):
         self.context: Context =  Context()
-        self.context.create_type('String')
-        
+        string_type  = self.context.create_type('String')
+        string_type.define_method('concat', string_type, ['s1'], [string_type])
         self.context.create_type('Bool')
         self.context.create_type('Int')
         self.context.create_type('Float')

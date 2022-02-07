@@ -30,10 +30,17 @@ from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
+from orbsim_language.built_in_funcs import*
+
+
 class Executor:
 
+    
     def __init__(self, context: 'Context'):
         self.context: 'Context' = context
+        self.builtin_funcs = {
+            'concat':concat
+        }
         # self.scope: 'ExScope' = ExScope()
 
     @visitor.on('node')
