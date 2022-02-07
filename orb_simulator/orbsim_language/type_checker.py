@@ -40,7 +40,7 @@ class TypeChecker:
             except OrbisimSemanticError as err:
                 self.log(err.error_info)
         if len(arg_types) == len(node.arg_types):
-            if not scope.define_fun(node.identifier, fun_ret_type, node.args, arg_types, node.body):
+            if not self.context.define_fun(node.identifier, fun_ret_type, node.args, arg_types, node.body):
                 self.log(f'Ya está definida una función con nombre {node.identifier}')
 
         
@@ -67,7 +67,7 @@ class TypeChecker:
 
     @visitor.when(FunCallNode)
     def visit(self, node: FunCallNode, scope: 'Scope'):
-        if not scope.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
+        if not self.context.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
             self.log(f'SemanticError: No existe una función con nombre {node.identifier}')
     
     # @visitor.when()

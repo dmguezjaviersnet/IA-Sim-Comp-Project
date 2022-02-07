@@ -60,12 +60,12 @@ class Executor:
     def execute(self, node: FuncDeclrNode, scope: 'ExScope'):
         ret_type = self.context.get_type(node.return_type)
         arg_types = [self.context.get_type(t) for t in node.arg_types]
-        scope.define_fun(node.identifier, ret_type, node.args, arg_types, node.body)
+        self.context.define_fun(node.identifier, ret_type, node.args, arg_types, node.body)
 
     @visitor.when(FunCallNode)
     def execute(self, node: FunCallNode, scope: 'ExScope'):
-        func = scope.get_func(node.identifier, len(node.args))
-        new_scope = scope.create_child_scope()
+        func = self.context.get_func(node.identifier, len(node.args))
+        new_scope = ExScope()
         for i in range(len(node.args)):
             val = self.execute(node.args[i], scope)
             new_scope.define_var(func.args[i],  func.arg_types[i], val)
@@ -86,9 +86,11 @@ class Executor:
     
     @visitor.when(BodyNode)
     def execute(self, node: 'BodyNode', scope: 'ExScope'):
+        instance = None
         for st in node.statements:
-            self.execute(st, scope)
-
+            instance = self.execute(st, scope)
+        return instance
+            
     @visitor.when(IntegerNode)
     def execute(self, node: 'IntegerNode', scope: 'ExScope'):
         return int(node.val)

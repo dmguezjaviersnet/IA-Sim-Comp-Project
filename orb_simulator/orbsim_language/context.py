@@ -40,7 +40,7 @@ class ExScope:
     def __init__(self, parent: 'ExScope' = None):
         self.parent: 'ExScope' = parent
         self.local_variables: Dict[str, ExecuteVarInfo] = {}
-        self.local_functions = {}
+       
     
     def check_var(self, var: str) -> bool: 
         '''
@@ -53,14 +53,7 @@ class ExScope:
         return False
     
 
-    def check_fun(self, fun: str, args: int):
-        if (fun, args) in self.local_functions:
-            return True
-        
-        if self.parent != None:
-            return self.parent.check_fun(fun, args)
-        
-        return False
+    
     
     def define_var(self, var_id: str, type: OrbsimType, val: Any) -> bool:
         if not self.check_var(var_id):
@@ -69,17 +62,14 @@ class ExScope:
         
         return False
 
-    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType], body: BodyNode) -> bool:
-        if not self.check_fun(fun_name, len(args)):
-            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types,body)
-            return True
-        return False
+    
     
     def get_variable_val(self, var_name: str):
         if var_name in self.local_variables:
             return self.local_variables[var_name].val
         if self.parent != None:
              return self.parent.get_variable_val(var_name)
+        return None
     
     def assing_new_variable_val(self, var_name: str, new_value):
         if var_name in self.local_variables:
@@ -89,8 +79,9 @@ class ExScope:
             return self.parent.assing_new_variable_val(var_name, new_value)
         return False
 
-    def get_func(self, fun_name:str, params: int) -> FunctionInfo:
-        return self.local_functions[(fun_name, params)]
+    
+
+    
 
     def create_child_scope(self):
         child_scope = ExScope(self)
@@ -152,7 +143,7 @@ class Context:
 
     def __init__(self, parent: 'Context' = None): 
         self.types: Dict[str, Type] = {}
-        
+        self.local_functions: Dict[str, FunctionInfo] = {}
     
     def get_type(self, name: str):
         if name in self.types:
@@ -170,3 +161,18 @@ class Context:
             self.types[name] = new_type
             return new_type
             
+    def check_fun(self, fun: str, args: int):
+        if (fun, args) in self.local_functions:
+            return True
+        return False
+    
+    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType], body: BodyNode) -> bool:
+        if not self.check_fun(fun_name, len(args)):
+            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types,body)
+            return True
+        return False
+    
+    def get_func(self, fun_name:str, params: int) -> FunctionInfo:
+        if (fun_name, params) in self.local_functions:
+            return self.local_functions[fun_name, params]
+        raise OrbisimSemanticError(f'La función {fun_name} no está definida')

@@ -2,8 +2,10 @@ from dataclasses import dataclass
 from typing import List
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
+from orbsim_language.orbsim_type import VoidType
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
+
 from errors import OrbisimSemanticError
 class TypeCollector:
 
@@ -25,6 +27,7 @@ class TypeCollector:
         self.context.create_type('Bool')
         self.context.create_type('Int')
         self.context.create_type('Float')
+        self.context.types['Void'] = VoidType()
 
         for st in node.statements:
             self.visit(st)

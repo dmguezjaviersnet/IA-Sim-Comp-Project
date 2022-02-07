@@ -100,6 +100,9 @@ def arg_list_rule1(head: Symbol, tail: List[Symbol]):
 def arg_list_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = [(tail[1].val, tail[0].val)]
 
+def arg_list_rule3(head: Symbol, tail: List[Symbol]):
+    head.ast = []
+
 def expression_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
 
@@ -226,3 +229,6 @@ def expr_list_rule1(head: Symbol, tail: List[Symbol]):
 
 def expr_list_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].ast]
+
+def expr_list_rule3(head: Symbol, tail: List[Symbol]):
+    head.ast = []

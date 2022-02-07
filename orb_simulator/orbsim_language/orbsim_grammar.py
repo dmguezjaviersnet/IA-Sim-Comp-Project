@@ -4,7 +4,7 @@ from parser.terminal import Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2
+from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2, expr_list_rule3
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule 
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
@@ -141,6 +141,7 @@ conditional_statement -> "if" "(" expression ")" "then "{" list_statement "}" "e
 print-statement -> "print" expression
 arg-list -> <type> ID "," arg-list
            | <type>ID
+           | EPS # sin argumentos
 expression -> or_expr
               |
 or_expr -> <and_expr> "||" <or_expr>
@@ -184,6 +185,7 @@ atom -> INT
 func_call -> ID "(" <expr-list> ")"
 expr_list -> expression "," expr_list
              | expression
+             | eps
 '''
 # Terminales
 
@@ -235,6 +237,7 @@ boolean = Terminal('boolean_val', 'val')
 string = Terminal('string_val', 'val')
 id_orbsim = Terminal('id_orbsim', 'val')
 type_id = Terminal('type_id', 'val')
+epsilon = Terminal('eps')
 
 terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword, then_keyword, else_keyword, print_keyword,
             break_keyword, continue_keyword, ret_keyword, make_keyword, stmt_separator, expr_separator, assign,
@@ -412,8 +415,8 @@ p20 = Production(print_stmt,
                 )
 
 p21 = Production(arg_list,
-                [[type_id,id_orbsim, expr_separator, arg_list], [type_id, id_orbsim]],
-                [[(arg_list_rule1, True)], [(arg_list_rule2, True)]]
+                [[type_id,id_orbsim, expr_separator, arg_list], [type_id, id_orbsim], [epsilon]],
+                [[(arg_list_rule1, True)], [(arg_list_rule2, True)], [(arg_list_rule3, True)]]
                 )
 
 p22 = Production(expression,
@@ -504,8 +507,8 @@ p38 = Production(make_instance,
                 )
 
 p39 = Production(expr_list,
-                [[expression, expr_separator, expr_list], [expression]],
-                [[(expr_list_rule1, True)], [(expr_list_rule2, True)]]
+                [[expression, expr_separator, expr_list], [expression], [epsilon]],
+                [[(expr_list_rule1, True)], [(expr_list_rule2, True)], [(expr_list_rule3, True)]]
                 )
 
 productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20,
