@@ -1,10 +1,11 @@
 import random 
 import simpy
 import uuid
-import math
+import numpy as np
 from orbsim_simulation_entities.satellite import Satellite
 from orbsim_simulation_entities.elements_3d import Vector3
-from orbsim_simulation_entities.conf_variables import T_BUILD_SATELLITE
+from orbsim_simulation_entities.conf_variables import T_BUILD_SATELLITE , T_BUILD_ROCKET
+from orbsim_simulation_entities.rocket import Rocket
 
 
 class Factory():
@@ -23,7 +24,7 @@ class Factory():
     R = random.random()
     
     #tiempo que va a durar en construirse el cohete  
-    t_const = -T_BUILD_SATELLITE * math.log(R)
+    t_const = -T_BUILD_SATELLITE * np.log(R)
     yield env.timeout(t_const)
 
     # creandole una nueva posicion al satelite 
@@ -47,3 +48,27 @@ class Factory():
     
     # se retorna en el proceso el nuevo satelite 
     return new_satellite
+
+     # metodo para producir un nuevo cohete, ese cohete  tiene que tener una lista de 
+  # satelites que van as ser lanzados al espacio 
+  def produceRocket(self,env : simpy.Environment,quality: int = None) -> Rocket:
+    
+    # tiempo en el que empezo a producice el cohete 
+    start_pro = env.now
+    R = random.random()
+    t_const = - T_BUILD_ROCKET * np.log(R)
+    yield env.timeout(t_const)
+
+    # crea un nuevo proceso y espera por este para  construir un nuevo satelite  
+    new_satellite = yield env.process(self.produceSatellite(env))
+
+    # generar un nuevo id para el nuevo cohete creado 
+    rocket_id = uuid.uuid4()
+    rocket = Rocket(self.loc,rocket_id,satellites=[new_satellite])
+    
+    #aumenting  ranking of Factory 
+    self.ranking = self.ranking + 1 
+    end_pro = env.now 
+    print("+++ Producido con exito el cohete con id: (%s) en: %.2f minutos" %(str(rocket.unique_id),end_pro - start_pro)) 
+    return rocket
+
