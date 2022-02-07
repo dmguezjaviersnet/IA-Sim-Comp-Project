@@ -41,8 +41,9 @@ def attr_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = AttributeDef(tail[1].val, tail[0]. val)
 
 def def_func_stmt_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = FuncDeclrNode(tail[2].val, tail[1].val, [elem for elem in tail[4].ast], 
-                            [elem for elem in tail[7].ast]
+    head.ast = FuncDeclrNode(tail[2].val, tail[1].val, [id_param for id_param, _ in tail[4].ast],
+                            [type_param for _, type_param in tail[4].ast], 
+                            BodyNode([elem for elem in tail[7].ast])
                             )
 
 def func_body_stmt_list_rule1(head: Symbol, tail: List[Symbol]):
@@ -94,10 +95,10 @@ def print_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = PrintNode(tail[1].ast)
 
 def arg_list_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = [tail[0].val] + tail[2].ast
+    head.ast = [(tail[0].val, tail[1].val)] + tail[3].ast
 
 def arg_list_rule2(head: Symbol, tail: List[Symbol]):
-    head.ast = [tail[0].val]
+    head.ast = [(tail[0].val, tail[1].val)]
 
 def expression_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast

@@ -11,7 +11,7 @@ class FuncDeclrNode(StatementNode):
     identifier: str
     return_type: str
     args: List[str]
-    arg_types = List[str]
+    arg_types: List[str]
     body: BodyNode
 
   

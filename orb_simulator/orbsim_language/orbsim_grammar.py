@@ -58,6 +58,7 @@ loop_body_stmt -> let_stmt ########## Prod 14
              | loop_stmt
              | conditional_stmt
              | flow_stmt
+             | 
 flow_stmt -> break ########## Prod 15
            | continue
 conditional_stmt -> if ( condition ) then { conditional_body_stmt_list } ; ########## Prod 16
@@ -138,8 +139,8 @@ loop_statement -> "loop" "(" expression ")" "{" list_statement "}"
 conditional_statement -> "if" "(" expression ")" "then "{" list_statement "}" "else" "{" list_statement "}"
                          | "if" "(" expression ")" "then "{" list_statement "}"
 print-statement -> "print" expression
-arg-list -> ID "," arg-list
-           | ID
+arg-list -> <type> ID "," arg-list
+           | <type>ID
 expression -> or_expr
               |
 or_expr -> <and_expr> "||" <or_expr>
@@ -411,7 +412,7 @@ p20 = Production(print_stmt,
                 )
 
 p21 = Production(arg_list,
-                [[id_orbsim, expr_separator, arg_list], [id_orbsim]],
+                [[type_id,id_orbsim, expr_separator, arg_list], [type_id, id_orbsim]],
                 [[(arg_list_rule1, True)], [(arg_list_rule2, True)]]
                 )
 

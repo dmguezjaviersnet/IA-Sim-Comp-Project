@@ -105,23 +105,12 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
-            let Int max = -4 ;
-            let Int b = max - 5;
-            let Int count = 0;
-            loop (count < 10){
-                b = 2 * b ;
-                count = count + 1;
+    
+            func Int Suma(Int a, Int b){
+                ret a + b;
             };
-            let Bool condition = true;
-            let Bool number = 2;
-            if ((number % 2) == 0) then {
-                max = max + 1;
-            }
-            else{
-                max = max - 1;
-            };
-            print(b);
-            print(max);
+
+            c = Suma(4, 5);
         '''
     )
 
