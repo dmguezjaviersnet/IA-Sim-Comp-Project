@@ -22,7 +22,7 @@ class TypeChecker:
     def visit(self, node: ProgramNode, scope: 'Scope' = None):
         scope = Scope()
         for statement in node.statements:
-            self.visit(statement, scope.create_child_scope())
+            self.visit(statement, scope)
         return scope
 
     @visitor.when(FuncDeclrNode)
@@ -40,11 +40,11 @@ class TypeChecker:
             except OrbisimSemanticError as err:
                 self.log(err.error_info)
         if len(arg_types) == len(node.arg_types):
-            if not scope.define_fun(node.identifier, fun_ret_type, node.args, arg_types):
+            if not scope.define_fun(node.identifier, fun_ret_type, node.args, arg_types, node.body):
                 self.log(f'Ya está definida una función con nombre {node.identifier}')
 
-        for st in node.body:
-            self.visit(st, scope.create_child_scope())
+        
+        self.visit(node.body, scope.create_child_scope())
     
     @visitor.when(VariableDeclrNode)
     def visit(self, node: VariableDeclrNode, scope: 'Scope'):

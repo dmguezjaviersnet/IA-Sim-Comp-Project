@@ -95,10 +95,10 @@ def print_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = PrintNode(tail[1].ast)
 
 def arg_list_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = [(tail[0].val, tail[1].val)] + tail[3].ast
+    head.ast = [(tail[1].val, tail[0].val)] + tail[3].ast
 
 def arg_list_rule2(head: Symbol, tail: List[Symbol]):
-    head.ast = [(tail[0].val, tail[1].val)]
+    head.ast = [(tail[1].val, tail[0].val)]
 
 def expression_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast

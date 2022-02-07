@@ -60,7 +60,7 @@ class Executor:
     def execute(self, node: FuncDeclrNode, scope: 'ExScope'):
         ret_type = self.context.get_type(node.return_type)
         arg_types = [self.context.get_type(t) for t in node.arg_types]
-        scope.define_fun(node.identifier, ret_type, arg_types, node.body)
+        scope.define_fun(node.identifier, ret_type, node.args, arg_types, node.body)
 
     @visitor.when(FunCallNode)
     def execute(self, node: FunCallNode, scope: 'ExScope'):
@@ -68,8 +68,8 @@ class Executor:
         new_scope = scope.create_child_scope()
         for i in range(len(node.args)):
             val = self.execute(node.args[i], scope)
-            new_scope.define_var(func.args[i],  self.context.get_type(func.arg_types[i], val))
-        self.execute(func.body, new_scope)
+            new_scope.define_var(func.args[i],  func.arg_types[i], val)
+        return self.execute(func.body, new_scope)
         
 
     @visitor.when(LoopNode)

@@ -106,11 +106,12 @@ def main():
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
     
-            func Int Suma(Int a, Int b){
+            func Int suma(Int a, Int b){
                 ret a + b;
             };
 
-            c = Suma(4, 5);
+            let Int c = suma(4, 5);
+            print(c);
         '''
     )
 

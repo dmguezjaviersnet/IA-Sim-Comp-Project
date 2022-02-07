@@ -70,7 +70,7 @@ class ExScope:
         return False
 
     def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType], body: BodyNode) -> bool:
-        if not self.check_fun(fun_name, len(return_type)):
+        if not self.check_fun(fun_name, len(args)):
             self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types,body)
             return True
         return False
@@ -135,9 +135,9 @@ class Scope:
         
         return False
 
-    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType]) -> bool:
-        if not self.check_fun(fun_name, len(return_type)):
-            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types)
+    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType], body) -> bool:
+        if not self.check_fun(fun_name, len(args)):
+            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types, body)
             return True
         return False
     
