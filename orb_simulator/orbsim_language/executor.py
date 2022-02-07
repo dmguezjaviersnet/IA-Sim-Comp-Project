@@ -64,7 +64,12 @@ class Executor:
 
     @visitor.when(FunCallNode)
     def execute(self, node: FunCallNode, scope: 'ExScope'):
-        ...
+        func = scope.get_func(node.identifier, len(node.args))
+        new_scope = scope.create_child_scope()
+        for i in range(len(node.args)):
+            val = self.execute(node.args[i], scope)
+            new_scope.define_var(func.args[i],  self.context.get_type(func.arg_types[i], val))
+        self.execute(func.body, new_scope)
         
 
     @visitor.when(LoopNode)

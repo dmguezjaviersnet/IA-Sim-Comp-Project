@@ -34,8 +34,7 @@ class FunctionInfo:
 
 class ExScope:
     '''
-        Para la correcta definición de variables y 
-        métodos(el contexto de las variables y métodos)
+        Para ser usado en la ejecución
     '''
 
     def __init__(self, parent: 'ExScope' = None):
@@ -72,7 +71,7 @@ class ExScope:
 
     def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType], body: BodyNode) -> bool:
         if not self.check_fun(fun_name, len(return_type)):
-            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types, body: BodyNode )
+            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types,body)
             return True
         return False
     
@@ -89,6 +88,9 @@ class ExScope:
         if self.parent != None:
             return self.parent.assing_new_variable_val(var_name, new_value)
         return False
+
+    def get_func(self, fun_name:str, params: int) -> FunctionInfo:
+        return self.local_functions[(fun_name, params)]
 
     def create_child_scope(self):
         child_scope = ExScope(self)
@@ -110,7 +112,7 @@ class Scope:
         '''
             Dice si una variable está definida o no en el programa
         '''
-        if var  in self.local_variables:
+        if var in self.local_variables:
             return True
         if self.parent != None:
             return self.parent.check_var(var)
