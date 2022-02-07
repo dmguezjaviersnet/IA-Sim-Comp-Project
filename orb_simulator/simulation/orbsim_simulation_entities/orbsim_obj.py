@@ -36,10 +36,9 @@ class OrbsimObj:
   # Este metodo dado una instancia del environmet espera un tiempo determinado 
   # y depues mueve el objeto a una posicion random  
   def move (self, env: simpy.Environment)-> None:
-    while True:
-      yield env.timeout(200)
-      self.position = Vector3.random()
-      # print ('El objeto %s se ha movido a la posicion %s' %(str(self.unique_id), str(self.position)))
+    self.position = Vector3.random()
+    pass
+
 
 
   def __str__(self) -> str:
