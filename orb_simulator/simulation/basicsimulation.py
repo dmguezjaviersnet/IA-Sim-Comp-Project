@@ -27,8 +27,7 @@ def generateObj():
   return obj
 
 
-
-def principal (env: simpy.Environment,launchpads: simpy.Store , factories : simpy.Store , objects: simpy.Store):
+def main (env: simpy.Environment,launchpads: simpy.Store , factories : simpy.Store , objects: simpy.Store):
   for i in range (TOTAL_COHETES):
     R = random.random()
     delay = -300 * math.log(R)
@@ -108,13 +107,19 @@ def moveAndCheckCollitions(env: simpy.Environment, objects : List[OrbsimObj]):
 
       objects = difference_objects(objects, collitions)
 
-      print ('se elimino al objeto '  , collitions)
+      for i in range(len(collitions) + random.randint(10, 50)):
+        objects.append(generateObj())
+
+      
 
 # poner a moverse a los objetos que fueron creados inicialmente en la simulacion 
 def creatingProcessToMOveObjects(env: simpy.Environment , objects: List[OrbsimObj]):
   for item in objects:
     env.process(item.move(env))
  
+
+def counting_amount_of_objects(objects):
+  print (len(objects))
 
 
 OBJECTS = [generateObj() for i in range (NUMERO_INICIAL_OBJETOS)]
@@ -123,6 +128,10 @@ LAUNCHPAD = [Launchpad(env) for i in range(NUMERO_PLATAFORMAS)]
 
 env.process(moveAndCheckCollitions(env,OBJECTS))
 
-env.process(principal(env,LAUNCHPAD,FACTORIES,OBJECTS))
+#--------------- testing ---------
+# env.process(counting_amount_of_objects(OBJECTS))
+#---------------------------------
+
+env.process(main(env,LAUNCHPAD,FACTORIES,OBJECTS))
 env.run()
 
