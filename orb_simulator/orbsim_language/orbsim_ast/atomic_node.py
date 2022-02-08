@@ -4,5 +4,5 @@ from dataclasses import dataclass
 @dataclass
 class AtomicNode(ExpressionNode):
     val: str
-    
+    comp_type = None
     

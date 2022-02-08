@@ -30,10 +30,17 @@ from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
+from orbsim_language.built_in_funcs import*
+from orbsim_language.orbsim_ast.attribute_declr_node import AttributeDeclrNode
+
 class Executor:
 
+    
     def __init__(self, context: 'Context'):
         self.context: 'Context' = context
+        self.builtin_funcs = {
+            'concat':concat
+        }
         # self.scope: 'ExScope' = ExScope()
 
     @visitor.on('node')
@@ -58,10 +65,13 @@ class Executor:
         # return instance
     @visitor.when(FuncDeclrNode)
     def execute(self, node: FuncDeclrNode, scope: 'ExScope'):
-        ret_type = self.context.get_type(node.return_type)
-        arg_types = [self.context.get_type(t) for t in node.arg_types]
-        self.context.define_fun(node.identifier, ret_type, node.args, arg_types, node.body)
-
+        # ret_type = self.context.get_type(node.return_type)
+        # arg_types = [self.context.get_type(t) for t in node.arg_types]
+        func = self.context.get_func(node.identifier, len(node.args))
+        func.body = node.body
+        # self.context.define_fun(node.identifier, ret_type, node.args, arg_types, node.body)
+    @visitor.when(FuncDeclrNode)
+    
     @visitor.when(FunCallNode)
     def execute(self, node: FunCallNode, scope: 'ExScope'):
         func = self.context.get_func(node.identifier, len(node.args))

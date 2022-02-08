@@ -4,6 +4,6 @@ from orbsim_language.orbsim_ast.expression_node import ExpressionNode
 from orbsim_language.orbsim_ast.statement_node import StatementNode
 
 @dataclass
-class AttributeDef(StatementNode):
+class AttributeDeclrNode(StatementNode):
     name: str
     type: str

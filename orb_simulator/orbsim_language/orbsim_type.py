@@ -4,20 +4,22 @@ from typing import Dict, List
 from numpy import imag
 from orbsim_language.orbsim_ast import ExpressionNode
 from orbsim_language.orbsim_ast import StatementNode
+from orbsim_language.orbsim_ast import BodyNode
 from errors import OrbisimSemanticError
 @dataclass
 class Attribute:
     name: str
     type: 'OrbsimType'
-    expr: 'ExpressionNode'
+    expr: 'ExpressionNode' =  None
 
 
 @dataclass
 class Method:
     name: str
     return_type: 'OrbsimType'
-    arguments: List['Attribute']
-    body: List['StatementNode']
+    args: str
+    type_args: str
+    body: 'BodyNode' = None
     
 
 class OrbsimType:
@@ -25,7 +27,7 @@ class OrbsimType:
     def __init__(self, name: str):
         self.name = name
         self.attributes:  Dict[str, 'Attribute'] = {}
-        self.methods: Dict[str, 'Method'] = {}
+        self.methods: Dict[(str, int), 'Method'] = {}
     
 
     def get_attribute(self, name: str) -> 'Attribute':
@@ -41,12 +43,17 @@ class OrbsimType:
         return True
     
     def define_method(self, name: str, return_type:'OrbsimType', args: List[str], arg_types: List['OrbsimType']) -> bool:
-        if name in self.methods:
-            return False
-        arguments = [Attribute(arg, arg_type) for arg, arg_type in zip(args, arg_types)]
-        self.methods[name] = Method(name, return_type, arguments)
+        if (name, len(args)) in self.methods:
+            raise OrbisimSemanticError(f'Ya existe un método definido con nombre{name} y cantidad de parámetros{len(args)}')
+        
+        self.methods[name] = Method(name, return_type, args, arg_types)
         return True
 
+    def __eq__(self, other: 'OrbsimType'):
+        return self.name == other.name
+    
+    def __ne__(self, other: 'OrbsimType'):
+        return self.name != other.name
 class VoidType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Void')
@@ -55,10 +62,50 @@ class VoidType(OrbsimType):
         return isinstance(other, VoidType)
 
 
+class IntType(OrbsimType):
+    def __init__(self):
+        OrbsimType.__init__(self, 'Int')
+    
+    def __eq__(self, other):
+        return isinstance(other, IntType)
+
+class StringType(OrbsimType):
+    def __init__(self):
+        OrbsimType.__init__(self, 'String')
+    
+    def __eq__(self, other):
+        return isinstance(other, StringType)
+    
+    def __ne__(self, other) -> bool:
+        return not isinstance(other, StringType)
+
+class FloatType(OrbsimType):
+    def __init__(self):
+        OrbsimType.__init__(self, 'Float')
+    
+    def __eq__(self, other):
+        return isinstance(other, FloatType)
+
+    def __ne__(self, other):
+        return not isinstance(other, FloatType)
+
+class BoolType(OrbsimType):
+    def __init__(self):
+        OrbsimType.__init__(self, 'Bool')
+    
+    def __eq__(self, other):
+        return isinstance(other, BoolType)
+
+    def __ne__(self, other):
+        return not isinstance(other, BoolType)
+
+
 def NullType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Null')
     def __eq__(self, other):
         return isinstance(other, NullType)
 
+    def __ne__(self, other):
+        return not isinstance(other, NullType)
 
