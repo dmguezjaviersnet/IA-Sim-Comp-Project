@@ -78,13 +78,18 @@ class TypeChecker:
     
     @visitor.when(PlusNode)
     def visit(self, node: PlusNode, scope: 'Scope'):
-        self.visit(node.left)
-        left_type: OrbsimType = node.comp_type
-        self.visit(node.right)
-        right_type: OrbsimType = node.comp_type
-        if left_type != right_type or left_type.name != 'Int':
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
             self.log.append(f'SemanticError: La operación +  no está definida entre {left_type.name} y {right_type.name}')
-        #node.comp_type =
+        else:
+            if left_type.name == 'Int':
+                node.comp_type = IntType() 
+            else:
+                node.comp_type = FloatType()
+         
     @visitor.when(StringNode)
     def visit(self, node: StringNode, scope: 'Scope'):
         node.comp_type = StringType()

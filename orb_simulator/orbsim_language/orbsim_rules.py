@@ -5,7 +5,7 @@ from orbsim_language.orbsim_ast import ConditionalNode, LoopNode, OrNode, AndNod
 from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterThanNode
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
 from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode
-from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode
+from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode, StringNode, BooleanNode
 from orbsim_language.orbsim_ast import DivNode, AtomicNode, PrintNode, FunCallNode, ModNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
 from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode
@@ -210,10 +210,10 @@ def atom_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = FloatNode(tail[0].val)
     
 def atom_rule3(head: Symbol, tail: List[Symbol]):
-    head.ast = AtomicNode(tail[0].val)
+    head.ast = BooleanNode(tail[0].val)
 
 def atom_rule4(head: Symbol, tail: List[Symbol]):
-    head.ast = AtomicNode(tail[0].val)
+    head.ast = StringNode(tail[0].val)
 
 def atom_rule5(head: Symbol, tail: List[Symbol]):
     head.ast = VariableNode(tail[0].val)
