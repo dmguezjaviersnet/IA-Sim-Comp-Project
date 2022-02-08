@@ -1,4 +1,8 @@
 from lexer.regex_grammar import regex_grammar
+from parser.lr0_item import Lr0_item
+from parser.lr1_item import Lr1_item
+from parser.non_terminal import Non_terminal
+from parser.terminal import Epsilon, Terminal
 from orbsim_language.context import ExScope, Scope
 from test_language.arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
 from test_language.test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
@@ -102,6 +106,12 @@ def main():
 
     # print(item1 == item2)
     # print(hash(item1) == hash(item3))
+
+    # item1 = Lr1_item(Lr0_item(Non_terminal('E'), (Epsilon(), Non_terminal('X')), 0), frozenset({'$'}))
+    # item2 = Lr1_item(Lr0_item(Non_terminal('P'), (Epsilon(), Non_terminal('X')), 0), frozenset({'$'}))
+    # h1 = hash(item1)
+    # h2 = hash(item2)
+    
 
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''

@@ -1,6 +1,6 @@
 from typing import Dict
 from parser.production import Production
-from parser.terminal import Terminal, Eof
+from parser.terminal import Epsilon, Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
@@ -237,14 +237,14 @@ boolean = Terminal('boolean_val', 'val')
 string = Terminal('string_val', 'val')
 id_orbsim = Terminal('id_orbsim', 'val')
 type_id = Terminal('type_id', 'val')
-epsilon = Terminal('eps')
+epsilon = Epsilon()
 
 terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword, then_keyword, else_keyword, print_keyword,
             break_keyword, continue_keyword, ret_keyword, make_keyword, stmt_separator, expr_separator, assign,
             open_curly_braces, closed_curly_braces, open_parenthesis, closed_parenthesis, neg, logic_or, logic_and,
             not_equals, equals, greater_or_equal, less_equal, greater, less, addition, substraction, product, division,
             module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and,
-            bitwise_shift_left, bitwise_shift_right]
+            bitwise_shift_left, bitwise_shift_right, epsilon]
 
 # No terminales
 
