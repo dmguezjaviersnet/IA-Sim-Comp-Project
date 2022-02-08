@@ -1,6 +1,6 @@
 from orbsim_language.orbsim_ast.and_node import AndNode
 from orbsim_language.orbsim_ast.atomic_node import AtomicNode
-from orbsim_language.orbsim_ast.attribute_def_node import AttributeDef
+from orb_simulator.orbsim_language.orbsim_ast.attribute_declr_node import AttributeDeclrNode
 from orbsim_language.orbsim_ast.binary_expr_node import BinaryExprNode
 from orbsim_language.orbsim_ast.boolean_node import BooleanNode
 from orbsim_language.orbsim_ast.class_declr_node import ClassDeclrNode

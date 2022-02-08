@@ -27,7 +27,7 @@ class FunctionInfo:
     return_type: OrbsimType
     args: List[str]
     arg_types: List[OrbsimType]
-    body: BodyNode
+    body: BodyNode =  None
 
     def __eq__(self, other: 'FunctionInfo') -> bool:
         return self.name == other.name and self.args == other.args
@@ -166,9 +166,9 @@ class Context:
             return True
         return False
     
-    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType], body: BodyNode) -> bool:
+    def define_fun(self, fun_name: str, return_type: OrbsimType, args: List[str], arg_types: List[OrbsimType]) -> bool:
         if not self.check_fun(fun_name, len(args)):
-            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types,body)
+            self.local_functions[(fun_name, len(args))] = FunctionInfo(fun_name, return_type, args, arg_types)
             return True
         return False
     

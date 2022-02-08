@@ -106,13 +106,10 @@ def main():
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
     
-        func Int ocho(){
-            ret 8;
+        class Point {
+            Int x;
+            Int y;
         };
-
-
-        let Int f = ocho();
-        print(f);
         '''
     )
 
