@@ -3,7 +3,7 @@ from orbsim_language import visitor
 from orbsim_language.context import Context
 from orbsim_language.orbsim_type import OrbsimType
 from orbsim_language.orbsim_ast import MethodDeclrNode, ProgramNode
-from orbsim_language.orbsim_ast import ClassDeclrNode, AttributeDef
+from orbsim_language.orbsim_ast import ClassDeclrNode, AttributeDeclrNode
 from errors import OrbisimSemanticError
 class TypeBuilder:
     def __init__(self,  context: 'Context', log: List[str] = []):
@@ -30,8 +30,8 @@ class TypeBuilder:
         for method in node.methods:
             self.visit(method)
 
-    @visitor.when(AttributeDef)
-    def visit(self, node: AttributeDef):
+    @visitor.when(AttributeDeclrNode)
+    def visit(self, node: AttributeDeclrNode):
         try:
             attr_type = self.context.get_type(node.type)
         except OrbisimSemanticError as err:

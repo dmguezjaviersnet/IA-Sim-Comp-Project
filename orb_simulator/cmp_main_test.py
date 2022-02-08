@@ -116,14 +116,17 @@ def main():
     # print(hash(tup1) == hash(tup2))
     tokens = orbsim_lexer('''
     
-        class Point {
-            Int x;
-            Int y;
+        func Int ocho(){
+            ret 8;
         };
+
+        let Int s = ocho();
+        print(s);
         '''
     )
 
     _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
+    print('\o/')
     collector = TypeCollector()
     collector.visit(ast)
     builder = TypeBuilder(collector.context, collector.log)

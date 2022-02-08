@@ -70,7 +70,7 @@ class Executor:
         func = self.context.get_func(node.identifier, len(node.args))
         func.body = node.body
         # self.context.define_fun(node.identifier, ret_type, node.args, arg_types, node.body)
-    @visitor.when(FuncDeclrNode)
+    
     
     @visitor.when(FunCallNode)
     def execute(self, node: FunCallNode, scope: 'ExScope'):

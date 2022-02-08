@@ -1,5 +1,5 @@
 from typing import List
-from    orb_simulator.orbsim_language.orbsim_type import *
+from   orbsim_language.orbsim_type import *
 import orbsim_language.visitor as visitor
 from   orbsim_language.context import Context, Scope
 from   orbsim_language.orbsim_ast.program_node import ProgramNode

@@ -4,7 +4,7 @@ from orbsim_language.orbsim_ast import ProgramNode, VariableDeclrNode, FuncDeclr
 from orbsim_language.orbsim_ast import ConditionalNode, LoopNode, OrNode, AndNode
 from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterThanNode
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
-from orbsim_language.orbsim_ast import AssingNode, AttributeDef, NotNode, PlusNode
+from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode
 from orbsim_language.orbsim_ast import DivNode, AtomicNode, PrintNode, FunCallNode, ModNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
@@ -21,7 +21,7 @@ def stmt_list_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].ast]
 
 def stmt_rule1(head: Symbol, tail: List[Symbol]):
-    head.ast = ClassDeclrNode(tail[1].val, [elem for elem in tail[3].ast if isinstance(elem, AttributeDef)],
+    head.ast = ClassDeclrNode(tail[1].val, [elem for elem in tail[3].ast if isinstance(elem, AttributeDeclrNode)],
                         [elem for elem in tail[3].ast if isinstance(elem, FuncDeclrNode)]
                         ) 
 
