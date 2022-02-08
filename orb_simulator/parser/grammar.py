@@ -25,7 +25,7 @@ class Grammar: # Clase para representar una gramática
                 tail_str = ''
                 for elem in self.productions[i].tails[j]: # Por cada elemento en esta producción
                     tail_str += f'{elem.identifier} ' # Añadirlo al id de la cola de la producción
-                ans[head_str + tail_str] = (prod_id, len(self.productions[i].tails[j]), self.productions[i].rules[j]) # Asignarle al id de la producción la regla correspondiente
+                ans[head_str + tail_str] = (prod_id, len(self.productions[i].tails[j]) if elem.identifier != 'eps' else 0, self.productions[i].rules[j]) # Asignarle al id de la producción la regla correspondiente
                 prod_id += 1
         return ans
 

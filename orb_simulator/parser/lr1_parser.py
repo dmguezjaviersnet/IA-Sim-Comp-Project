@@ -26,7 +26,11 @@ def __build_lr0_items(G: Grammar) -> List[Lr0_item]:
         head = coll.head
         for tail in coll.tails:
             for index, _ in enumerate(tail):
-                lr0_items.append(Lr0_item(head, tuple(tail), index))
+                if 'eps' not in tail[0].identifier:
+                    lr0_items.append(Lr0_item(head, tuple(tail), index))
+
+                else : lr0_items.append(Lr0_item(head, (), index))
+
             lr0_items.append(Lr0_item(head, tuple(tail), len(tail)))
     
     return lr0_items
@@ -85,7 +89,10 @@ def __lr1_automaton_clousure(G: Grammar, state: State, lr0_items: List[Lr0_item]
 
         if current_lr1_item.center.dot == len(current_lr1_item.center.tail):
             if current_lr1_item.center.head.identifier != 'S\'':
-                prod_id = G.map_prodstr_rules[str(current_lr1_item.center)][0]
+                prod_id = (G.map_prodstr_rules[str(current_lr1_item.center)][0] 
+                            if current_lr1_item.center.tail
+                            else G.map_prodstr_rules[str(current_lr1_item.center) + 'eps '][0])
+                            
                 if state_id_number not in action_goto_table.terminals_dict[curr_frozen_set_elem]:
                     action_goto_table.terminals_dict[curr_frozen_set_elem][state_id_number] = None
                 
