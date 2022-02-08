@@ -11,6 +11,7 @@ from   orbsim_language.orbsim_ast.plus_node import PlusNode
 from   orbsim_language.orbsim_ast.minus_node import MinusNode
 from   orbsim_language.orbsim_ast.product_node import ProductNode
 from   orbsim_language.orbsim_ast.div_node import DivNode
+from   orbsim_language.orbsim_ast.mod_node import ModNode
 from   orbsim_language.orbsim_ast.string_node import StringNode
 from   orbsim_language.orbsim_ast.integer_node import IntegerNode
 from   orbsim_language.orbsim_ast.float_node import FloatNode
@@ -22,7 +23,7 @@ class TypeChecker:
 
     def __init__(self, context: Context =Context(), log: List[str] = []):
         self.context: Context = context
-        self.log: List[str]   = context
+        self.log: List[str]   = log
         
     @visitor.on('node')
     def visit(self, node):
@@ -134,6 +135,17 @@ class TypeChecker:
                 node.comp_type = IntType() 
             else:
                 node.comp_type = FloatType()
+    
+    @visitor.when(ModNode)
+    def visit(self, node: ModNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int':
+            self.log.append(f'SemanticError: La operación %  no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            node.comp_type = IntType() 
     
     @visitor.when(StringNode)
     def visit(self, node: StringNode, scope: 'Scope'):
