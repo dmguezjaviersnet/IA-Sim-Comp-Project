@@ -8,6 +8,9 @@ from   orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
 from   orbsim_language.orbsim_ast.variable_node import VariableNode
 from   orbsim_language.orbsim_ast.fun_call_node import FunCallNode
 from   orbsim_language.orbsim_ast.plus_node import PlusNode
+from   orbsim_language.orbsim_ast.minus_node import MinusNode
+from   orbsim_language.orbsim_ast.product_node import ProductNode
+from   orbsim_language.orbsim_ast.div_node import DivNode
 from   orbsim_language.orbsim_ast.string_node import StringNode
 from   orbsim_language.orbsim_ast.integer_node import IntegerNode
 from   orbsim_language.orbsim_ast.float_node import FloatNode
@@ -89,7 +92,49 @@ class TypeChecker:
                 node.comp_type = IntType() 
             else:
                 node.comp_type = FloatType()
-         
+    
+    @visitor.when(MinusNode)
+    def visit(self, node: MinusNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+            self.log.append(f'SemanticError: La operación -  no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            if left_type.name == 'Int':
+                node.comp_type = IntType() 
+            else:
+                node.comp_type = FloatType()
+    
+    @visitor.when(DivNode)
+    def visit(self, node: DivNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+            self.log.append(f'SemanticError: La operación /  no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            if left_type.name == 'Int':
+                node.comp_type = IntType() 
+            else:
+                node.comp_type = FloatType()
+    
+    @visitor.when(ProductNode)
+    def visit(self, node: ProductNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+            self.log.append(f'SemanticError: La operación *  no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            if left_type.name == 'Int':
+                node.comp_type = IntType() 
+            else:
+                node.comp_type = FloatType()
+    
     @visitor.when(StringNode)
     def visit(self, node: StringNode, scope: 'Scope'):
         node.comp_type = StringType()
