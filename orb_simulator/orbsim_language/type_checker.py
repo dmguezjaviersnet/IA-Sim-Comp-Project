@@ -1,29 +1,29 @@
 from typing import List
 from   orbsim_language.orbsim_type import *
 import orbsim_language.visitor as visitor
-from   orbsim_language.context import Context, FunctionInfo, Scope, VariableInfo
-from   orbsim_language.orbsim_ast.program_node import ProgramNode
-from   orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
-from   orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
-from   orbsim_language.orbsim_ast.variable_node import VariableNode
-from   orbsim_language.orbsim_ast.fun_call_node import FunCallNode
-from   orbsim_language.orbsim_ast.plus_node import PlusNode
-from   orbsim_language.orbsim_ast.minus_node import MinusNode
-from   orbsim_language.orbsim_ast.product_node import ProductNode
-from   orbsim_language.orbsim_ast.div_node import DivNode
-from   orbsim_language.orbsim_ast.mod_node import ModNode
-from   orbsim_language.orbsim_ast.string_node import StringNode
-from   orbsim_language.orbsim_ast.integer_node import IntegerNode
-from   orbsim_language.orbsim_ast.float_node import FloatNode
-from   orbsim_language.orbsim_ast.boolean_node import BooleanNode
-from   orbsim_language.orbsim_ast.and_node import AndNode
-from   orbsim_language.orbsim_ast.or_node import OrNode
-from   orbsim_language.orbsim_ast.not_node import NotNode
-from   orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
-from   orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
-from   orbsim_language.orbsim_ast.bitwise_xor_node import BitwiseXorNode
-from   orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
-from   orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRightNode
+from orbsim_language.context import Context, FunctionInfo, Scope, VariableInfo
+from orbsim_language.orbsim_ast.program_node import ProgramNode
+from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
+from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
+from orbsim_language.orbsim_ast.variable_node import VariableNode
+from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
+from orbsim_language.orbsim_ast.plus_node import PlusNode
+from orbsim_language.orbsim_ast.minus_node import MinusNode
+from orbsim_language.orbsim_ast.product_node import ProductNode
+from orbsim_language.orbsim_ast.div_node import DivNode
+from orbsim_language.orbsim_ast.mod_node import ModNode
+from orbsim_language.orbsim_ast.string_node import StringNode
+from orbsim_language.orbsim_ast.integer_node import IntegerNode
+from orbsim_language.orbsim_ast.float_node import FloatNode
+from orbsim_language.orbsim_ast.boolean_node import BooleanNode
+from orbsim_language.orbsim_ast.and_node import AndNode
+from orbsim_language.orbsim_ast.or_node import OrNode
+from orbsim_language.orbsim_ast.not_node import NotNode
+from orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
+from orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
+from orbsim_language.orbsim_ast.bitwise_xor_node import BitwiseXorNode
+from orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
+from orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRightNode
 from orbsim_language.orbsim_ast.equal_node import EqualNode
 from orbsim_language.orbsim_ast.not_equal_node import NotEqualNode
 from orbsim_language.orbsim_ast.greater_than_node import GreaterThanNode
@@ -32,6 +32,11 @@ from orbsim_language.orbsim_ast.less_than_node import LessThanNode
 from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
 from orbsim_language.orbsim_ast.print_node import PrintNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
+from orbsim_language.orbsim_ast.loop_node import LoopNode
+from orbsim_language.orbsim_ast.conditional_node import ConditionalNode
+from orbsim_language.orbsim_ast.body_node import BodyNode
+
+
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -354,7 +359,27 @@ class TypeChecker:
             if node.expr.comp_type != var_info.type:
                 self.log.append(f'SemanticError: No le puedes asignar a una variable de tipo  {var_info.type} una expresión de tipo {node.expr.comp_type}')
 
+    @visitor.when(ConditionalNode)
+    def check(self, node: ConditionalNode, scope: 'Scope'):
+        self.check(node.if_expr, scope)
+        if_cond_type: OrbsimType =  node.if_expr.comp_type 
+        if if_cond_type.name != 'Bool':
+            self.log.append(f'SemanticError: Se esperaba una expresión de tipo Bool en la condición del if')
+        self.check(node.then_expr, scope.create_child_scope())
+        self.check(node.else_expr, scope.create_child_scope())
 
+    @visitor.when(LoopNode)
+    def check(self, node: LoopNode, scope: 'Scope'):
+        self.check(node.condition, scope)
+        condition_type: OrbsimType =  node.condition.comp_type 
+        if condition_type.name != 'Bool':
+            self.log.append(f'SemanticError: Se esperaba una expresión de tipo Bool en la condición del loop')
+        self.check(node.body, scope.create_child_scope())
+
+    @visitor.when(BodyNode)
+    def check(self, node: BodyNode, scope: 'Scope'):
+        for st in node.statements:
+            self.check(st, scope)
 
     @visitor.when(StringNode)
     def check(self, node: StringNode, scope: 'Scope'):
