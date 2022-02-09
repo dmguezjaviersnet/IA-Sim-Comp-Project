@@ -59,7 +59,7 @@ class TypeChecker:
     @visitor.when(VariableDeclrNode)
     def visit(self, node: VariableDeclrNode, scope: 'Scope'):
         try:
-            var_type = self.context.get_type(node.type) # dame el tipo si existe de esta variable en caso que esté definido en el context
+            var_type: OrbsimType = self.context.get_type(node.type) # dame el tipo si existe de esta variable en caso que esté definido en el context
             
         except OrbisimSemanticError as err:
             self.log.append(err.error_info)
@@ -67,8 +67,10 @@ class TypeChecker:
         if not scope.define_var(node.identifier, var_type, node.expr):
             self.log.append(f'SemanticError: Ya existe una variable definida con el nombre {node.identifier}')
             
-        expr = self.visit(node.expr, scope)
-
+        self.visit(node.expr, scope)
+        if node.expr.comp_type != var_type:
+            self.log.append(f'SemanticError: No se puede asignar una expresión de tipo {node.expr.comp_type.name} a la variable {node.identifier}  de tipo {var_type.name}')
+    
     @visitor.when(VariableNode)
     def visit(self, node: VariableNode, scope: 'Scope'):
         if not scope.check_var(node.identifier):
