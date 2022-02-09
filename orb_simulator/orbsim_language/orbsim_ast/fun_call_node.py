@@ -6,5 +6,6 @@ from typing import List
 class FunCallNode(ExpressionNode):
     identifier: str
     args: List['ExpressionNode']
+    comp_type = None
 
    

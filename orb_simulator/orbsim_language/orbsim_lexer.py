@@ -19,7 +19,7 @@ orbsim_lexer = Lexer([
     ("([A-Z])([a-z]|[A-Z])*", Token_Type.type_id_orbsim),
     ('0|([1-9][0-9]*)', Token_Type.int),
     ('(0|([1-9][0-9]*)).[0-9]+', Token_Type.float),
-    ('\'    \'', Token_Type.string),
+    ('\' ((\ ) | [!-~])* \'', Token_Type.string), #  ACII(character code 33-126)
     ('\+', Token_Type.plus),
     ('\-', Token_Type.minus),
     ('\*', Token_Type.mul),
@@ -48,5 +48,5 @@ orbsim_lexer = Lexer([
     (',', Token_Type.expr_separator),
     ('(\\ )+', Token_Type.space),
     ('(\\n)+', Token_Type.new_line)],
-    # ('([a-z]|[A-Z]|[0-9]|\\! | \\@| \\# | \\$| \\%| \\^| \\&| \\*| \\( | \\) | \\~ | \\/  | \\- | \\+ )*', Token_Type.error)
+    # ('[!-~]+', Token_Type.error)], # ACII(character code 33-126) token especial para detectar los errores
     eof=Token_Type.eof)

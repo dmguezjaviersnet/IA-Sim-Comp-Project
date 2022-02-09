@@ -114,12 +114,21 @@ def main():
     
 
     # print(hash(tup1) == hash(tup2))
-    tokens = orbsim_lexer('''
-    
-        let Int a = 1 ^ 100;
+    tokens, errs = orbsim_lexer('''
+        let Int n = 2;
+        if (n == 1 || n == 0) then {
+            n = 3;
+        }
+        else{
+            n = 4;
+            print('H');
+        };
+
+        print('Hola');
         '''
     )
 
+    
     _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
     print('\o/')
     collector = TypeCollector()

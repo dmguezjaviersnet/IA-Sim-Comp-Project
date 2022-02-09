@@ -132,6 +132,12 @@ class Scope:
             return True
         return False
     
+    def get_variable(self, identifier: str):
+        if identifier in self.local_variables:
+            return self.local_variables[identifier]
+        if self.parent != None:
+            return self.parent.get_variable(identifier)
+        
     def create_child_scope(self):
         child_scope = Scope(self)
         return child_scope
