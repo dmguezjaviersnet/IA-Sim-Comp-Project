@@ -19,6 +19,11 @@ from   orbsim_language.orbsim_ast.boolean_node import BooleanNode
 from   orbsim_language.orbsim_ast.and_node import AndNode
 from   orbsim_language.orbsim_ast.or_node import OrNode
 from   orbsim_language.orbsim_ast.not_node import NotNode
+from   orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
+from   orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
+from   orbsim_language.orbsim_ast.bitwise_xor_node import BitwiseXorNode
+from   orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
+from   orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRightNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -179,6 +184,71 @@ class TypeChecker:
             self.log.append(f'SemanticError: La operación || no está definida entre {left_type.name} y {right_type.name}')
         else:
             node.comp_type = BoolType() 
+
+    @visitor.when(NotNode)
+    def visit(self, node: NotNode, scope: 'Scope'):
+        self.visit(node.expr, scope)
+        expr_type: OrbsimType = node.expr.comp_type
+        
+        if expr_type.name != 'Bool':
+            self.log.append(f'SemanticError: La operación not no está definida para el tipo {expr_type.name}')
+        else:
+            node.comp_type = BoolType() 
+
+    @visitor.when(BitwiseAndNode)
+    def visit(self, node: BitwiseAndNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int':
+            self.log.append(f'SemanticError: La operación bitwise and & no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
+        else:
+            node.comp_type = IntType() 
+
+    @visitor.when(BitwiseOrNode)
+    def visit(self, node: BitwiseOrNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int':
+            self.log.append(f'SemanticError: La operación bitwise or |  no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
+        else:
+            node.comp_type = IntType() 
+
+    @visitor.when(BitwiseXorNode)
+    def visit(self, node: BitwiseXorNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int':
+            self.log.append(f'SemanticError: La operación bitwise xor ^ no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
+        else:
+            node.comp_type = IntType() 
+
+    @visitor.when(BitwiseShiftRightNode)
+    def visit(self, node: BitwiseShiftRightNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int':
+            self.log.append(f'SemanticError: La operación bitwise shift right  >> no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
+        else:
+            node.comp_type = IntType() 
+    
+    @visitor.when(BitwiseShiftLeftNode)
+    def visit(self, node: BitwiseShiftLeftNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Int':
+            self.log.append(f'SemanticError: La operación bitwise shift left  << no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
+        else:
+            node.comp_type = IntType() 
 
 
     @visitor.when(StringNode)

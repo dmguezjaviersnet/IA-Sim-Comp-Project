@@ -115,7 +115,7 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer('''
-        let Int n = 200 ^ 1
+        let Int b =  123444;
         '''
     )
 

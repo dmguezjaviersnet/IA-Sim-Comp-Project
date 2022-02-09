@@ -32,7 +32,11 @@ from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
 from orbsim_language.built_in_funcs import*
 from orbsim_language.orbsim_ast.attribute_declr_node import AttributeDeclrNode
-
+from orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
+from orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
+from orbsim_language.orbsim_ast.bitwise_xor_node import BitwiseXorNode
+from orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
+from orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRightNode
 class Executor:
 
     
@@ -100,11 +104,13 @@ class Executor:
         for st in node.statements:
             instance = self.execute(st, scope)
         return instance
-            
+    
+    
     @visitor.when(IntegerNode)
     def execute(self, node: 'IntegerNode', scope: 'ExScope'):
         return int(node.val)
     
+
     @visitor.when(BooleanNode)
     def execute(self, node: 'BooleanNode', scope: 'ExScope'):
         if node.val == 'true':
@@ -207,6 +213,36 @@ class Executor:
         eval_right = self.execute(node.right, scope)
         return eval_left or eval_right
 
+    @visitor.when(BitwiseAndNode)
+    def execute(self, node: 'BitwiseAndNode', scope: 'ExScope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left & eval_right
+    
+    @visitor.when(BitwiseOrNode)
+    def execute(self, node: 'BitwiseOrNode', scope: 'ExScope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left | eval_right
+    
+    @visitor.when(BitwiseXorNode)
+    def execute(self, node: 'BitwiseXorNode', scope: 'ExScope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left ^ eval_right
+    
+    @visitor.when(BitwiseShiftRightNode)
+    def execute(self, node: 'BitwiseShiftRightNode', scope: 'ExScope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left >> eval_right
+    
+    @visitor.when(BitwiseShiftLeftNode)
+    def execute(self, node: 'BitwiseShiftLeftNode', scope: 'ExScope'):
+        eval_left = self.execute(node.left, scope)
+        eval_right = self.execute(node.right, scope)
+        return eval_left << eval_right
+    
     @visitor.when(RetNode)
     def execute(self, node: RetNode, scope: 'ExScope'):
         eval_expr = self.execute(node.expr, scope)
