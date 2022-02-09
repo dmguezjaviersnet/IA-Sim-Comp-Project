@@ -24,6 +24,12 @@ from   orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
 from   orbsim_language.orbsim_ast.bitwise_xor_node import BitwiseXorNode
 from   orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
 from   orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRightNode
+from orbsim_language.orbsim_ast.equal_node import EqualNode
+from orbsim_language.orbsim_ast.not_equal_node import NotEqualNode
+from orbsim_language.orbsim_ast.greater_than_node import GreaterThanNode
+from orbsim_language.orbsim_ast.greater_equal_node import GreaterEqualNode
+from orbsim_language.orbsim_ast.less_than_node import LessThanNode
+from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -267,6 +273,68 @@ class TypeChecker:
             node.comp_type = IntType() 
 
 
+    @visitor.when(EqualNode)
+    def visit(self, node: EqualNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        node.comp_type = BoolType() 
+    
+    @visitor.when(NotEqualNode)
+    def visit(self, node: NotEqualNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        node.comp_type = BoolType() 
+
+    @visitor.when(GreaterThanNode)
+    def visit(self, node: GreaterThanNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
+            node.comp_type = NullType()
+            self.log.append(f'SemanticError: La operación > no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            node.comp_type = BoolType() 
+    
+    @visitor.when(GreaterEqualNode)
+    def visit(self, node: GreaterEqualNode, scope: 'Scope'):
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
+            node.comp_type = NullType()
+            self.log.append(f'SemanticError: La operación >= no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            node.comp_type = BoolType() 
+    
+    @visitor.when(LessThanNode)
+    def visit(self, node: LessThanNode, scope: 'Scope'):
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
+            node.comp_type = NullType()
+            self.log.append(f'SemanticError: La operación < no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            node.comp_type = BoolType() 
+
+    @visitor.when(LessEqualNode)
+    def visit(self, node: LessEqualNode, scope: 'Scope'):
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
+            node.comp_type = NullType()
+            self.log.append(f'SemanticError: La operación <= no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            node.comp_type = BoolType() 
+
+    
     @visitor.when(StringNode)
     def visit(self, node: StringNode, scope: 'Scope'):
         node.comp_type = StringType()
