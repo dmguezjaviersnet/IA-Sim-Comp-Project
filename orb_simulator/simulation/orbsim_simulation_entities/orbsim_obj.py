@@ -1,4 +1,5 @@
 import simpy
+import uuid
 from orbsim_simulation_entities.elements_3d import Vector3
 
 
@@ -39,6 +40,18 @@ class OrbsimObj:
     self.position = Vector3.random()
     pass
 
+  # genera un objeto random en una posicion random
+  def randomObject():
+    rnd = Vector3.random()
+    obj_id = uuid.uuid4()
+    obj = OrbsimObj(position= rnd, unique_id= obj_id)
+    return obj
+  
+  def randomObject(max):
+    rnd = Vector3.random(max)
+    obj_id = uuid.uuid4()
+    obj = OrbsimObj(position= rnd, unique_id= obj_id)
+    return obj
 
 
   def __str__(self) -> str:
