@@ -46,7 +46,6 @@ class Token_Type(Enum):
     bitwise_or = 46
     bitwise_xor = 51
     bitwise_and = 45
-    bitwise_not = 47
     bitwise_shift_left = 48
     bitwise_shift_right = 49
 

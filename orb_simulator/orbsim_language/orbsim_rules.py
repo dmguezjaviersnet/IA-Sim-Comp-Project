@@ -38,7 +38,7 @@ def class_body_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
 
 def attr_stmt_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = AttributeDef(tail[1].val, tail[0]. val)
+    head.ast = AttributeDeclrNode(tail[1].val, tail[0]. val)
 
 def def_func_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = FuncDeclrNode(tail[2].val, tail[1].val, [id_param for id_param, _ in tail[4].ast],
