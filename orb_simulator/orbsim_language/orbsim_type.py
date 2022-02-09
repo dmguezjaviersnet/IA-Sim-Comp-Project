@@ -58,54 +58,24 @@ class VoidType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Void')
     
-    def __eq__(self, other):
-        return isinstance(other, VoidType)
-
 
 class IntType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Int')
     
-    def __eq__(self, other):
-        return isinstance(other, IntType)
-
 class StringType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'String')
-    
-    def __eq__(self, other):
-        return isinstance(other, StringType)
-    
-    def __ne__(self, other) -> bool:
-        return not isinstance(other, StringType)
 
 class FloatType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Float')
     
-    def __eq__(self, other):
-        return isinstance(other, FloatType)
-
-    def __ne__(self, other):
-        return not isinstance(other, FloatType)
-
 class BoolType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Bool')
     
-    def __eq__(self, other):
-        return isinstance(other, BoolType)
-
-    def __ne__(self, other):
-        return not isinstance(other, BoolType)
-
-
-def NullType(OrbsimType):
+    
+class NullType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Null')
-    def __eq__(self, other):
-        return isinstance(other, NullType)
-
-    def __ne__(self, other):
-        return not isinstance(other, NullType)
-

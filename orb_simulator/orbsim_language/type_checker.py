@@ -76,12 +76,14 @@ class TypeChecker:
             self.log.append(f'SemanticError: Ya existe una variable definida con el nombre {node.identifier}')
             
         self.visit(node.expr, scope)
-        if node.expr.comp_type != var_type:
+        
+        if  node.expr.comp_type != var_type:
             self.log.append(f'SemanticError: No se puede asignar una expresión de tipo {node.expr.comp_type.name} a la variable {node.identifier}  de tipo {var_type.name}')
     
     @visitor.when(VariableNode)
     def visit(self, node: VariableNode, scope: 'Scope'):
         if not scope.check_var(node.identifier):
+            node.comp_type = NullType()
             self.log(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
         else:
             var: 'VariableInfo' = scope.get_variable(node.identifier)
@@ -90,6 +92,7 @@ class TypeChecker:
     @visitor.when(FunCallNode)
     def visit(self, node: FunCallNode, scope: 'Scope'):
         if not self.context.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
+            node.comp_type = NullType()
             self.log(f'SemanticError: No existe una función con nombre {node.identifier}')
         else:
             func: 'FunctionInfo' = self.context.get_func(node.identifier, len(node.args))
@@ -103,6 +106,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación +  no está definida entre {left_type.name} y {right_type.name}')
         else:
             if left_type.name == 'Int':
@@ -117,6 +121,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación -  no está definida entre {left_type.name} y {right_type.name}')
         else:
             if left_type.name == 'Int':
@@ -131,6 +136,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación /  no está definida entre {left_type.name} y {right_type.name}')
         else:
             if left_type.name == 'Int':
@@ -145,6 +151,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación *  no está definida entre {left_type.name} y {right_type.name}')
         else:
             if left_type.name == 'Int':
@@ -159,6 +166,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación %  no está definida entre {left_type.name} y {right_type.name}')
         else:
             node.comp_type = IntType() 
@@ -170,6 +178,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Bool':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación && no está definida entre {left_type.name} y {right_type.name}')
         else:
             node.comp_type = BoolType() 
@@ -181,6 +190,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Bool':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación || no está definida entre {left_type.name} y {right_type.name}')
         else:
             node.comp_type = BoolType() 
@@ -191,6 +201,7 @@ class TypeChecker:
         expr_type: OrbsimType = node.expr.comp_type
         
         if expr_type.name != 'Bool':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación not no está definida para el tipo {expr_type.name}')
         else:
             node.comp_type = BoolType() 
@@ -202,6 +213,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación bitwise and & no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
         else:
             node.comp_type = IntType() 
@@ -213,6 +225,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación bitwise or |  no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
         else:
             node.comp_type = IntType() 
@@ -224,6 +237,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación bitwise xor ^ no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
         else:
             node.comp_type = IntType() 
@@ -235,6 +249,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación bitwise shift right  >> no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
         else:
             node.comp_type = IntType() 
@@ -246,6 +261,7 @@ class TypeChecker:
         self.visit(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
+            node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación bitwise shift left  << no está definida entre {left_type.name} y {right_type.name}.\n La operacions lógicas bitwise solo está definida para los enteros.')
         else:
             node.comp_type = IntType() 
