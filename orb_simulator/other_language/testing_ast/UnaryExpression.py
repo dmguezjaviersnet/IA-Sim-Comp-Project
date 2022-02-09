@@ -1,5 +1,5 @@
 from typing import overload
-from test_language.testing_ast.Expression import Expression
+from other_language.testing_ast.Expression import Expression
 
 class UnaryExpression(Expression):
 

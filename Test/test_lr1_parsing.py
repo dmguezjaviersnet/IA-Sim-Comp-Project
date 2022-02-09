@@ -1,7 +1,7 @@
-from lr1_parser import lr1_parse
-from lexer import Lexer
-from arth_grammar import arth_grammar, arth_grammar_token_string
-from own_token import Token_Type
+from orb_simulator.parser import lr1_parse
+from orb_simulator.lexer import Lexer
+from orb_simulator.other_language import arth_grammar, arth_grammar_token_string
+from orb_simulator.parser import Token_Type
 
 def test_parse():
 

@@ -1,4 +1,4 @@
-from test_language.testing_ast.BinaryExpression import *
+from other_language.testing_ast.BinaryExpression import *
 
 class Sub(BinaryExpression):
     

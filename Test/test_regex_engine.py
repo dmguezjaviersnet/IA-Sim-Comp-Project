@@ -1,7 +1,7 @@
-from regex_engine import Regex_Engine
-from state import State
-from own_token import Token_Type
-from automaton import Automaton
+from orb_simulator.lexer import Regex_Engine
+from orb_simulator.lexer import State
+from orb_simulator.lexer import Token_Type
+from orb_simulator.automaton import Automaton
 
 def test_regex_engine1():
     regexengine = Regex_Engine('(a|b|c)*')

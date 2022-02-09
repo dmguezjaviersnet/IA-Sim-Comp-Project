@@ -4,8 +4,8 @@ from parser.lr1_item import Lr1_item
 from parser.non_terminal import Non_terminal
 from parser.terminal import Epsilon, Terminal
 from orbsim_language.context import ExScope, Scope
-from test_language.arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
-from test_language.test_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
+from other_language.arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
+from orb_simulator.other_language.other_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
 from lexer.regex_engine import Regex_Engine
 from lexer import Lexer
 from parser.own_token import Token_Type, Token
@@ -115,16 +115,7 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer('''
-        let Int n = 2;
-        if (n == 1 || n == 0) then {
-            n = 3;
-        }
-        else{
-            n = 4;
-            print('H');
-        };
-
-        print('Hola');
+        let Int n = 200 ^ 1
         '''
     )
 

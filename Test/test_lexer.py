@@ -1,6 +1,5 @@
-from secrets import token_bytes
-from lexer import Lexer
-from own_token import Token, Token_Type
+from orb_simulator.lexer import Lexer
+from orb_simulator.parser import Token_Type
 
 def test_lexer():
     lex = Lexer([('\+', Token_Type.plus),

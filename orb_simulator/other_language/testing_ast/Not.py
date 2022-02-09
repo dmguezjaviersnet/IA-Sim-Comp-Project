@@ -1,5 +1,5 @@
 from typing import overload
-from test_language.testing_ast.UnaryExpression import *
+from other_language.testing_ast.UnaryExpression import *
 
 class Not(UnaryExpression):
 
