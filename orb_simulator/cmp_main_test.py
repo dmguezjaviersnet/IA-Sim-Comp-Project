@@ -115,7 +115,7 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer('''
-        let String a = 3;
+        let String a = 'hola';
         '''
     )
 

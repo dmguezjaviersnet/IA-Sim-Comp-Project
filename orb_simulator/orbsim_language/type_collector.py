@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
-from orbsim_language.orbsim_type import VoidType
+from orbsim_language.orbsim_type import VoidType, StringType, BoolType, IntType, FloatType
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
 
@@ -22,11 +22,16 @@ class TypeCollector:
     @visitor.when(ProgramNode)
     def visit(self, node: ProgramNode):
         self.context: Context =  Context()
-        string_type  = self.context.create_type('String')
+        string_type =  StringType()
+        self.context.types['String']  = string_type
         string_type.define_method('concat', string_type, ['s1'], [string_type])
-        self.context.create_type('Bool')
-        self.context.create_type('Int')
-        self.context.create_type('Float')
+        bool_type = BoolType()
+        self.context.types['Bool']  =  bool_type
+        int_type =  IntType()
+        self.context.types['Int'] =  int_type
+        float_type = FloatType()
+        self.context.types['Float'] =  float_type
+        
         self.context.types['Void'] = VoidType()
 
         for st in node.statements:
