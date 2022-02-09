@@ -1,7 +1,7 @@
 from typing import List
 from   orbsim_language.orbsim_type import *
 import orbsim_language.visitor as visitor
-from   orbsim_language.context import Context, Scope
+from   orbsim_language.context import Context, FunctionInfo, Scope, VariableInfo
 from   orbsim_language.orbsim_ast.program_node import ProgramNode
 from   orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from   orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
@@ -16,6 +16,9 @@ from   orbsim_language.orbsim_ast.string_node import StringNode
 from   orbsim_language.orbsim_ast.integer_node import IntegerNode
 from   orbsim_language.orbsim_ast.float_node import FloatNode
 from   orbsim_language.orbsim_ast.boolean_node import BooleanNode
+from   orbsim_language.orbsim_ast.and_node import AndNode
+from   orbsim_language.orbsim_ast.or_node import OrNode
+from   orbsim_language.orbsim_ast.not_node import NotNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -75,12 +78,18 @@ class TypeChecker:
     def visit(self, node: VariableNode, scope: 'Scope'):
         if not scope.check_var(node.identifier):
             self.log(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
-        
-
+        else:
+            var: 'VariableInfo' = scope.get_variable(node.identifier)
+            node.comp_type = var.type
+    
     @visitor.when(FunCallNode)
     def visit(self, node: FunCallNode, scope: 'Scope'):
         if not self.context.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
             self.log(f'SemanticError: No existe una función con nombre {node.identifier}')
+        else:
+            func: 'FunctionInfo' = self.context.get_func(node.identifier, len(node.args))
+            node.comp_type = func.return_type
+            
     
     @visitor.when(PlusNode)
     def visit(self, node: PlusNode, scope: 'Scope'):
@@ -149,6 +158,29 @@ class TypeChecker:
         else:
             node.comp_type = IntType() 
     
+    @visitor.when(AndNode)
+    def visit(self, node: AndNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Bool':
+            self.log.append(f'SemanticError: La operación && no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            node.comp_type = BoolType() 
+
+    @visitor.when(OrNode)
+    def visit(self, node: OrNode, scope: 'Scope'):
+        self.visit(node.left, scope)
+        left_type: OrbsimType = node.left.comp_type
+        self.visit(node.right, scope)
+        right_type: OrbsimType = node.right.comp_type
+        if left_type != right_type or left_type.name != 'Bool':
+            self.log.append(f'SemanticError: La operación || no está definida entre {left_type.name} y {right_type.name}')
+        else:
+            node.comp_type = BoolType() 
+
+
     @visitor.when(StringNode)
     def visit(self, node: StringNode, scope: 'Scope'):
         node.comp_type = StringType()
@@ -165,7 +197,4 @@ class TypeChecker:
     def visit(self, node: BooleanNode, scope: 'Scope'):
         node.comp_type = BoolType()
     
-    # @visitor.when()
-       
-
-    # @visitor.when()
+    

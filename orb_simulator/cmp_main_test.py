@@ -115,7 +115,16 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer('''
-        let String a = 'hola';
+        let Int n = 2;
+        if (n == 1 || n == 0) then {
+            n = 3;
+        }
+        else{
+            n = 4;
+            print('H');
+        };
+
+        print('Hola');
         '''
     )
 
