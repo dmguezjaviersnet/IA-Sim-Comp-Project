@@ -33,14 +33,19 @@ class Vector3:
   def Zero ():
     return Vector3(0,0,0)
 
+  # retorna un random entre 0 y 100
   def random():
-    x = random.randint(0,100)
-    y = random.randint(0,100)
-    z = random.randint(0,100)
-    return Vector3(x,y,z)
+    return Vector3(random.randint(0,100),
+                   random.randint(0,100),
+                   random.randint(0,100))
+  
+  def random(max):
+    return Vector3( random.randint(0,max),
+                    random.randint(0,max),
+                    random.randint(0,max))
 
 
 def sig (x : int):
   if x > 0: return 1 
-  if x < 0: return -1 
+  elif x < 0: return -1 
   else: return 0
