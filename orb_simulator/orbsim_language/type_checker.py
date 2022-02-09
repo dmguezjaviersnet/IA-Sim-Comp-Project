@@ -30,6 +30,8 @@ from orbsim_language.orbsim_ast.greater_than_node import GreaterThanNode
 from orbsim_language.orbsim_ast.greater_equal_node import GreaterEqualNode
 from orbsim_language.orbsim_ast.less_than_node import LessThanNode
 from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
+from orbsim_language.orbsim_ast.print_node import PrintNode
+from orbsim_language.orbsim_ast.assign_node import AssingNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -40,18 +42,18 @@ class TypeChecker:
         self.log: List[str]   = log
         
     @visitor.on('node')
-    def visit(self, node):
+    def check(self, node):
         pass
     
     @visitor.when(ProgramNode)
-    def visit(self, node: ProgramNode, scope: 'Scope' = None):
+    def check(self, node: ProgramNode, scope: 'Scope' = None):
         scope = Scope()
         for statement in node.statements:
-            self.visit(statement, scope)
+            self.check(statement, scope)
         return scope
 
     @visitor.when(FuncDeclrNode)
-    def visit(self, node: FuncDeclrNode, scope: 'Scope'):
+    def check(self, node: FuncDeclrNode, scope: 'Scope'):
         try:
             fun_ret_type = self.context.get_type(node.return_type)
         except OrbisimSemanticError as err:
@@ -68,10 +70,10 @@ class TypeChecker:
             if not self.context.define_fun(node.identifier, fun_ret_type, node.args, arg_types):
                 self.log(f'Ya está definida una función con nombre {node.identifier}')
         
-        self.visit(node.body, scope.create_child_scope())
+        self.check(node.body, scope.create_child_scope())
     
     @visitor.when(VariableDeclrNode)
-    def visit(self, node: VariableDeclrNode, scope: 'Scope'):
+    def check(self, node: VariableDeclrNode, scope: 'Scope'):
         try:
             var_type: OrbsimType = self.context.get_type(node.type) # dame el tipo si existe de esta variable en caso que esté definido en el context
             
@@ -81,13 +83,13 @@ class TypeChecker:
         if not scope.define_var(node.identifier, var_type, node.expr):
             self.log.append(f'SemanticError: Ya existe una variable definida con el nombre {node.identifier}')
             
-        self.visit(node.expr, scope)
+        self.check(node.expr, scope)
         
         if  node.expr.comp_type != var_type:
             self.log.append(f'SemanticError: No se puede asignar una expresión de tipo {node.expr.comp_type.name} a la variable {node.identifier}  de tipo {var_type.name}')
     
     @visitor.when(VariableNode)
-    def visit(self, node: VariableNode, scope: 'Scope'):
+    def check(self, node: VariableNode, scope: 'Scope'):
         if not scope.check_var(node.identifier):
             node.comp_type = NullType()
             self.log(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
@@ -96,7 +98,7 @@ class TypeChecker:
             node.comp_type = var.type
     
     @visitor.when(FunCallNode)
-    def visit(self, node: FunCallNode, scope: 'Scope'):
+    def check(self, node: FunCallNode, scope: 'Scope'):
         if not self.context.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
             node.comp_type = NullType()
             self.log(f'SemanticError: No existe una función con nombre {node.identifier}')
@@ -106,10 +108,10 @@ class TypeChecker:
             
     
     @visitor.when(PlusNode)
-    def visit(self, node: PlusNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: PlusNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
             node.comp_type = NullType()
@@ -121,10 +123,10 @@ class TypeChecker:
                 node.comp_type = FloatType()
     
     @visitor.when(MinusNode)
-    def visit(self, node: MinusNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: MinusNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
             node.comp_type = NullType()
@@ -136,10 +138,10 @@ class TypeChecker:
                 node.comp_type = FloatType()
     
     @visitor.when(DivNode)
-    def visit(self, node: DivNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: DivNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
             node.comp_type = NullType()
@@ -151,10 +153,10 @@ class TypeChecker:
                 node.comp_type = FloatType()
     
     @visitor.when(ProductNode)
-    def visit(self, node: ProductNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: ProductNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
             node.comp_type = NullType()
@@ -166,10 +168,10 @@ class TypeChecker:
                 node.comp_type = FloatType()
     
     @visitor.when(ModNode)
-    def visit(self, node: ModNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: ModNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
             node.comp_type = NullType()
@@ -178,10 +180,10 @@ class TypeChecker:
             node.comp_type = IntType() 
     
     @visitor.when(AndNode)
-    def visit(self, node: AndNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: AndNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Bool':
             node.comp_type = NullType()
@@ -190,10 +192,10 @@ class TypeChecker:
             node.comp_type = BoolType() 
 
     @visitor.when(OrNode)
-    def visit(self, node: OrNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: OrNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Bool':
             node.comp_type = NullType()
@@ -202,8 +204,8 @@ class TypeChecker:
             node.comp_type = BoolType() 
 
     @visitor.when(NotNode)
-    def visit(self, node: NotNode, scope: 'Scope'):
-        self.visit(node.expr, scope)
+    def check(self, node: NotNode, scope: 'Scope'):
+        self.check(node.expr, scope)
         expr_type: OrbsimType = node.expr.comp_type
         
         if expr_type.name != 'Bool':
@@ -213,10 +215,10 @@ class TypeChecker:
             node.comp_type = BoolType() 
 
     @visitor.when(BitwiseAndNode)
-    def visit(self, node: BitwiseAndNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: BitwiseAndNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
             node.comp_type = NullType()
@@ -225,10 +227,10 @@ class TypeChecker:
             node.comp_type = IntType() 
 
     @visitor.when(BitwiseOrNode)
-    def visit(self, node: BitwiseOrNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: BitwiseOrNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
             node.comp_type = NullType()
@@ -237,10 +239,10 @@ class TypeChecker:
             node.comp_type = IntType() 
 
     @visitor.when(BitwiseXorNode)
-    def visit(self, node: BitwiseXorNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: BitwiseXorNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
             node.comp_type = NullType()
@@ -249,10 +251,10 @@ class TypeChecker:
             node.comp_type = IntType() 
 
     @visitor.when(BitwiseShiftRightNode)
-    def visit(self, node: BitwiseShiftRightNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: BitwiseShiftRightNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
             node.comp_type = NullType()
@@ -261,10 +263,10 @@ class TypeChecker:
             node.comp_type = IntType() 
     
     @visitor.when(BitwiseShiftLeftNode)
-    def visit(self, node: BitwiseShiftLeftNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: BitwiseShiftLeftNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or left_type.name != 'Int':
             node.comp_type = NullType()
@@ -274,26 +276,26 @@ class TypeChecker:
 
 
     @visitor.when(EqualNode)
-    def visit(self, node: EqualNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: EqualNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         node.comp_type = BoolType() 
     
     @visitor.when(NotEqualNode)
-    def visit(self, node: NotEqualNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: NotEqualNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         node.comp_type = BoolType() 
 
     @visitor.when(GreaterThanNode)
-    def visit(self, node: GreaterThanNode, scope: 'Scope'):
-        self.visit(node.left, scope)
+    def check(self, node: GreaterThanNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
             node.comp_type = NullType()
@@ -302,9 +304,9 @@ class TypeChecker:
             node.comp_type = BoolType() 
     
     @visitor.when(GreaterEqualNode)
-    def visit(self, node: GreaterEqualNode, scope: 'Scope'):
+    def check(self, node: GreaterEqualNode, scope: 'Scope'):
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
             node.comp_type = NullType()
@@ -313,9 +315,9 @@ class TypeChecker:
             node.comp_type = BoolType() 
     
     @visitor.when(LessThanNode)
-    def visit(self, node: LessThanNode, scope: 'Scope'):
+    def check(self, node: LessThanNode, scope: 'Scope'):
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
             node.comp_type = NullType()
@@ -324,9 +326,9 @@ class TypeChecker:
             node.comp_type = BoolType() 
 
     @visitor.when(LessEqualNode)
-    def visit(self, node: LessEqualNode, scope: 'Scope'):
+    def check(self, node: LessEqualNode, scope: 'Scope'):
         left_type: OrbsimType = node.left.comp_type
-        self.visit(node.right, scope)
+        self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
         if left_type != right_type or (left_type.name != 'Int' and left_type.name != 'Float'):
             node.comp_type = NullType()
@@ -334,21 +336,40 @@ class TypeChecker:
         else:
             node.comp_type = BoolType() 
 
-    
+
+    @visitor.when(PrintNode)
+    def check(self, node: PrintNode, scope: 'Scope'):
+        self.check(node.expr, scope)
+        expr_type: OrbsimType =  node.expr.comp_type
+        if expr_type.name != 'Int' and expr_type.name != 'Float' and expr_type.name != 'Bool' and expr_type.name != 'String':
+            self.log.append(f'SemanticError: print no admite expresiones de tipo {expr_type.name}')
+        
+    @visitor.when(AssingNode)
+    def check(self, node: AssingNode, scope: 'Scope'):
+        self.check(node.expr, scope)
+        if not scope.check_var(node.var_id):
+            self.log.append(f'SemanticError: No existe una variable definida con nombre {node.var_id}')
+        else:
+            var_info: VariableInfo = scope.get_variable(node.var_id)
+            if node.expr.comp_type != var_info.type:
+                self.log.append(f'SemanticError: No le puedes asignar a una variable de tipo  {var_info.type} una expresión de tipo {node.expr.comp_type}')
+
+
+
     @visitor.when(StringNode)
-    def visit(self, node: StringNode, scope: 'Scope'):
+    def check(self, node: StringNode, scope: 'Scope'):
         node.comp_type = StringType()
     
     @visitor.when(IntegerNode)
-    def visit(self, node: IntegerNode, scope: 'Scope'):
+    def check(self, node: IntegerNode, scope: 'Scope'):
         node.comp_type = IntType()
     
     @visitor.when(FloatNode)
-    def visit(self, node: FloatNode, scope: 'Scope'):
+    def check(self, node: FloatNode, scope: 'Scope'):
         node.comp_type = FloatType()
     
     @visitor.when(BooleanNode)
-    def visit(self, node: BooleanNode, scope: 'Scope'):
+    def check(self, node: BooleanNode, scope: 'Scope'):
         node.comp_type = BoolType()
     
     

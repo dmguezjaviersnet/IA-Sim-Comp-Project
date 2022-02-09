@@ -4,8 +4,6 @@ from parser.lr1_item import Lr1_item
 from parser.non_terminal import Non_terminal
 from parser.terminal import Epsilon, Terminal
 from orbsim_language.context import ExScope, Scope
-from other_language.arth_grammar import arth_grammar, arth_grammar_tokenize, arth_grammar_token_string
-from orb_simulator.other_language.other_grammar_lr1 import lr1_test_grammar, test_grammar_tokenize
 from lexer.regex_engine import Regex_Engine
 from lexer import Lexer
 from parser.own_token import Token_Type, Token
@@ -129,7 +127,7 @@ def main():
     builder = TypeBuilder(collector.context, collector.log)
     builder.visit(ast)
     checker =  TypeChecker(builder.context, builder.log)
-    checker.visit(ast, Scope())
+    checker.check(ast, Scope())
     exe =  Executor(checker.context)
     exe.execute(ast, ExScope())
     
