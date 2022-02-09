@@ -264,7 +264,6 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_
                     break
                       
                 parsing_errors.append(OrbisimParserError(f'expected token ------> {expected_token}'))
-                states_stack.append(curr_state.transitions[expected_token])
-                symbols_stack.append(Terminal(expected_token))
+                return parsing_errors, None 
 
-    return False, None
+    return parsing_errors, None

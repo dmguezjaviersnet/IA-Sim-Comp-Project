@@ -1,6 +1,6 @@
 from typing import List
-from test_language.testing_ast import Number, Sum
-from test_language.testing_ast import Sub, Mul, Div
+from other_language.testing_ast import Number, Sum
+from other_language.testing_ast import Sub, Mul, Div
 from parser.own_symbol import Symbol
 
 ################################ E

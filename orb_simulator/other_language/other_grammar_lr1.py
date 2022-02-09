@@ -4,7 +4,7 @@ from parser.grammar import Grammar
 from parser.non_terminal import Non_terminal
 from parser.terminal import Terminal, Epsilon, Eof
 from parser.production import Production
-from test_language.arth_grammar_rules import *
+from other_language.arth_grammar_rules import *
 
 
 lr1_test_token_builder: Dict[str, Callable] = {
