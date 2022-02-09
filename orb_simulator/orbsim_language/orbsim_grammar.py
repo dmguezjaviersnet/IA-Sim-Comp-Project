@@ -347,9 +347,9 @@ p8 = Production (func_body_stmt_list,
                 )
 
 p9 = Production (func_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt]],
                 [[(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)],
-                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)]]
+                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)]]
                 )
 
 p10 = Production(let_stmt,
@@ -374,9 +374,9 @@ p13 = Production(loop_body_stmt_list,
                 )
 
 p14 = Production(loop_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [flow_stmt]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [flow_stmt], [print_stmt]],
                 [[(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)],
-                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)]]
+                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)]]
                 )
 
 p15 = Production(flow_stmt,
@@ -399,8 +399,8 @@ p17 = Production(conditional_body_stmt_list,
                 )
 
 p18 = Production(conditional_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt]],
-                [[(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt]],
+                [[(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)],
                  [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)]]
                 )
 

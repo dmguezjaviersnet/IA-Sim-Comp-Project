@@ -36,7 +36,7 @@ orbsim_lexer = Lexer([
     ('\|\|', Token_Type.logical_or),
     ('&&', Token_Type.logical_and),
     ('\|', Token_Type.bitwise_or),
-    ('^', Token_Type.bitwise_not),
+    ('^', Token_Type.bitwise_xor),
     ('&', Token_Type.bitwise_and),
     ('<<', Token_Type.bitwise_shift_left),
     ('>>', Token_Type.bitwise_shift_right),
