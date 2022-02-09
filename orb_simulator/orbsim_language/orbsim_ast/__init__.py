@@ -38,7 +38,7 @@ from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
 from orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
-from orbsim_language.orbsim_ast.bitwise_xor import BitwiseXorNode
+from orbsim_language.orbsim_ast.bitwise_xor_node import BitwiseXorNode
 from orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRightNode
-from orbsim_language.orbsim_ast.bitwsie_shift_left_node import BitwiseShiftLeftNode
+from orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
 from orbsim_language.orbsim_ast.body_node import BodyNode
