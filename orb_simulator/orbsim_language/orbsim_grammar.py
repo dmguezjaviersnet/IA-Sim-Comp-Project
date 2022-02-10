@@ -295,7 +295,7 @@ non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body
                 func_body_stmt_list, func_body_stmt, let_stmt, assign_stmt, loop_stmt, conditional_stmt, print_stmt,
                 ret_stmt, loop_body_stmt_list, loop_body_stmt, flow_stmt, conditional_body_stmt_list, conditional_body_stmt,
                 arg_list, expression, or_expr, and_expr, not_expr, compare_expr, compare_op, bitwise_or_expr, bitwise_xor_expr,
-                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, func_call, make_instance, method_call, expr_list]
+                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, func_call, make_instance, method_call, attr_call, expr_list]
 
 # Producciones
 
@@ -488,9 +488,10 @@ p34 = Production(factor,
                 )
 
 p35 = Production(atom,
-                [[int], [float], [boolean], [string], [id_orbsim], [func_call]],
+                [[int], [float], [boolean], [string], [id_orbsim], [func_call], [make_instance], [method_call], [attr_call]],
                 [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)], 
-                 [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)]]
+                 [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)]
+                 [(atom_rule7, True)], [(atom_rule8, True)], [(atom_rule9, True)]]
                 )
 
 p36 = Production(func_call,

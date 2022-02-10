@@ -1,3 +1,4 @@
+from pickle import NONE
 from typing import Any, Dict, FrozenSet, List, Set, Tuple
 from automaton.state import State
 from parser.grammar import Grammar
@@ -11,6 +12,7 @@ from parser.ll1_table_builder import find_first, find_firsts
 from parser.action_goto_table import Action_Goto_Table
 from parser.eval_rule import eval_rule
 from errors import OrbisimParserError
+from tools import serialize_data, deserialize_data
 
 action_goto_table: Action_Goto_Table = None
 lr1_states_hash_table = None
@@ -196,11 +198,29 @@ def __build_lr1_automaton(G: Grammar, lr0_items: List[Lr0_item]) -> Tuple[bool, 
 
 def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_Type, str]) -> Tuple[bool, Any]:
     lr0_items = __build_lr0_items(G)
-    is_lr1, lr1_automaton, states = __build_lr1_automaton(G, lr0_items)
+    is_lr1, lr1_automaton, states = False, None, None
+
+    global action_goto_table    
     del globals()['lr1_states_hash_table']
     del lr1_automaton
 
-    string_to_token_type = {value: key for key, value in token_type_to_string.items()}
+    deserialized_action_goto_table = deserialize_data('./serialized_data/serialized_action_goto_table.pickle')
+    deserialized_states = deserialize_data('./serialized_data/states.pickle')
+
+    if deserialized_states != None:
+        states = deserialized_states
+    
+    if deserialized_action_goto_table != None:
+        is_lr1 = True
+        action_goto_table = deserialized_action_goto_table
+
+    else:
+        is_lr1, lr1_automaton, states = __build_lr1_automaton(G, lr0_items)
+
+        if is_lr1:
+            serialize_data(action_goto_table, './serialized_data/serialized_action_goto_table')
+            serialize_data(states, './serialized_data/states')
+
     symbols_stack = []
     states_stack = [states[0]]
     prods = list(G.map_prodstr_rules.keys())
