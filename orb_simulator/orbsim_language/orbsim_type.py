@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from numpy import imag
 from orbsim_language.orbsim_ast import ExpressionNode
@@ -11,7 +11,7 @@ class Attribute:
     name: str
     type: 'OrbsimType'
     expr: 'ExpressionNode' =  None
-
+    val: Any = None
 
 @dataclass
 class Method:

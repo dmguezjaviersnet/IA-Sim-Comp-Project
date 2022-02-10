@@ -36,6 +36,7 @@ from orbsim_language.orbsim_ast.loop_node import LoopNode
 from orbsim_language.orbsim_ast.conditional_node import ConditionalNode
 from orbsim_language.orbsim_ast.body_node import BodyNode
 from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
+from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 
 
@@ -395,6 +396,19 @@ class TypeChecker:
                 node.comp_type = attr.type
             except OrbisimSemanticError as err:
                 self.log.append(err.error_info)
+
+    @visitor.when(ClassMakeNode)
+    def check(self, node: ClassMakeNode, scope: 'Scope'):
+        class_type: 'OrbsimType' = self.context.get_type(node.classname)
+        attrs = class_type.attributes
+        for  p in node.params:
+            self.check(p, scope)
+        
+        for index, att in enumerate(attrs.values()):
+            if att.type != node.params[index].comp_type:
+                self.log.append(f'No le puedes asignar a un atributo de tipo {att.type.name} una expresión de tipo {node.params[index].comp_type}')
+            
+        node.comp_type = class_type
 
     @visitor.when(StringNode)
     def check(self, node: StringNode, scope: 'Scope'):

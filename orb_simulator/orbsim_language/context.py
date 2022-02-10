@@ -16,6 +16,7 @@ class VariableInfo:
     name: str
     type: OrbsimType
     expr: ExpressionNode
+    val: Any = None
 
     def __eq__(self, other: 'VariableInfo') -> bool:
         return self.name == other.name
@@ -62,26 +63,11 @@ class ExScope:
         
         return False
 
-    
-    
-    def get_variable_val(self, var_name: str):
-        if var_name in self.local_variables:
-            return self.local_variables[var_name].val
+    def get_variable(self, identifier: str):
+        if identifier in self.local_variables:
+            return self.local_variables[identifier]
         if self.parent != None:
-             return self.parent.get_variable_val(var_name)
-        return None
-    
-    def assing_new_variable_val(self, var_name: str, new_value):
-        if var_name in self.local_variables:
-            self.local_variables[var_name].val = new_value
-            return True
-        if self.parent != None:
-            return self.parent.assing_new_variable_val(var_name, new_value)
-        return False
-
-    
-
-    
+            return self.parent.get_variable(identifier)    
 
     def create_child_scope(self):
         child_scope = ExScope(self)
@@ -137,7 +123,7 @@ class Scope:
             return self.local_variables[identifier]
         if self.parent != None:
             return self.parent.get_variable(identifier)
-        
+    
     def create_child_scope(self):
         child_scope = Scope(self)
         return child_scope
