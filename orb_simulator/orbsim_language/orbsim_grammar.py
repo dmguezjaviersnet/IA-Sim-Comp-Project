@@ -118,7 +118,8 @@ atom -> INT ########## Prod 35
 func_call -> ID ( expr_list ) ########## Prod 36
 make_instance -> make ID ( expr_list ) ########## Prod 37
 method_call -> ID . ID ( expr_list ) ########## Prod 38
-expr_list -> expression "," expr_list ########## Prod 39
+attr_call -> ID . ID ########## Prod 39
+expr_list -> expression "," expr_list ########## Prod 40
              | expression>
 
 
@@ -287,6 +288,7 @@ atom = Non_terminal('atom', 'ast')
 func_call = Non_terminal('func_call', 'ast')
 make_instance = Non_terminal('make_instance', 'ast')
 method_call = Non_terminal('method_call', 'ast')
+attr_call = Non_terminal('attr_call', 'ast')
 expr_list = Non_terminal('expr_list', 'ast')
 
 non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body_stmt, attr_stmt, def_func_stmt, 
@@ -308,12 +310,12 @@ p2 = Production(stmt_list,
 
 p3 = Production(statement,
                 [[class_keyword, type_id, open_curly_braces, class_body_stmt_list, closed_curly_braces], 
-                 [let_stmt], 
-                 [def_func_stmt], 
-                 [conditional_stmt], 
-                 [loop_stmt], 
+                 [let_stmt],
+                 [def_func_stmt],
+                 [conditional_stmt],
+                 [loop_stmt],
                  [print_stmt],
-                 [assign_stmt]], 
+                 [assign_stmt]],
                 [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], 
                  [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)]]
                 )
@@ -496,23 +498,28 @@ p36 = Production(func_call,
                 [[(func_call_rule, True)]]
                 )
 
-p37 = Production(method_call,
-                [[id_orbsim, class_member_access_operator, open_parenthesis, expr_list, closed_parenthesis]],
-                [[(func_call_rule, True)]]
-                )
-
-p38 = Production(make_instance,
+p37 = Production(make_instance,
                 [[make_keyword, type_id, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(make_rule, True)]]
                 )
 
-p39 = Production(expr_list,
+p38 = Production(method_call,
+                [[id_orbsim, class_member_access_operator, id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
+                [[(func_call_rule, True)]]
+                )            
+
+p39 = Production(attr_call,
+                [[id_orbsim, class_member_access_operator, id_orbsim]],
+                [[(func_call_rule, True)]]
+                )      
+
+p40 = Production(expr_list,
                 [[expression, expr_separator, expr_list], [expression], [epsilon]],
                 [[(expr_list_rule1, True)], [(expr_list_rule2, True)], [(expr_list_rule3, True)]]
                 )
 
 productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20,
-                p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39]
+                p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39, p40]
 
 orbsim_grammar = Grammar(terminals, non_terminals, program, productions)
 
