@@ -4,7 +4,7 @@ from parser.terminal import Epsilon, Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2, expr_list_rule3
+from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2, expr_list_rule3, make_rule
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule 
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
@@ -503,7 +503,7 @@ p37 = Production(method_call,
 
 p38 = Production(make_instance,
                 [[make_keyword, type_id, open_parenthesis, expr_list, closed_parenthesis]],
-                [[(func_call_rule, True)]]
+                [[(make_rule, True)]]
                 )
 
 p39 = Production(expr_list,

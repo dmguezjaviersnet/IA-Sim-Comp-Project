@@ -8,7 +8,7 @@ from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, 
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode, StringNode, BooleanNode
 from orbsim_language.orbsim_ast import DivNode, AtomicNode, PrintNode, FunCallNode, ModNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
-from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode
+from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode
 
 
 def program_rule(head: Symbol, tail: List[Symbol]):
@@ -223,6 +223,9 @@ def atom_rule6(head: Symbol, tail: List[Symbol]):
 
 def func_call_rule(head: Symbol, tail: List[Symbol]):
     head.ast = FunCallNode(tail[0].val, tail[2].ast)
+
+def make_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = ClassMakeNode(tail[1].val, tail[3].ast)
 
 def expr_list_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].ast] + tail[2].ast
