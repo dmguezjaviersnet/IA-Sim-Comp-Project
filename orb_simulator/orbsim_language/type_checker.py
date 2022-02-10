@@ -388,8 +388,13 @@ class TypeChecker:
             node.comp_type = NullType()
             self.log(f'SemanticError: El nombre {node.instance_name} no está definido')
         else:
-            # var_instance: VariableInfo = scope.get_variable(node.instance_name)
-            # var_insance.type
+            var_instance: VariableInfo = scope.get_variable(node.instance_name)
+            var_type = var_instance.type
+            try:
+                attr = var_type.get_attribute(node.identifier)
+                node.comp_type = attr.type
+            except OrbisimSemanticError as err:
+                self.log.append(err.error_info)
 
     @visitor.when(StringNode)
     def check(self, node: StringNode, scope: 'Scope'):

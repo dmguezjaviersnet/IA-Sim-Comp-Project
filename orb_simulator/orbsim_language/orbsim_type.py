@@ -31,8 +31,11 @@ class OrbsimType:
     
 
     def get_attribute(self, name: str) -> 'Attribute':
-        return self.attributes[name]
-    
+        try:
+            return self.attributes[name]
+        except KeyError:
+            raise OrbisimSemanticError(f'El tipo {self.name} no tiene definido ningún atributo {name}')
+        
     def get_method(self, name: str):
         return self.methods[name]
     
