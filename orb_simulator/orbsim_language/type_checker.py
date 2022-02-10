@@ -388,6 +388,7 @@ class TypeChecker:
             node.comp_type = NullType()
             self.log(f'SemanticError: El nombre {node.instance_name} no está definido')
         else:
+            pass
             # var_instance: VariableInfo = scope.get_variable(node.instance_name)
             # var_insance.type
 

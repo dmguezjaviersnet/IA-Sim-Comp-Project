@@ -227,10 +227,10 @@ def make_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ClassMakeNode(tail[1].val, tail[3].ast)
 
 def method_call_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = MethodCallNode(tail[0].val, tail[2].val, )
+    head.ast = MethodCallNode(tail[0].val, tail[2].val, tail[4].ast)
 
 def attr_call_rule(head: Symbol, tail: List[Symbol]):
-    head.ast = AttributeCallNode(tail[1].val, tail[3].ast)
+    head.ast = AttributeCallNode(tail[0].val, tail[2].val)
 
 def expr_list_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].ast] + tail[2].ast
