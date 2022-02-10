@@ -35,7 +35,8 @@ from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.loop_node import LoopNode
 from orbsim_language.orbsim_ast.conditional_node import ConditionalNode
 from orbsim_language.orbsim_ast.body_node import BodyNode
-
+from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
+from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 
 
 from errors import OrbisimSemanticError
@@ -380,6 +381,15 @@ class TypeChecker:
     def check(self, node: BodyNode, scope: 'Scope'):
         for st in node.statements:
             self.check(st, scope)
+
+    @visitor.when(AttributeCallNode)
+    def check(self, node: AttributeCallNode, scope: 'Scope'):   
+        if not scope.check_var(node.instance_name):
+            node.comp_type = NullType()
+            self.log(f'SemanticError: El nombre {node.instance_name} no está definido')
+        else:
+            # var_instance: VariableInfo = scope.get_variable(node.instance_name)
+            # var_insance.type
 
     @visitor.when(StringNode)
     def check(self, node: StringNode, scope: 'Scope'):
