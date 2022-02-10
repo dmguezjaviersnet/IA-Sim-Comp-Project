@@ -6,10 +6,9 @@ from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterT
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
 from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode, StringNode, BooleanNode
-from orbsim_language.orbsim_ast import DivNode, AtomicNode, PrintNode, FunCallNode, ModNode
+from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
-from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode
-
+from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode, MethodCallNode, AttributeCallNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ProgramNode(tail[0].ast)
@@ -226,6 +225,12 @@ def func_call_rule(head: Symbol, tail: List[Symbol]):
 
 def make_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ClassMakeNode(tail[1].val, tail[3].ast)
+
+def method_call_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = MethodCallNode(tail[0].val, tail[2].val, tail[4].ast)
+
+def attr_call_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = AttributeCallNode(tail[0].val, tail[2].val)
 
 def expr_list_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = [tail[0].ast] + tail[2].ast

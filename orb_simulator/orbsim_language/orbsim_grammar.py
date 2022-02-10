@@ -4,9 +4,9 @@ from parser.terminal import Epsilon, Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, class_body_stmt_list_rule2, expr_list_rule3, make_rule
+from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
-from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule 
+from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule, class_body_stmt_list_rule2, expr_list_rule3, make_rule, method_call_rule
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
 from orbsim_language.orbsim_rules import arth_expr_rule2, arth_expr_rule3, atom_rule1, atom_rule2, atom_rule3, atom_rule4
 from orbsim_language.orbsim_rules import atom_rule5, atom_rule6, bitwise_and_expr_rule1, bitwise_and_expr_rule2
@@ -118,7 +118,8 @@ atom -> INT ########## Prod 35
 func_call -> ID ( expr_list ) ########## Prod 36
 make_instance -> make ID ( expr_list ) ########## Prod 37
 method_call -> ID . ID ( expr_list ) ########## Prod 38
-expr_list -> expression "," expr_list ########## Prod 39
+attr_call -> ID . ID ########## Prod 39
+expr_list -> expression "," expr_list ########## Prod 40
              | expression>
 
 
@@ -287,13 +288,14 @@ atom = Non_terminal('atom', 'ast')
 func_call = Non_terminal('func_call', 'ast')
 make_instance = Non_terminal('make_instance', 'ast')
 method_call = Non_terminal('method_call', 'ast')
+attr_call = Non_terminal('attr_call', 'ast')
 expr_list = Non_terminal('expr_list', 'ast')
 
 non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body_stmt, attr_stmt, def_func_stmt, 
                 func_body_stmt_list, func_body_stmt, let_stmt, assign_stmt, loop_stmt, conditional_stmt, print_stmt,
                 ret_stmt, loop_body_stmt_list, loop_body_stmt, flow_stmt, conditional_body_stmt_list, conditional_body_stmt,
                 arg_list, expression, or_expr, and_expr, not_expr, compare_expr, compare_op, bitwise_or_expr, bitwise_xor_expr,
-                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, func_call, make_instance, method_call, expr_list]
+                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, func_call, make_instance, method_call, attr_call, expr_list]
 
 # Producciones
 
@@ -308,14 +310,16 @@ p2 = Production(stmt_list,
 
 p3 = Production(statement,
                 [[class_keyword, type_id, open_curly_braces, class_body_stmt_list, closed_curly_braces], 
-                 [let_stmt], 
-                 [def_func_stmt], 
-                 [conditional_stmt], 
-                 [loop_stmt], 
+                 [let_stmt],
+                 [def_func_stmt],
+                 [conditional_stmt],
+                 [loop_stmt],
                  [print_stmt],
-                 [assign_stmt]], 
-                [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], 
-                 [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)]]
+                 [assign_stmt],
+                 [func_call],
+                 [method_call]],
+                [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)],
+                 [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(func_call_rule, True)], [(method_call_rule, True)]]
                 )
 
 p4 = Production(class_body_stmt_list,
@@ -486,9 +490,10 @@ p34 = Production(factor,
                 )
 
 p35 = Production(atom,
-                [[int], [float], [boolean], [string], [id_orbsim], [func_call]],
+                [[int], [float], [boolean], [string], [id_orbsim], [func_call], [make_instance], [method_call], [attr_call]],
                 [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)], 
-                 [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)]]
+                 [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)],
+                 [(atom_rule6, True)], [(atom_rule6, True)], [(atom_rule6, True)]]
                 )
 
 p36 = Production(func_call,
@@ -496,23 +501,28 @@ p36 = Production(func_call,
                 [[(func_call_rule, True)]]
                 )
 
-p37 = Production(method_call,
-                [[id_orbsim, class_member_access_operator, open_parenthesis, expr_list, closed_parenthesis]],
-                [[(func_call_rule, True)]]
-                )
-
-p38 = Production(make_instance,
+p37 = Production(make_instance,
                 [[make_keyword, type_id, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(make_rule, True)]]
                 )
 
-p39 = Production(expr_list,
+p38 = Production(method_call,
+                [[id_orbsim, class_member_access_operator, id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
+                [[(func_call_rule, True)]]
+                )            
+
+p39 = Production(attr_call,
+                [[id_orbsim, class_member_access_operator, id_orbsim]],
+                [[(func_call_rule, True)]]
+                )      
+
+p40 = Production(expr_list,
                 [[expression, expr_separator, expr_list], [expression], [epsilon]],
                 [[(expr_list_rule1, True)], [(expr_list_rule2, True)], [(expr_list_rule3, True)]]
                 )
 
 productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20,
-                p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39]
+                p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39, p40]
 
 orbsim_grammar = Grammar(terminals, non_terminals, program, productions)
 

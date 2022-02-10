@@ -43,3 +43,5 @@ from orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRigh
 from orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
 from orbsim_language.orbsim_ast.body_node import BodyNode
 from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
+from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
+from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
