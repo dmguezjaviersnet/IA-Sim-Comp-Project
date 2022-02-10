@@ -48,6 +48,7 @@ orbsim_lexer = Lexer([
     ('}', Token_Type.closed_curly_braces),
     (';', Token_Type.stmt_separator),
     (',', Token_Type.expr_separator),
+    ('.', Token_Type.instance_access_op),
     ('(\\ )+', Token_Type.space),
     ('(\\n)+', Token_Type.new_line)],
     # ('[!-~]+', Token_Type.error)], # ACII(character code 33-126) token especial para detectar los errores

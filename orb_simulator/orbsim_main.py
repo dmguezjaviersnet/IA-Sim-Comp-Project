@@ -113,12 +113,10 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer(
-    '''
-        let Point b =  make Point(2,3);
-    '''
+    '''let Int cd = a.pepito(2, 3);
+         '''
     )
 
-    
     _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
     print('\o/')
     collector = TypeCollector()
