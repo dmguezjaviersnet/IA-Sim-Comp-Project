@@ -1,6 +1,6 @@
 from typing import List
 from parser.own_symbol import Symbol
-from orbsim_language.orbsim_ast import ProgramNode, VariableDeclrNode, FuncDeclrNode
+from orbsim_language.orbsim_ast import ProgramNode, VariableDeclrNode, FuncDeclrNode, MethodDeclrNode
 from orbsim_language.orbsim_ast import ConditionalNode, LoopNode, OrNode, AndNode
 from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterThanNode
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
@@ -38,6 +38,12 @@ def class_body_stmt_rule(head: Symbol, tail: List[Symbol]):
 
 def attr_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = AttributeDeclrNode(tail[1].val, tail[0]. val)
+
+def def_method_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = MethodDeclrNode(tail[2].val, tail[1].val, [id_param for id_param, _ in tail[4].ast],
+                            [type_param for _, type_param in tail[4].ast], 
+                            BodyNode([elem for elem in tail[7].ast])
+                            )
 
 def def_func_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = FuncDeclrNode(tail[2].val, tail[1].val, [id_param for id_param, _ in tail[4].ast],

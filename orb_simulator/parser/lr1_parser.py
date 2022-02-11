@@ -201,9 +201,6 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_
     is_lr1, lr1_automaton, states = False, None, None
 
     global action_goto_table    
-    del globals()['lr1_states_hash_table']
-    del lr1_automaton
-
     deserialized_action_goto_table = deserialize_data('./serialized_data/serialized_action_goto_table.pickle')
     deserialized_states = deserialize_data('./serialized_data/states.pickle')
 
@@ -216,6 +213,8 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_
 
     else:
         is_lr1, lr1_automaton, states = __build_lr1_automaton(G, lr0_items)
+        del globals()['lr1_states_hash_table']
+        del lr1_automaton
 
         if is_lr1:
             serialize_data(action_goto_table, './serialized_data/serialized_action_goto_table')
