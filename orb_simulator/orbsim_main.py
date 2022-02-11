@@ -122,12 +122,15 @@ def main():
                 ret make Point(this.a + b.a, this.b + b.b);
             };
         };
-        
-        
+        let Point a =  make Point(2,3);
+        let Point b =  make Point(4,5);
+        let Point c = a.add(b);
+        print(c.a);
+        print(c.b);
         
     '''
     )
-
+    
     _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
     print('\o/')
     collector = TypeCollector()
