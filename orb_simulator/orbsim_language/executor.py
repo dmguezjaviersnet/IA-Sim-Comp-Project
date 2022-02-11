@@ -41,6 +41,8 @@ from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
 from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.instance import Instance
 from orbsim_language.orbsim_type import*
+from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
+
 from errors import OrbisimExecutionError
 class Executor:
 
@@ -303,6 +305,23 @@ class Executor:
             class_instance.set_attr_instance(attr, attr_instance)
         return class_instance
 
+    @visitor.when(MethodCallNode)
+    def execute(self, node: MethodCallNode, scope: 'Scope'):
+        var: VariableInfo = scope.get_variable(node.instance_name)
+        var_instance = var.instance
 
+        new_scope = Scope()
+        method: 'Method' = var_instance.get_method(node.identifier, len(node.args))
+        new_scope.define_var('this', var_instance.orbsim_type)
+        new_scope.get_variable('this').instance = var_instance
+        for arg, arg_type, arg_expr in  zip(method.args, method.type_args, node.args):
+            new_scope.define_var(arg, arg_type)
+            new_var = new_scope.get_variable(arg)
+            new_var.instance = self.execute(arg_expr, new_scope)
+
+        return self.execute(method.body, new_scope)
+        
+
+        
 
         

@@ -18,7 +18,7 @@ class Method:
     name: str
     return_type: 'OrbsimType'
     args: str
-    type_args: str
+    type_args: List['OrbsimType']
     body: 'BodyNode' = None
     
 

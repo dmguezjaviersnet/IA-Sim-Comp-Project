@@ -117,10 +117,13 @@ def main():
         class Point {
             Int a;
             Int b;
+
+            func Point add (Point b){
+                ret Point(this.a + b.a, this.b + b.b);
+            };
         };
-        let Point b =  make Point(2,3);
-        print(b.a);
-        print(b.b);
+        
+        
         
     '''
     )
