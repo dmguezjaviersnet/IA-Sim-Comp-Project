@@ -37,17 +37,10 @@ class OrbsimObj:
   # Este metodo dado una instancia del environmet espera un tiempo determinado 
   # y depues mueve el objeto a una posicion random  
   def move (self, env: simpy.Environment)-> None:
-    self.position = Vector3.random()
+    self.position = Vector3.random(100)
     pass
-
-  # genera un objeto random en una posicion random
-  def randomObject():
-    rnd = Vector3.random()
-    obj_id = uuid.uuid4()
-    obj = OrbsimObj(position= rnd, unique_id= obj_id)
-    return obj
   
-  def randomObject(max):
+  def random(max):
     rnd = Vector3.random(max)
     obj_id = uuid.uuid4()
     obj = OrbsimObj(position= rnd, unique_id= obj_id)
