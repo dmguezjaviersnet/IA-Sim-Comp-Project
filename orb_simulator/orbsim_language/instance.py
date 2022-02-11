@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 from typing import Any, Dict
-
-from telegram import Dice
 from orbsim_language.orbsim_type import OrbsimType
 
 

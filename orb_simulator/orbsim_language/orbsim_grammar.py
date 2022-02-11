@@ -7,7 +7,7 @@ from parser.own_token import Token_Type
 from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule, class_body_stmt_list_rule2, expr_list_rule3, make_rule, method_call_rule
-from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
+from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1, def_method_stmt_rule
 from orbsim_language.orbsim_rules import arth_expr_rule2, arth_expr_rule3, atom_rule1, atom_rule2, atom_rule3, atom_rule4
 from orbsim_language.orbsim_rules import atom_rule5, atom_rule6, bitwise_and_expr_rule1, bitwise_and_expr_rule2
 from orbsim_language.orbsim_rules import bitwise_or_expr_rule1, bitwise_or_expr_rule2, bitwise_shift_expr_rule1
@@ -197,6 +197,7 @@ class_body_stmt_list = Non_terminal('class_body_stmt_list', 'ast')
 class_body_stmt = Non_terminal('class_body_stmt', 'ast')
 attr_stmt = Non_terminal('attr_stmt', 'ast')
 def_func_stmt = Non_terminal('def_func_stmt', 'ast')
+def_method_stmt = Non_terminal('def_method_stmt', 'ast')
 func_body_stmt_list = Non_terminal('func_body_stmt_list', 'ast')
 func_body_stmt = Non_terminal('func_body_stmt', 'ast')
 let_stmt = Non_terminal('let_stmt', 'ast')
@@ -233,10 +234,11 @@ attr_call = Non_terminal('attr_call', 'ast')
 expr_list = Non_terminal('expr_list', 'ast')
 
 non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body_stmt, attr_stmt, def_func_stmt, 
-                func_body_stmt_list, func_body_stmt, let_stmt, assign_stmt, loop_stmt, conditional_stmt, print_stmt,
-                ret_stmt, loop_body_stmt_list, loop_body_stmt, flow_stmt, conditional_body_stmt_list, conditional_body_stmt,
+                def_method_stmt, func_body_stmt_list, func_body_stmt, let_stmt, assign_stmt, loop_stmt, conditional_stmt,
+                print_stmt, ret_stmt, loop_body_stmt_list, loop_body_stmt, flow_stmt, conditional_body_stmt_list, conditional_body_stmt,
                 arg_list, expression, or_expr, and_expr, not_expr, compare_expr, compare_op, bitwise_or_expr, bitwise_xor_expr,
-                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, func_call, make_instance, method_call, attr_call, expr_list]
+                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, func_call, make_instance, method_call, 
+                attr_call, expr_list]
 
 # Producciones
 
@@ -271,7 +273,7 @@ p4 = Production(class_body_stmt_list,
 
 p5 = Production(class_body_stmt,
                 [[attr_stmt], 
-                 [def_func_stmt]], 
+                 [def_method_stmt]], 
                 [[(class_body_stmt_rule, True)], [(class_body_stmt_rule, True)]]
                 )
 
@@ -284,6 +286,12 @@ p7 = Production (def_func_stmt,
                 [[func_keyword, type_id, id_orbsim, open_parenthesis, arg_list, closed_parenthesis,
                  open_curly_braces, func_body_stmt_list, closed_curly_braces]],
                 [[(def_func_stmt_rule, True)]]
+                )
+
+p8 = Production (def_method_stmt,
+                [[func_keyword, type_id, id_orbsim, open_parenthesis, arg_list, closed_parenthesis,
+                 open_curly_braces, func_body_stmt_list, closed_curly_braces]],
+                [[(def_method_stmt_rule, True)]]
                 )
 
 p8 = Production (func_body_stmt_list,
@@ -363,7 +371,7 @@ p20 = Production(print_stmt,
                 )
 
 p21 = Production(arg_list,
-                [[type_id,id_orbsim, expr_separator, arg_list], [type_id, id_orbsim], [epsilon]],
+                [[type_id, id_orbsim, expr_separator, arg_list], [type_id, id_orbsim], [epsilon]],
                 [[(arg_list_rule1, True)], [(arg_list_rule2, True)], [(arg_list_rule3, True)]]
                 )
 

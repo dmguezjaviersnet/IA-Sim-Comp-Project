@@ -119,7 +119,7 @@ def main():
             Int b;
 
             func Point add (Point b){
-                ret Point(this.a + b.a, this.b + b.b);
+                ret make Point(this.a + b.a, this.b + b.b);
             };
         };
         
