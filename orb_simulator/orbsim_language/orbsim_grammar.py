@@ -4,7 +4,7 @@ from parser.terminal import Epsilon, Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1
+from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule, class_body_stmt_list_rule2, expr_list_rule3, make_rule, method_call_rule
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1
@@ -35,6 +35,8 @@ statement -> class { class_body_stmt_list } ; ########## Prod 3
            | conditional_stmt
            | print_stmt
            | def_func_stmt
+           | func_call
+           | method_call
 class_body_stmt_list -> class_body_stmt ; class_body_stmt_list ########## Prod 4
                | class_body_stmt ;
 class_body_stmt -> def_func_stmt ########## Prod 5
@@ -48,6 +50,8 @@ func_body_stmt -> let_stmt ########## Prod 9
              | loop_stmt
              | conditional_stmt
              | ret_stmt
+             | func_call
+             | method_call
 let_stmt -> let type ID = expression ########## Prod 10
 assign_stmt ->  ID = expression ########## Prod 11
 loop_stmt -> loop ( condition ) { loop_body_list_stmt } ; ########## Prod 12
@@ -58,7 +62,8 @@ loop_body_stmt -> let_stmt ########## Prod 14
              | loop_stmt
              | conditional_stmt
              | flow_stmt
-             | 
+             | func_call
+             | method_call
 flow_stmt -> break ########## Prod 15
            | continue
 conditional_stmt -> if ( condition ) then { conditional_body_stmt_list } ; ########## Prod 16
@@ -69,6 +74,8 @@ conditional_body_stmt -> let_stmt ########## Prod 18
              | assign_stmt
              | loop_stmt
              | conditional_stmt
+             | func_call
+             | method_call
 ret_stmt -> ret expression ########## Prod 19
 print_statement -> print expression ########## Prod 20
 arg_list -> ID , arg_list ########## Prod 21
@@ -120,73 +127,7 @@ make_instance -> make ID ( expr_list ) ########## Prod 37
 method_call -> ID . ID ( expr_list ) ########## Prod 38
 attr_call -> ID . ID ########## Prod 39
 expr_list -> expression "," expr_list ########## Prod 40
-             | expression>
-
-
-############### Grammar 2 ###################
-program -> list_statement
-list_statement -> statement ";" list_statement
-               | statement ";"
-statement> -> let_statement
-           | def_func
-           | conditional_statement
-           | loop_statement
-           | print-statement
-           | ret-statement
-ret-statement -> "ret" expression
-let_statement -> "let" ID "=" expression
-def_func -> "func" ID "(" args-list ")" "{" list_statement "}"
-loop_statement -> "loop" "(" expression ")" "{" list_statement "}"
-conditional_statement -> "if" "(" expression ")" "then "{" list_statement "}" "else" "{" list_statement "}"
-                         | "if" "(" expression ")" "then "{" list_statement "}"
-print-statement -> "print" expression
-arg-list -> <type> ID "," arg-list
-           | <type>ID
-           | EPS # sin argumentos
-expression -> or_expr
-              |
-or_expr -> <and_expr> "||" <or_expr>
-          | <and_expr>
-and_expr -> not_expr "&&" and_expr
-           | not_expr
-not_expr -> ! not_expr
-           | compare_expr
-compare_expr -> bitwise_or compare-op compare_expr
-              | bitwise_or
-compare_op ->  ">"
-               | "<"
-               | ">="
-               | "<="
-               | "=="
-               | "!="
- bitwise_or -> bitwise_xor "|" bitwise_or
-                | bitwise_xor
- bitwise_xor -> bitwise_and "^" bitwise_or
-              | bitwise_and
- bitwise_and -> shift "&" bitwise_and
-               | shift
- shift -> arth-exp "<<" shift
-         | arth-exp ">>" shift
-         | arth-expr
-arth_expr -> arth_expr + term
-             | arth_expr - term
-             | term
-term -> term "*" factor
-        | term "/" factor
-        | term "%" factor
-        | factor
-factor -> atom
-          | "(" <expression> ")"
-atom -> INT
-        | FLOAT 
-        | STRING
-        | BOOL
-        | ID
-        | func_call
-func_call -> ID "(" <expr-list> ")"
-expr_list -> expression "," expr_list
              | expression
-             | eps
 '''
 # Terminales
 
@@ -245,7 +186,7 @@ terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword,
             open_curly_braces, closed_curly_braces, open_parenthesis, closed_parenthesis, neg, logic_or, logic_and,
             not_equals, equals, greater_or_equal, less_equal, greater, less, addition, substraction, product, division,
             module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and,
-            bitwise_shift_left, bitwise_shift_right, epsilon]
+            bitwise_shift_left, bitwise_shift_right, class_member_access_operator, epsilon]
 
 # No terminales
 
@@ -319,7 +260,7 @@ p3 = Production(statement,
                  [func_call],
                  [method_call]],
                 [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)],
-                 [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(func_call_rule, True)], [(method_call_rule, True)]]
+                 [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)]]
                 )
 
 p4 = Production(class_body_stmt_list,
@@ -351,9 +292,10 @@ p8 = Production (func_body_stmt_list,
                 )
 
 p9 = Production (func_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt], [func_call], [method_call]],
                 [[(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)],
-                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)]]
+                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)],
+                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)]]
                 )
 
 p10 = Production(let_stmt,
@@ -378,9 +320,10 @@ p13 = Production(loop_body_stmt_list,
                 )
 
 p14 = Production(loop_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [flow_stmt], [print_stmt]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [flow_stmt], [print_stmt], [func_call], [method_call]],
                 [[(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)],
-                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)]]
+                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)],
+                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)]]
                 )
 
 p15 = Production(flow_stmt,
@@ -403,9 +346,10 @@ p17 = Production(conditional_body_stmt_list,
                 )
 
 p18 = Production(conditional_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt], [func_call], [method_call]],
                 [[(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)],
-                 [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)]]
+                 [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)],
+                 [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)]]
                 )
 
 p19 = Production(ret_stmt,
@@ -508,12 +452,12 @@ p37 = Production(make_instance,
 
 p38 = Production(method_call,
                 [[id_orbsim, class_member_access_operator, id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
-                [[(func_call_rule, True)]]
+                [[(method_call_rule, True)]]
                 )            
 
 p39 = Production(attr_call,
                 [[id_orbsim, class_member_access_operator, id_orbsim]],
-                [[(func_call_rule, True)]]
+                [[(attr_call_rule, True)]]
                 )      
 
 p40 = Production(expr_list,
@@ -577,6 +521,7 @@ orbsim_token_string: Dict[Token_Type, str] = {
 
     Token_Type.stmt_separator : ';',
     Token_Type.expr_separator : ',',
+    Token_Type.instance_access_op : '.',
 
     Token_Type.eof : '$',
     Token_Type.space : ' ',

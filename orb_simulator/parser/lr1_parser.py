@@ -278,12 +278,12 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_
                     return parsing_errors, symbols_stack.pop().ast
                     
             elif not curr_token_symbol_identifier in curr_state.transitions:
-                expected_token = ''
-                for _, elem in enumerate(curr_state.transitions):          
-                    expected_token = elem
-                    break
+                # expected_token = ''
+                # for _, elem in enumerate(curr_state.transitions):
+                #     expected_token = elem
+                #     break
                       
-                parsing_errors.append(OrbisimParserError(f'expected token ------> {expected_token}'))
-                return parsing_errors, None 
+                parsing_errors.append(OrbisimParserError(f'unespected token in line {curr_token.line}'))
+                return parsing_errors, None
 
     return parsing_errors, None

@@ -119,11 +119,11 @@ def main():
             Int b;
         };
         let Point b =  make Point(2,3);
+        print(b.a);
         
     '''
     )
 
-    
     _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
     print('\o/')
     collector = TypeCollector()
