@@ -130,7 +130,7 @@ def main():
         
     '''
     )
-
+    
     _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
     print('\o/')
     collector = TypeCollector()
