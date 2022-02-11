@@ -6,7 +6,7 @@ from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterT
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
 from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode, StringNode, BooleanNode
-from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode
+from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode, ListCreationNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
 from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode, MethodCallNode, AttributeCallNode
 
@@ -225,6 +225,9 @@ def atom_rule5(head: Symbol, tail: List[Symbol]):
 
 def atom_rule6(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
+
+def list_creation_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = ListCreationNode(tail[1].ast)
 
 def func_call_rule(head: Symbol, tail: List[Symbol]):
     head.ast = FunCallNode(tail[0].val, tail[2].ast)

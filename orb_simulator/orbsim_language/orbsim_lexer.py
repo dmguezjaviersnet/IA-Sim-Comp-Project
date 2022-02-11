@@ -46,6 +46,8 @@ orbsim_lexer = Lexer([
     ('\)', Token_Type.closed_parenthesis),
     ('{', Token_Type.open_curly_braces),
     ('}', Token_Type.closed_curly_braces),
+    ('\[', Token_Type.open_square_brackets),
+    ('\]', Token_Type.closed_square_brackets),
     (';', Token_Type.stmt_separator),
     (',', Token_Type.expr_separator),
     ('.', Token_Type.instance_access_op),
