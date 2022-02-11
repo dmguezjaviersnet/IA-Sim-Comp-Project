@@ -3,7 +3,7 @@ import random
 import numpy as np
 from typing import List
 from orbsim_simulation_structs import Octree
-from orbsim_simulation_entities import OrbsimObj , Factory , Vector3 , Launchpad
+from orbsim_simulation_entities import OrbsimObj , Factory , Vector3 , Launchpad , Junk
 from colorama import Back, Fore, init
 
 
@@ -45,7 +45,7 @@ class Handler:
   def check_collitions(self):
 
     octree = Octree(world_size= self._world_size,
-                    origin= Vector3.zero(),
+                    origin= Vector3.Zero(),
                     max_type= None,
                     max_value= 6)
     
@@ -59,12 +59,12 @@ class Handler:
 
     return collitions_obj
 
-  def generate_garbage_from_a_collition (collition_objects: List[OrbsimObj]):
+  def generate_garbage_from_a_collition (self, collition_objects: List[OrbsimObj]):
     
-    total_mass= 0
+    total_weith = 0
 
     for obj in collition_objects:
-      total_mass += obj.mass
+      total_weith += obj.weith
     
     # ver despues la cantidad de objetos en que se puede dividir
     # todos los objetos a partir de los objeto que colisionaron
@@ -73,8 +73,14 @@ class Handler:
     a = - len(collition_objects) * np.log(r)
     b = - len(collition_objects) * np.log(a)
 
-    for i in range(b):
-      generate
+    new_junk = [] 
+
+    ## arreglar esto despues
+    for i in range(int(b)):
+      ## arreglar el random despues
+      new_junk.append(Junk.random(100))
+    
+    return new_junk
  
 
   def move_and_check_collitions(self):
@@ -86,7 +92,7 @@ class Handler:
       for obj in self._objects:
         obj.move(self._env)
       
-      collitions = self.check_collections(self.objects)
+      collitions = self.check_collitions()
 
       if collitions: 
 
@@ -95,16 +101,21 @@ class Handler:
           print ('[', [str(i) for i in item] ,']')
         print('-' * 55 , Fore.RESET)
 
-      
-
-
+        count_junk = 0 
+        for item in collitions:
+          new_junk = self.generate_garbage_from_a_collition(item)
+          count_junk += len(new_junk) 
+          self._objects  = self._objects + new_junk
+        
+        print ('se generaron' , count_junk, 'objetos que son basura')
 
 
   def _addProcess(self):
+    self._env.process(self.move_and_check_collitions())
     self._env.process(self.main())
 
   def _generate_objects(self):
-    return [OrbsimObj.randomObject(self._world_size) for i in range (self._world_size)]
+    return [OrbsimObj.random(self._world_size) for i in range (self._world_size)]
   
   def _generate_factories(self):
     return [Factory(Vector3.random(self._world_size)) for i in range(self._amount_factories)]
@@ -127,7 +138,7 @@ class Handler:
 
   # esto puede ser usado para annadir un nuevo objeto a la simulacion 
   def add_objetc(self):
-    new_object = OrbsimObj.randomObject(self._world_size)
+    new_object = OrbsimObj.random(self._world_size)
     self.objects.append(new_object)
 
   # esto puede ser llamado para annadir una nueva fabrica
