@@ -45,3 +45,4 @@ from orbsim_language.orbsim_ast.body_node import BodyNode
 from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
+from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode

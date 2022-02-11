@@ -114,20 +114,7 @@ def main():
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer(
     ''' 
-        class Point {
-            Int a;
-            Int b;
-
-            func Point add (Point b){
-                ret make Point(this.a + b.a, this.b + b.b);
-            };
-        };
-        let Point a =  make Point(2,3);
-        let Point b =  make Point(4,5);
-        let Point c = a.add(b);
-        print(c.a);
-        print(c.b);
-        
+        let List a = [2+3, make Point(1,2), true];
     '''
     )
     

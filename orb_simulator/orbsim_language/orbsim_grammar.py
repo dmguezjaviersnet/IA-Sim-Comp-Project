@@ -20,7 +20,7 @@ from orbsim_language.orbsim_rules import func_body_stmt_rule, func_call_rule, le
 from orbsim_language.orbsim_rules import loop_body_stmt_list_rule2, loop_body_stmt_rule, loop_stmt_rule, not_expr_rule1
 from orbsim_language.orbsim_rules import not_expr_rule2, or_expr_rule1, or_expr_rule2, program_rule, ret_stmt_rule
 from orbsim_language.orbsim_rules import stmt_list_rule1, stmt_list_rule2, stmt_rule1, stmt_rule2, term_rule1, term_rule2
-from orbsim_language.orbsim_rules import term_rule3, term_rule4
+from orbsim_language.orbsim_rules import term_rule3, term_rule4, list_creation_rule
 
 # Gramática del DSL
 '''
@@ -166,6 +166,8 @@ bitwise_xor = Terminal('^')
 bitwise_and = Terminal('&')
 bitwise_shift_left = Terminal('<<')
 bitwise_shift_right = Terminal('>>')
+open_sqr_brckt = Terminal('[')
+closed_sqr_brckt = Terminal(']')
 addition = Terminal('+')
 substraction = Terminal('-')
 product = Terminal('*')
@@ -186,7 +188,7 @@ terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword,
             open_curly_braces, closed_curly_braces, open_parenthesis, closed_parenthesis, neg, logic_or, logic_and,
             not_equals, equals, greater_or_equal, less_equal, greater, less, addition, substraction, product, division,
             module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and,
-            bitwise_shift_left, bitwise_shift_right, class_member_access_operator, epsilon]
+            bitwise_shift_left, bitwise_shift_right, class_member_access_operator, open_sqr_brckt, closed_sqr_brckt, epsilon]
 
 # No terminales
 
@@ -227,6 +229,7 @@ arth_expr = Non_terminal('arth_expr', 'ast')
 term = Non_terminal('term', 'ast')
 factor = Non_terminal('factor', 'ast')
 atom = Non_terminal('atom', 'ast')
+list_creation = Non_terminal('list_creation', 'ast')
 func_call = Non_terminal('func_call', 'ast')
 make_instance = Non_terminal('make_instance', 'ast')
 method_call = Non_terminal('method_call', 'ast')
@@ -237,7 +240,7 @@ non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body
                 def_method_stmt, func_body_stmt_list, func_body_stmt, let_stmt, assign_stmt, loop_stmt, conditional_stmt,
                 print_stmt, ret_stmt, loop_body_stmt_list, loop_body_stmt, flow_stmt, conditional_body_stmt_list, conditional_body_stmt,
                 arg_list, expression, or_expr, and_expr, not_expr, compare_expr, compare_op, bitwise_or_expr, bitwise_xor_expr,
-                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, func_call, make_instance, method_call, 
+                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, list_creation, func_call, make_instance, method_call, 
                 attr_call, expr_list]
 
 # Producciones
@@ -442,39 +445,46 @@ p35 = Production(factor,
                 )
 
 p36 = Production(atom,
-                [[int], [float], [boolean], [string], [id_orbsim], [func_call], [make_instance], [method_call], [attr_call]],
+                [[int], [float], [boolean], [string], [id_orbsim], [func_call], [make_instance], [method_call], [attr_call], [list_creation]],
                 [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)], 
                  [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)],
-                 [(atom_rule6, True)], [(atom_rule6, True)], [(atom_rule6, True)]]
+                 [(atom_rule6, True)], [(atom_rule6, True)], [(atom_rule6, True)],
+                 [(atom_rule6, True)]]
                 )
 
-p37 = Production(func_call,
+p37 = Production(list_creation,
+                [[open_sqr_brckt, expr_list, closed_sqr_brckt]],
+                [[(list_creation_rule, True)]]
+                )
+
+p38 = Production(func_call,
                 [[id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(func_call_rule, True)]]
                 )
 
-p38 = Production(make_instance,
+p39 = Production(make_instance,
                 [[make_keyword, type_id, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(make_rule, True)]]
                 )
 
-p39 = Production(method_call,
+p40 = Production(method_call,
                 [[id_orbsim, class_member_access_operator, id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
                 [[(method_call_rule, True)]]
                 )            
 
-p40 = Production(attr_call,
+p41 = Production(attr_call,
                 [[id_orbsim, class_member_access_operator, id_orbsim]],
                 [[(attr_call_rule, True)]]
                 )      
 
-p41 = Production(expr_list,
+p42 = Production(expr_list,
                 [[expression, expr_separator, expr_list], [expression], [epsilon]],
                 [[(expr_list_rule1, True)], [(expr_list_rule2, True)], [(expr_list_rule3, True)]]
                 )
 
 productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20,
-                p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39, p40, p41]
+                p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, 
+                p39, p40, p41, p42]
 
 orbsim_grammar = Grammar(terminals, non_terminals, program, productions)
 
@@ -526,6 +536,8 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.closed_parenthesis : ')',
     Token_Type.open_curly_braces : '{',
     Token_Type.closed_curly_braces : '}',
+    Token_Type.open_square_brackets : '[',
+    Token_Type.closed_square_brackets : ']',
 
     Token_Type.stmt_separator : ';',
     Token_Type.expr_separator : ',',
