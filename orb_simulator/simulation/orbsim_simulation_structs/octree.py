@@ -37,16 +37,16 @@ class Node(object):
 
 
 class Octree(object):
-  def __init__(self, worldSize, origin: Vector3, max_type="nodes", max_value=10):
+  def __init__(self, world_size, origin: Vector3, max_type="nodes", max_value=10):
     '''
     inicializando el octree 
     '''
 
     # este es la raíz del árbol octree 
-    self.root = Node(origin, worldSize, 0, [])
+    self.root = Node(origin, world_size, 0, [])
 
     # este es el tamaño del espacio que va a representar el octree 
-    self.worldSize = worldSize
+    self.world_size = world_size
 
     # el limite de los nodos 
     self.limit_nodes = (max_type=="nodes")
