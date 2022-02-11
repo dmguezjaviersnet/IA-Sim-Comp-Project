@@ -8,7 +8,7 @@ from orbsim_language.orbsim_ast.body_node import BodyNode
 class MethodDeclrNode(StatementNode):
     name: str
     return_type: str
-    arg_names = List[str]
-    arg_types = List[str]
+    arg_names : List[str]
+    arg_types : List[str]
     body: BodyNode
 
