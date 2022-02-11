@@ -1,13 +1,15 @@
-
+from django.template import base
+from orbsim_simulation_entities.orbsim_obj import OrbsimObj
+from orbsim_simulation_entities.elements_3d import Vector3
 import random
-class Junk:
+class Junk(OrbsimObj):
 
-    def __init__(self, size: float, position):
-        self.size = size
-        self.position =position
+  def __init__(self,position: Vector3, unique_id, weith,diameter, name):
+    super().__init__(position,unique_id, weith=weith, diameter=diameter, name=name)
 
-    def __str__(self) -> str:
-        return f"size:{self.size}-position:{self.position}"
+  def __str__(self) -> str:
+    return f"size:{self.diameter}-position:{self.position}"
+
 
 def generateJunk():
     junks = []
@@ -18,8 +20,3 @@ def generateJunk():
 
 for junk in generateJunk():
     print(junk)
-    
-class EnvironmentMap:
-
-    def __init__(self, maxX, maxY, maxZ):
-        ...
