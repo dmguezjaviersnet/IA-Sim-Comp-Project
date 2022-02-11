@@ -410,6 +410,28 @@ class TypeChecker:
             
         node.comp_type = class_type
 
+
+    @visitor.when(MethodCallNode)
+    def check(self, node: MethodCallNode, scope: 'Scope'):
+        if not scope.check_var(node.instance_name):
+            self.log.append(f'No existe la variable {node.instance_name}')
+        else:
+            var_info = scope.get_variable(node.instance_name)
+            try:
+                class_type: 'OrbsimType' = self.context.get_type(var_info)
+            except OrbisimSemanticError as err:
+                self.log.append(err.error_info)
+            try:
+                t_method:'Method' = class_type.get_method(node.identifier, len(node.args))
+                for arg_index, arg_type in enumerate(t_method.type_args):
+                    arg_comp_type = self.check(node.args[arg_index], scope)
+                    if arg_comp_type != arg_type:
+                        self.log.append(f'Se esperaba una expresión de tipo {arg_type.name} para el argumento {t_method.args[arg_index]} del método {node.identifier} de la clase {node.instance_name}')
+            except OrbisimSemanticError as err:
+                self.log.append(err.error_info)
+            
+
+
     @visitor.when(StringNode)
     def check(self, node: StringNode, scope: 'Scope'):
         node.comp_type = StringType()

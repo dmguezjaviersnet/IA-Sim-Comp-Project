@@ -36,8 +36,12 @@ class OrbsimType:
         except KeyError:
             raise OrbisimSemanticError(f'El tipo {self.name} no tiene definido ningún atributo {name}')
         
-    def get_method(self, name: str):
-        return self.methods[name]
+    def get_method(self, name: str, args: int):
+        try:
+            return self.methods[(name, args)]
+        except KeyError:
+            raise OrbisimSemanticError(f'El tipo {self.name} not tiene un método definido con nombre {name} y {args} argumentos')
+
     
     def define_attribute(self, name: str, type: 'OrbsimType') -> bool:
         if name in self.attributes:
@@ -49,7 +53,7 @@ class OrbsimType:
         if (name, len(args)) in self.methods:
             raise OrbisimSemanticError(f'Ya existe un método definido con nombre{name} y cantidad de parámetros{len(args)}')
         
-        self.methods[name] = Method(name, return_type, args, arg_types)
+        self.methods[(name, len(args))] = Method(name, return_type, args, arg_types)
         return True
 
     def __eq__(self, other: 'OrbsimType'):
