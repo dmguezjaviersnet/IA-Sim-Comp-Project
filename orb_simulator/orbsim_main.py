@@ -3,7 +3,7 @@ from parser.lr0_item import Lr0_item
 from parser.lr1_item import Lr1_item
 from parser.non_terminal import Non_terminal
 from parser.terminal import Epsilon, Terminal
-from orbsim_language.context import ExScope, Scope
+from orbsim_language.context import Scope
 from lexer.regex_engine import Regex_Engine
 from lexer import Lexer
 from parser.own_token import Token_Type, Token
@@ -120,6 +120,7 @@ def main():
         };
         let Point b =  make Point(2,3);
         print(b.a);
+        print(b.b);
         
     '''
     )
@@ -133,8 +134,8 @@ def main():
     checker =  TypeChecker(builder.context, builder.log)
     checker.check(ast, Scope())
     exe =  Executor(checker.context)
-    exe.execute(ast, ExScope())
-    
+    exe.execute(ast, Scope())
+    print('_o/ \o/  \o_')
     # a = (1, 2)
     # b = (2, 1)
     # print(hash(a) == hash(b))

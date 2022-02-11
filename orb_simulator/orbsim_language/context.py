@@ -34,47 +34,6 @@ class FunctionInfo:
     def __eq__(self, other: 'FunctionInfo') -> bool:
         return self.name == other.name and self.args == other.args
 
-class ExScope:
-    '''
-        Para ser usado en la ejecución
-    '''
-
-    def __init__(self, parent: 'ExScope' = None):
-        self.parent: 'ExScope' = parent
-        self.local_variables: Dict[str, ExecuteVarInfo] = {}
-       
-    
-    def check_var(self, var: str) -> bool: 
-        '''
-            Dice si una variable está definida o no en el programa
-        '''
-        if var  in self.local_variables:
-            return True
-        if self.parent != None:
-            return self.parent.check_var(var)
-        return False
-    
-
-    
-    
-    def define_var(self, var_id: str, type: OrbsimType, val: Any) -> bool:
-        if not self.check_var(var_id):
-            self.local_variables[var_id] = ExecuteVarInfo(var_id, type, val)
-            return True
-        
-        return False
-
-    def get_variable(self, identifier: str):
-        if identifier in self.local_variables:
-            return self.local_variables[identifier]
-        if self.parent != None:
-            return self.parent.get_variable(identifier)    
-
-    def create_child_scope(self):
-        child_scope = ExScope(self)
-        return child_scope
-
-
 class Scope:
     '''
         Para la correcta definición de variables y 

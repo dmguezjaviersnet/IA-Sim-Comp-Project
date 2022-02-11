@@ -68,6 +68,7 @@ class Executor:
         var_type =  self.context.get_type(node.type)
         scope.define_var(node.identifier, var_type)
         scope.get_variable(node.identifier).instance = instance_expr
+        
 
     @visitor.when(FuncDeclrNode)
     def execute(self, node: FuncDeclrNode, scope: 'Scope'):
@@ -300,6 +301,7 @@ class Executor:
         for attr_index, attr in enumerate(class_type.attributes):
             attr_instance = self.execute(node.params[attr_index], scope)
             class_instance.set_attr_instance(attr, attr_instance)
+        return class_instance
 
 
 
