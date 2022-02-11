@@ -33,13 +33,10 @@ class Vector3:
   def Zero ():
     return Vector3(0,0,0)
 
-  # retorna un random entre 0 y 100
-  def random():
-    return Vector3(random.randint(0,100),
-                   random.randint(0,100),
-                   random.randint(0,100))
   
-  def random(max):
+  # retorn auna instanci ad ela clase donde sus componenetes 
+  # x , y , z tienen un valor entre 0 y el paramentro max 
+  def random(max: int):
     return Vector3( random.randint(0,max),
                     random.randint(0,max),
                     random.randint(0,max))
