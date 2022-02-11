@@ -1,4 +1,5 @@
 from orbsim_language.orbsim_ast.string_node import StringNode
-from instance import Instance
-def concat(s1: StringNode):
-    return StringNode(s1 + s2)
+from orbsim_language.instance import Instance
+
+def concat(s1: StringNode, s2: StringNode):
+    return Instance( s1 + s2)
