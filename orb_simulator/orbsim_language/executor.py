@@ -42,6 +42,7 @@ from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.instance import Instance
 from orbsim_language.orbsim_type import*
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
+from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 
 from errors import OrbisimExecutionError
 class Executor:
@@ -317,11 +318,10 @@ class Executor:
         for arg, arg_type, arg_expr in  zip(method.args, method.type_args, node.args):
             new_scope.define_var(arg, arg_type)
             new_var = new_scope.get_variable(arg)
-            new_var.instance = self.execute(arg_expr, new_scope)
+            new_var.instance = self.execute(arg_expr, scope)
 
         return self.execute(method.body, new_scope)
         
-
-        
-
+    
+    
         

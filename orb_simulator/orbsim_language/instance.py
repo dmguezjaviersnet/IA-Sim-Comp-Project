@@ -18,7 +18,7 @@ class Instance:
         return self.attributes_vals[attr_name]
     
     def get_method(self, method_name:str, args:int) :
-        return self.orbsim_type.define_method(method_name, args)
+        return self.orbsim_type.get_method(method_name, args)
     
 
 

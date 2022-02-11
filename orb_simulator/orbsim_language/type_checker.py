@@ -421,7 +421,8 @@ class TypeChecker:
             try:
                 t_method:'Method' = var_info.type.get_method(node.identifier, len(node.args))
                 for arg_index, arg_type in enumerate(t_method.type_args):
-                    arg_comp_type = self.check(node.args[arg_index], scope)
+                    self.check(node.args[arg_index], scope)
+                    arg_comp_type = node.args[arg_index].comp_type
                     if arg_comp_type != arg_type:
                         self.log.append(f'Se esperaba una expresión de tipo {arg_type.name} para el argumento {t_method.args[arg_index]} del método {node.identifier} de la clase {node.instance_name}')
                 node.comp_type = t_method.return_type

@@ -56,7 +56,7 @@ class TypeBuilder:
                 self.log.append(err.error_info)
         if len(arg_types) == len(node.arg_types):
             try:
-                self.current_type.define_method(node.name, return_type, node.arg_names, arg_types)
+                self.current_type.define_method(node.name, return_type, node.arg_names, arg_types, node.body)
             except OrbisimSemanticError as err:
                 self.log.append(err)
         

@@ -49,11 +49,11 @@ class OrbsimType:
         self.attributes[name] = Attribute(name, type)
         return True
     
-    def define_method(self, name: str, return_type:'OrbsimType', args: List[str], arg_types: List['OrbsimType']) -> bool:
+    def define_method(self, name: str, return_type:'OrbsimType', args: List[str], arg_types: List['OrbsimType'], body = None) -> bool:
         if (name, len(args)) in self.methods:
             raise OrbisimSemanticError(f'Ya existe un método definido con nombre{name} y cantidad de parámetros{len(args)}')
         
-        self.methods[(name, len(args))] = Method(name, return_type, args, arg_types)
+        self.methods[(name, len(args))] = Method(name, return_type, args, arg_types, body)
         return True
 
     def __eq__(self, other: 'OrbsimType'):
