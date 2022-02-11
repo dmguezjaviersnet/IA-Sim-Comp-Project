@@ -21,7 +21,7 @@ def stmt_list_rule2(head: Symbol, tail: List[Symbol]):
 
 def stmt_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = ClassDeclrNode(tail[1].val, [elem for elem in tail[3].ast if isinstance(elem, AttributeDeclrNode)],
-                        [elem for elem in tail[3].ast if isinstance(elem, FuncDeclrNode)]
+                        [elem for elem in tail[3].ast if isinstance(elem, MethodDeclrNode)]
                         ) 
 
 def stmt_rule2(head: Symbol, tail: List[Symbol]):
