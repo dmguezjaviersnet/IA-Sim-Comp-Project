@@ -1,11 +1,13 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, List, Tuple, Type
+
+
 # from orbsim_language.orbsim_type import OrbsimType
 from errors import OrbisimSemanticError
 from orbsim_language.orbsim_ast.body_node import BodyNode
 from orbsim_language.orbsim_type import OrbsimType
 from orbsim_language.orbsim_ast.expression_node import ExpressionNode
-
+from orbsim_language.instance import Instance
 @dataclass
 class ExecuteVarInfo:
     name: str
@@ -15,8 +17,7 @@ class ExecuteVarInfo:
 class VariableInfo:
     name: str
     type: OrbsimType
-    expr: ExpressionNode
-    val: Any = None
+    instance: 'Instance' = None
 
     def __eq__(self, other: 'VariableInfo') -> bool:
         return self.name == other.name
@@ -82,8 +83,8 @@ class Scope:
 
     def __init__(self, parent: 'Scope' = None):
         self.parent: 'Scope' = parent
-        self.local_variables = {}
-        self.local_functions = {}
+        self.local_variables: Dict[str, VariableInfo] = {}
+        self.local_functions: Dict[Tuple[str, int], FunctionInfo] = {}
     
     def check_var(self, var: str) -> bool: 
         '''
@@ -96,7 +97,7 @@ class Scope:
         return False
     
 
-    def check_fun(self, fun: str, args: int):
+    def check_fun(self, fun: str, args: int)-> bool:
         if (fun, args) in self.local_functions:
             return True
         
@@ -105,9 +106,9 @@ class Scope:
         
         return False
     
-    def define_var(self, var_id: str, type: OrbsimType, expr: 'ExpressionNode') -> bool:
+    def define_var(self, var_id: str, type: OrbsimType) -> bool:
         if not self.check_var(var_id):
-            self.local_variables[var_id] = VariableInfo(var_id, type, expr)
+            self.local_variables[var_id] = VariableInfo(var_id, type)
             return True
         
         return False

@@ -87,7 +87,7 @@ class TypeChecker:
         except OrbisimSemanticError as err:
             self.log.append(err.error_info)
         
-        if not scope.define_var(node.identifier, var_type, node.expr):
+        if not scope.define_var(node.identifier, var_type):
             self.log.append(f'SemanticError: Ya existe una variable definida con el nombre {node.identifier}')
             
         self.check(node.expr, scope)

@@ -113,8 +113,13 @@ def main():
 
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer(
-    '''
+    ''' 
+        class Point {
+            Int a;
+            Int b;
+        };
         let Point b =  make Point(2,3);
+        
     '''
     )
 

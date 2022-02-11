@@ -2,7 +2,7 @@ from orbsim_language.orbsim_ast.body_node import BodyNode
 import orbsim_language.visitor as visitor
 from orbsim_language.orbsim_ast.program_node import ProgramNode
 from orbsim_language.orbsim_ast.variable_declr_node import VariableDeclrNode
-from orbsim_language.context import Scope
+from orbsim_language.context import Scope, VariableInfo
 from orbsim_language.orbsim_ast.loop_node import LoopNode
 from orbsim_language.orbsim_ast.conditional_node import ConditionalNode
 from orbsim_language.orbsim_ast.boolean_node import BooleanNode
@@ -25,7 +25,7 @@ from orbsim_language.orbsim_ast.less_equal_node import LessEqualNode
 from orbsim_language.orbsim_ast.and_node import AndNode
 from orbsim_language.orbsim_ast.or_node import OrNode
 from orbsim_language.orbsim_ast.ret_node import RetNode
-from orbsim_language.context import Context, Scope, ExScope
+from orbsim_language.context import Context, Scope
 from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
@@ -51,41 +51,36 @@ class Executor:
             'concat':concat
         }
         self.log: List[str] = []
-        # self.scope: 'ExScope' = ExScope()
+        # self.scope: 'Scope' = Scope()
 
     @visitor.on('node')
     def execute(self, node):
         pass
     
     @visitor.when(ProgramNode)
-    def execute(self, node: 'ProgramNode', scope: 'ExScope'):
+    def execute(self, node: 'ProgramNode', scope: 'Scope'):
         for st in node.statements:
             self.execute(st, scope)
     
     @visitor.when(VariableDeclrNode)
-    def execute(self, node:'VariableDeclrNode',  scope: 'ExScope'):
-        # def_values = {'string': '', 'int': 0, 'bool': False}
-        ex_expr = self.execute(node.expr, scope)
+    def execute(self, node:'VariableDeclrNode',  scope: 'Scope'):
+        instance_expr = self.execute(node.expr, scope)
         var_type =  self.context.get_type(node.type)
-        scope.define_var(node.identifier, var_type, ex_expr)
-        # if not node.expr and node.type in def_values:
-        #     instance  = def_values[node.type]
-        # else:
-        #     instance = self.visit(node.expr, scope)
-        # return instance
+        scope.define_var(node.identifier, var_type)
+        scope.get_variable(node.identifier).instance = instance_expr
+
     @visitor.when(FuncDeclrNode)
-    def execute(self, node: FuncDeclrNode, scope: 'ExScope'):
-        # ret_type = self.context.get_type(node.return_type)
-        # arg_types = [self.context.get_type(t) for t in node.arg_types]
+    def execute(self, node: FuncDeclrNode, scope: 'Scope'):
+        
         func = self.context.get_func(node.identifier, len(node.args))
         func.body = node.body
-        # self.context.define_fun(node.identifier, ret_type, node.args, arg_types, node.body)
+       
     
     
     @visitor.when(FunCallNode)
-    def execute(self, node: FunCallNode, scope: 'ExScope'):
+    def execute(self, node: FunCallNode, scope: 'Scope'):
         func = self.context.get_func(node.identifier, len(node.args))
-        new_scope = ExScope()
+        new_scope = Scope()
         for i in range(len(node.args)):
             val = self.execute(node.args[i], scope)
             new_scope.define_var(func.args[i],  func.arg_types[i], val)
@@ -93,19 +88,19 @@ class Executor:
     
 
     @visitor.when(LoopNode)
-    def execute(self, node: 'LoopNode', scope: 'ExScope'):
+    def execute(self, node: 'LoopNode', scope: 'Scope'):
         while self.execute(node.condition, scope):
             new_scope = scope.create_child_scope()
             self.execute(node.body, new_scope)
     
     @visitor.when(ConditionalNode)
-    def execute(self, node: 'ConditionalNode', scope: 'ExScope'):
+    def execute(self, node: 'ConditionalNode', scope: 'Scope'):
         if self.execute(node.if_expr, scope):
             return self.execute(node.then_expr, scope.create_child_scope())
         return self.execute(node.else_expr, scope.create_child_scope())
     
     @visitor.when(BodyNode)
-    def execute(self, node: 'BodyNode', scope: 'ExScope'):
+    def execute(self, node: 'BodyNode', scope: 'Scope'):
         instance = None
         for st in node.statements:
             instance = self.execute(st, scope)
@@ -113,36 +108,36 @@ class Executor:
     
     
     @visitor.when(IntegerNode)
-    def execute(self, node: 'IntegerNode', scope: 'ExScope'):
+    def execute(self, node: 'IntegerNode', scope: 'Scope'):
         return Instance(IntType(),int(node.val))
     
 
     @visitor.when(BooleanNode)
-    def execute(self, node: 'BooleanNode', scope: 'ExScope'):
+    def execute(self, node: 'BooleanNode', scope: 'Scope'):
         if node.val == 'true':
             return  Instance(BoolType(), True)
         return Instance(BoolType(), False)
     
     @visitor.when(FloatNode)
-    def execute(self, node: 'FloatNode', scope: 'ExScope'):
+    def execute(self, node: 'FloatNode', scope: 'Scope'):
         return Instance(FloatNode(), float(node.val))
     
     @visitor.when(StringNode)
-    def execute(self, node: 'StringNode', scope: 'ExScope'):
+    def execute(self, node: 'StringNode', scope: 'Scope'):
         return Instance(StringType(), str(node.val))
 
     @visitor.when(PrintNode)
-    def execute(self, node: 'PrintNode', scope: 'ExScope'):
+    def execute(self, node: 'PrintNode', scope: 'Scope'):
         instance_expr: 'Instance' = self.execute(node.expr, scope)
         print(instance_expr.value) # temporal hasta que pongamos una consolita en la UI
     
     @visitor.when(NotNode)
-    def execute(self, node: 'NotNode', scope: 'ExScope'):
+    def execute(self, node: 'NotNode', scope: 'Scope'):
        instance_expr: 'Instance' = self.execute(node.expr, scope)
        return Instance(BoolType(), not instance_expr.value)
     
     @visitor.when(PlusNode)
-    def execute(self, node: 'PlusNode', scope: 'ExScope'):
+    def execute(self, node: 'PlusNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         if instance_right.orbsim_type.name == 'Int':
@@ -152,7 +147,7 @@ class Executor:
         return Instance(plus_type, instance_left.value + instance_right.value)
     
     @visitor.when(MinusNode)
-    def execute(self, node: 'MinusNode', scope: 'ExScope'):
+    def execute(self, node: 'MinusNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         if instance_right.orbsim_type.name == 'Int':
@@ -162,7 +157,7 @@ class Executor:
         return Instance(minus_type, instance_left.value - instance_right.value)
     
     @visitor.when(DivNode)
-    def execute(self, node: 'DivNode', scope: 'ExScope'):
+    def execute(self, node: 'DivNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         try:
@@ -179,7 +174,7 @@ class Executor:
             
     
     @visitor.when(ProductNode)
-    def execute(self, node: 'ProductNode', scope: 'ExScope'):
+    def execute(self, node: 'ProductNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         
@@ -191,109 +186,121 @@ class Executor:
         return Instance(prod_type, instance_left.value * instance_right.value)
     
     @visitor.when(ModNode)
-    def execute(self, node: 'ModNode', scope: 'ExScope'):
+    def execute(self, node: 'ModNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(IntType(), instance_left.value % instance_right.value)
     
     @visitor.when(EqualNode)
-    def execute(self, node: 'EqualNode', scope: 'ExScope'):
+    def execute(self, node: 'EqualNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(BoolType(), instance_left.value == instance_right.value)
 
     @visitor.when(NotEqualNode)
-    def execute(self, node: 'NotEqualNode', scope: 'ExScope'):
+    def execute(self, node: 'NotEqualNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(BoolType(), instance_left.value != instance_right.value)
 
     @visitor.when(GreaterThanNode)
-    def execute(self, node: 'GreaterThanNode', scope: 'ExScope'):
+    def execute(self, node: 'GreaterThanNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(BoolType(), instance_left.value > instance_right.value)
     
     @visitor.when(GreaterEqualNode)
-    def execute(self, node: 'GreaterEqualNode', scope: 'ExScope'):
+    def execute(self, node: 'GreaterEqualNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(BoolType(), instance_left.value >= instance_right.value)
     
     @visitor.when(LessThanNode)
-    def execute(self, node: 'LessThanNode', scope: 'ExScope'):
+    def execute(self, node: 'LessThanNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(BoolType(), instance_left.value < instance_right.value)
     
     @visitor.when(LessEqualNode)
-    def execute(self, node: 'LessEqualNode', scope: 'ExScope'):
+    def execute(self, node: 'LessEqualNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(BoolType(), instance_left.value <= instance_right.value)
     
     @visitor.when(AndNode)
-    def execute(self, node: 'AndNode', scope: 'ExScope'):
+    def execute(self, node: 'AndNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(instance_left.value and instance_right.value)
     
     @visitor.when(OrNode)
-    def execute(self, node: 'OrNode', scope: 'ExScope'):
+    def execute(self, node: 'OrNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(BoolType(), instance_left.value or instance_right.value)
 
     @visitor.when(BitwiseAndNode)
-    def execute(self, node: 'BitwiseAndNode', scope: 'ExScope'):
+    def execute(self, node: 'BitwiseAndNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(IntType(), instance_left.value & instance_right.value)
     
     @visitor.when(BitwiseOrNode)
-    def execute(self, node: 'BitwiseOrNode', scope: 'ExScope'):
+    def execute(self, node: 'BitwiseOrNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(IntType(), instance_left.value | instance_right.value)
     
     @visitor.when(BitwiseXorNode)
-    def execute(self, node: 'BitwiseXorNode', scope: 'ExScope'):
+    def execute(self, node: 'BitwiseXorNode', scope: 'Scope'):
         instance_left = self.execute(node.left, scope)
         instance_right = self.execute(node.right, scope)
         return Instance(IntType(),instance_left ^ instance_right)
     
     @visitor.when(BitwiseShiftRightNode)
-    def execute(self, node: 'BitwiseShiftRightNode', scope: 'ExScope'):
+    def execute(self, node: 'BitwiseShiftRightNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(IntType(), instance_left.value >> instance_right.value)
     
     @visitor.when(BitwiseShiftLeftNode)
-    def execute(self, node: 'BitwiseShiftLeftNode', scope: 'ExScope'):
+    def execute(self, node: 'BitwiseShiftLeftNode', scope: 'Scope'):
         instance_left: 'Instance' = self.execute(node.left, scope)
         instance_right: 'Instance' = self.execute(node.right, scope)
         return Instance(IntType(), instance_left.value << instance_right.value)
     
     @visitor.when(RetNode)
-    def execute(self, node: RetNode, scope: 'ExScope'):
+    def execute(self, node: RetNode, scope: 'Scope'):
         instance_expr = self.execute(node.expr, scope)
         return instance_expr
 
     @visitor.when(VariableNode)
-    def execute(self, node: VariableNode, scope: 'ExScope'):
-        val = scope.get_variable_val(node.identifier)
-        return val
+    def execute(self, node: VariableNode, scope: 'Scope'):
+        var_instance= scope.get_variable(node.identifier).instance
+        return var_instance
     
     @visitor.when(AssingNode)
-    def execute(self, node: AssingNode, scope: 'ExScope'):
+    def execute(self, node: AssingNode, scope: 'Scope'):
+        var_info : 'VariableInfo' = scope.get_variable(node.identifier)
         new_instance_value = self.execute(node.expr, scope)
-        scope.assing_new_variable_val(node.var_id, new_value)
+        var_info.instance = new_instance_value
+    
         
     @visitor.when(AttributeCallNode)
-    def execute(self, node: AttributeCallNode, scope: 'ExScope'):
-        class_type = scope.get_variable(node.instance_name).type
-        return class_type.get_attribute(node.identifier).val
+    def execute(self, node: AttributeCallNode, scope: 'Scope'):
+        class_instance: 'Instance' =  scope.get_variable(node.instance_name).instance
+        
+        return class_instance.get_attr_instance(node.identifier)
     
     @visitor.when(ClassMakeNode)
-    def execute(self, node: ClassMakeNode, scope: 'ExScope'):
-        pass
+    def execute(self, node: ClassMakeNode, scope: 'Scope'):
+        class_type: 'OrbsimType' = self.context.get_type(node.classname)
+        class_instance = Instance(class_type)
+        
+        for attr_index, attr in enumerate(class_type.attributes):
+            attr_instance = self.execute(node.params[attr_index], scope)
+            class_instance.set_attr_instance(attr, attr_instance)
+
+
+
+        
