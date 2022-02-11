@@ -75,7 +75,7 @@ def check_collitions (objects : List[OrbsimObj]):
 
   origin = Vector3.Zero()
 
-  octree = Octree(worldSize=WORLD_SIZE,origin=origin , max_type= None, max_value=6)
+  octree = Octree(world_size=WORLD_SIZE,origin=origin , max_type= None, max_value=6)
 
   collitionsObj = []
 
