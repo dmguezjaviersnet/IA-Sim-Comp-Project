@@ -114,7 +114,8 @@ def main():
     # print(hash(tup1) == hash(tup2))
     tokens, errs = orbsim_lexer(
     ''' 
-        let List a = [2+3, make Point(1,2), true];
+        let List a = [2+3, 1, 2];
+        print(a);
     '''
     )
     

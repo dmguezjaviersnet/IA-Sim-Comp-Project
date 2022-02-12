@@ -1,6 +1,8 @@
 from typing import List
+
 from   orbsim_language.orbsim_type import *
 import orbsim_language.visitor as visitor
+from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 from orbsim_language.context import Context, FunctionInfo, Scope, VariableInfo
 from orbsim_language.orbsim_ast.program_node import ProgramNode
 from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
@@ -38,7 +40,8 @@ from orbsim_language.orbsim_ast.body_node import BodyNode
 from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
 from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
-
+from orbsim_language.orbsim_ast.class_declr_node import ClassDeclrNode
+from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -47,6 +50,7 @@ class TypeChecker:
     def __init__(self, context: Context =Context(), log: List[str] = []):
         self.context: Context = context
         self.log: List[str]   = log
+        self.current_type: 'OrbsimType' = None
         
     @visitor.on('node')
     def check(self, node):
@@ -58,6 +62,22 @@ class TypeChecker:
         for statement in node.statements:
             self.check(statement, scope)
         return scope
+
+    @visitor.when(ClassDeclrNode)
+    def check(self, node: ClassDeclrNode, scope: 'Scope'):
+        self.current_type = self.context.get_type(node.name)
+
+        for attr in node.attributes:
+            self.check(attr, scope)
+        
+        for method in node.methods:
+            self.check(method, scope)
+    
+    @visitor.when(MethodDeclrNode)
+    def check(self, node: MethodDeclrNode, scope: 'Scope'):
+        self.current_type.get_method(node.name, len(node.arg_names)).body = node.body
+        self.check(node.body, scope.create_child_scope())
+
 
     @visitor.when(FuncDeclrNode)
     def check(self, node: FuncDeclrNode, scope: 'Scope'):
@@ -86,6 +106,7 @@ class TypeChecker:
             
         except OrbisimSemanticError as err:
             self.log.append(err.error_info)
+            return
         
         if not scope.define_var(node.identifier, var_type):
             self.log.append(f'SemanticError: Ya existe una variable definida con el nombre {node.identifier}')
@@ -120,7 +141,7 @@ class TypeChecker:
         left_type: OrbsimType = node.left.comp_type
         self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
-        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+        if left_type != right_type or left_type.name != 'Int' and left_type.name != 'Float':
             node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación +  no está definida entre {left_type.name} y {right_type.name}')
         else:
@@ -135,7 +156,7 @@ class TypeChecker:
         left_type: OrbsimType = node.left.comp_type
         self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
-        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+        if left_type != right_type or left_type.name != 'Int' and left_type.name != 'Float':
             node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación -  no está definida entre {left_type.name} y {right_type.name}')
         else:
@@ -150,7 +171,7 @@ class TypeChecker:
         left_type: OrbsimType = node.left.comp_type
         self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
-        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+        if left_type != right_type or left_type.name != 'Int' and left_type.name != 'Float':
             node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación /  no está definida entre {left_type.name} y {right_type.name}')
         else:
@@ -165,7 +186,7 @@ class TypeChecker:
         left_type: OrbsimType = node.left.comp_type
         self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
-        if left_type != right_type or left_type.name != 'Int' or left_type.name != 'Float':
+        if left_type != right_type or left_type.name != 'Int' and left_type.name != 'Float':
             node.comp_type = NullType()
             self.log.append(f'SemanticError: La operación *  no está definida entre {left_type.name} y {right_type.name}')
         else:
@@ -447,4 +468,16 @@ class TypeChecker:
     def check(self, node: BooleanNode, scope: 'Scope'):
         node.comp_type = BoolType()
     
-    
+    @visitor.when(ListCreationNode)
+    def check(self, node: ListCreationNode, scope: 'Scope'):
+        list_type = []
+        for expr in node.elems:
+            self.check(expr, scope)
+            if list_type:
+                if list_type[::-1][0] != expr.comp_type:
+                    self.log.append(f'Todos los elementos de una lista deben ser del mismo tipo')
+                    break
+            else:
+                list_type.append(expr.comp_type)
+        
+        node.comp_type = ListType()

@@ -43,6 +43,7 @@ from orbsim_language.instance import Instance
 from orbsim_language.orbsim_type import*
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
+from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
 
 from errors import OrbisimExecutionError
 class Executor:
@@ -321,7 +322,15 @@ class Executor:
             new_var.instance = self.execute(arg_expr, scope)
 
         return self.execute(method.body, new_scope)
-        
     
+    @visitor.when(ListCreationNode)
+    def execute(self, node: ListCreationNode, scope: 'Scope'):
+        list_val = []
+        for elem in node.elems:
+            elem_instance = self.execute(elem, scope)
+            list_val.append(elem_instance.value)
+        
+        return Instance(ListType(), list_val) 
+
     
         

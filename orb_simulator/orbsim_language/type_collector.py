@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
-from orbsim_language.orbsim_type import VoidType, StringType, BoolType, IntType, FloatType
+from orbsim_language.orbsim_type import ListType, VoidType, StringType, BoolType, IntType, FloatType
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
 
@@ -31,7 +31,7 @@ class TypeCollector:
         self.context.types['Int'] =  int_type
         float_type = FloatType()
         self.context.types['Float'] =  float_type
-        
+        self.context.types['List'] = ListType()
         self.context.types['Void'] = VoidType()
 
         for st in node.statements:

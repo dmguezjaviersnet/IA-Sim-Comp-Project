@@ -36,7 +36,7 @@ class OrbsimType:
         except KeyError:
             raise OrbisimSemanticError(f'El tipo {self.name} no tiene definido ningún atributo {name}')
         
-    def get_method(self, name: str, args: int):
+    def get_method(self, name: str, args: int) -> 'Method':
         try:
             return self.methods[(name, args)]
         except KeyError:
@@ -81,7 +81,10 @@ class FloatType(OrbsimType):
 class BoolType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Bool')
-    
+
+class ListType(OrbsimType):
+    def __init__(self):
+        OrbsimType.__init__(self, 'List')
     
 class NullType(OrbsimType):
     def __init__(self):
