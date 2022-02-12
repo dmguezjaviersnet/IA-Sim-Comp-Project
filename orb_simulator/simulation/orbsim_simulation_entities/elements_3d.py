@@ -21,20 +21,28 @@ class Vector3:
   def __str__(self) -> str:
     return '(' + str(self.x) +  ',' + str(self.y) +  ',' + str(self.z) + ')'
 
+  def __lt__(self, other: 'Vector3'): 
+    return self.x < other.x and self.y < other.y and self.z < other.z
+
+  def __gt__(self, other: 'Vector3'): 
+    return self.x > other.x and self.y > other.y and self.z > other.z
+
   def sig(self):
     return Vector3( sig(self.x), sig(self.y), sig(self.z))
 
   def Zero ():
     return Vector3(0,0,0)
 
-  def random():
-    x = random.randint(0,100)
-    y = random.randint(0,100)
-    z = random.randint(0,100)
-    return Vector3(x,y,z)
+  
+  # retorn auna instanci ad ela clase donde sus componenetes 
+  # x , y , z tienen un valor entre 0 y el paramentro max 
+  def random(max: int):
+    return Vector3( random.randint(0,max),
+                    random.randint(0,max),
+                    random.randint(0,max))
 
 
 def sig (x : int):
   if x > 0: return 1 
-  if x < 0: return -1 
+  elif x < 0: return -1 
   else: return 0

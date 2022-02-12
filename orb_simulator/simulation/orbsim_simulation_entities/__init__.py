@@ -7,5 +7,12 @@ from orbsim_simulation_entities.region import Region
 from orbsim_simulation_entities.satellite import Satellite
 from orbsim_simulation_entities.factory import Factory
 from orbsim_simulation_entities.agent import Agent
+from orbsim_simulation_entities.launchpad import Launchpad
+from orbsim_simulation_entities.rocket import Rocket
+from orbsim_simulation_entities.person import Person
+
+
+
+
 
 
