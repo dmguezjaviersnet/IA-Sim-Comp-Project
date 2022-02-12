@@ -16,7 +16,7 @@ from orbsim_language.type_collector import TypeCollector
 from orbsim_language.type_builder import TypeBuilder
 from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
-from orbisim_ui import OrbisimUI
+from orbsim_ui import OrbisimUI
 
 
 
