@@ -282,7 +282,7 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_
                 #     expected_token = elem
                 #     break
                       
-                parsing_errors.append(f'unespected token in line {curr_token.line}')
+                parsing_errors.append(f'ParseError: Token no esperado en la línea {curr_token.line}')
                 return parsing_errors, None
 
     return parsing_errors, None
