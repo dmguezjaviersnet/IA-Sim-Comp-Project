@@ -7,7 +7,7 @@ class Instance:
     
     def __init__(self, orbsim_type: OrbsimType, value = None):
         self.orbsim_type =  orbsim_type
-        self.value = value if value != None else id(self)
+        self.value = value if value is not None else id(self)
         self.attributes_vals: Dict[str, 'Instance']  = {}
 
 

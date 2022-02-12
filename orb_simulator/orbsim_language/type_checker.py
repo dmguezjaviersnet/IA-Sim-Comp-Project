@@ -369,7 +369,7 @@ class TypeChecker:
     def check(self, node: PrintNode, scope: 'Scope'):
         self.check(node.expr, scope)
         expr_type: OrbsimType =  node.expr.comp_type
-        if expr_type.name != 'Int' and expr_type.name != 'Float' and expr_type.name != 'Bool' and expr_type.name != 'String':
+        if expr_type.name != 'Int' and expr_type.name != 'Float' and expr_type.name != 'Bool' and expr_type.name != 'String' and expr_type.name != 'Vector3':
             self.log.append(f'SemanticError: print no admite expresiones de tipo {expr_type.name}')
         
     @visitor.when(AssingNode)

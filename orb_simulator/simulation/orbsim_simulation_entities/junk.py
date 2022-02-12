@@ -1,6 +1,6 @@
 from django.template import base
-from orbsim_simulation_entities.orbsim_obj import OrbsimObj
-from orbsim_simulation_entities.elements_3d import Vector3
+from simulation.orbsim_simulation_entities.orbsim_obj import OrbsimObj
+from simulation.orbsim_simulation_entities.elements_3d import Vector3
 import random
 class Junk(OrbsimObj):
 

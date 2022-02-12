@@ -1,4 +1,4 @@
-from orbsim_simulation_entities.elements_3d import Vector3
+from simulation.orbsim_simulation_entities.elements_3d import Vector3
 
 class Region:
   def __init__(self, center: Vector3 , radio : int) -> None:

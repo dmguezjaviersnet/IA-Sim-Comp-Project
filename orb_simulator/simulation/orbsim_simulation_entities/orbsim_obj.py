@@ -1,6 +1,6 @@
 import simpy
 import uuid
-from orbsim_simulation_entities.elements_3d import Vector3
+from simulation.orbsim_simulation_entities.elements_3d import Vector3
 
 
 # Esta clase me representa un objeto de la simulacion, es la clase

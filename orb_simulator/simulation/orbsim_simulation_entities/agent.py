@@ -2,7 +2,7 @@ from validators import uuid
 
 
 from uuid import UUID
-from orbsim_simulation_entities.elements_3d import Vector3
+from simulation.orbsim_simulation_entities.elements_3d import Vector3
 import numpy as np
 
 class Agent: 
