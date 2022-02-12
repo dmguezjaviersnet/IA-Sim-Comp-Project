@@ -1,3 +1,4 @@
+from pickle import NONE
 from typing import Any, Dict, FrozenSet, List, Set, Tuple
 from automaton.state import State
 from parser.grammar import Grammar
@@ -10,13 +11,20 @@ from parser.terminal import Terminal
 from parser.ll1_table_builder import find_first, find_firsts
 from parser.action_goto_table import Action_Goto_Table
 from parser.eval_rule import eval_rule
+from errors import OrbisimParserError
+from tools import serialize_data, deserialize_data
 
 action_goto_table: Action_Goto_Table = None
 lr1_states_hash_table = None
 
-_is_atom = lambda token : (token.token_type == Token_Type.int or token.token_type == Token_Type.float or
+__is_atom = lambda token : (token.token_type == Token_Type.int or token.token_type == Token_Type.float or
     token.token_type == Token_Type.string or token.token_type == Token_Type.boolean or 
     token.token_type == Token_Type.id_orbsim or token.token_type == Token_Type.type_id_orbsim)
+
+def __get_key(val: str, coll: Dict[Token_Type, str]):
+    for key, value in coll.items():
+        if value == val:
+            return key
 
 def __build_lr0_items(G: Grammar) -> List[Lr0_item]:
     lr0_items: List[Lr0_item] = []
@@ -26,7 +34,11 @@ def __build_lr0_items(G: Grammar) -> List[Lr0_item]:
         head = coll.head
         for tail in coll.tails:
             for index, _ in enumerate(tail):
-                lr0_items.append(Lr0_item(head, tuple(tail), index))
+                if 'eps' not in tail[0].identifier:
+                    lr0_items.append(Lr0_item(head, tuple(tail), index))
+
+                else : lr0_items.append(Lr0_item(head, (), index))
+
             lr0_items.append(Lr0_item(head, tuple(tail), len(tail)))
     
     return lr0_items
@@ -85,7 +97,10 @@ def __lr1_automaton_clousure(G: Grammar, state: State, lr0_items: List[Lr0_item]
 
         if current_lr1_item.center.dot == len(current_lr1_item.center.tail):
             if current_lr1_item.center.head.identifier != 'S\'':
-                prod_id = G.map_prodstr_rules[str(current_lr1_item.center)][0]
+                prod_id = (G.map_prodstr_rules[str(current_lr1_item.center)][0] 
+                            if current_lr1_item.center.tail
+                            else G.map_prodstr_rules[str(current_lr1_item.center) + 'eps '][0])
+                            
                 if state_id_number not in action_goto_table.terminals_dict[curr_frozen_set_elem]:
                     action_goto_table.terminals_dict[curr_frozen_set_elem][state_id_number] = None
                 
@@ -181,15 +196,34 @@ def __build_lr1_automaton(G: Grammar, lr0_items: List[Lr0_item]) -> Tuple[bool, 
 
     return True, initial_state, [state for _, state in enumerate(lr1_states_hash_table.values())]
 
-def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, str]) -> Tuple[bool, Any]:
+def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_Type, str]) -> Tuple[bool, Any]:
     lr0_items = __build_lr0_items(G)
-    is_lr1, lr1_automaton, states = __build_lr1_automaton(G, lr0_items)
-    del globals()['lr1_states_hash_table']
-    del lr1_automaton
+    is_lr1, lr1_automaton, states = False, None, None
+
+    global action_goto_table    
+    deserialized_action_goto_table = deserialize_data('./serialized_data/serialized_action_goto_table.pickle')
+    deserialized_states = deserialize_data('./serialized_data/states.pickle')
+
+    if deserialized_states != None:
+        states = deserialized_states
+    
+    if deserialized_action_goto_table != None:
+        is_lr1 = True
+        action_goto_table = deserialized_action_goto_table
+
+    else:
+        is_lr1, lr1_automaton, states = __build_lr1_automaton(G, lr0_items)
+        del globals()['lr1_states_hash_table']
+        del lr1_automaton
+
+        if is_lr1:
+            serialize_data(action_goto_table, './serialized_data/serialized_action_goto_table')
+            serialize_data(states, './serialized_data/states')
 
     symbols_stack = []
     states_stack = [states[0]]
     prods = list(G.map_prodstr_rules.keys())
+    parsing_errors: OrbisimParserError = []
 
     curr_token_index = 0
 
@@ -197,22 +231,21 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, st
         while (symbols_stack or states_stack) and curr_token_index < len(tokens):
             curr_token = tokens[curr_token_index]
 
-            if (curr_token.token_type == Token_Type.space or curr_token.token_type == Token_Type.new_line):
+            if curr_token.token_type == Token_Type.space or curr_token.token_type == Token_Type.new_line:
                 curr_token_index += 1
                 continue
-
+            
+            curr_token_symbol_identifier = token_type_to_string[curr_token.token_type]
             curr_state = states_stack[-1]
             curr_state_id = int(curr_state.id)
-            
-            curr_token_symbol_identifier = token_string[curr_token.token_type]
-            
+
             if curr_state_id in action_goto_table.terminals_dict[curr_token_symbol_identifier]:
                 action, state_or_prod_id = action_goto_table.terminals_dict[curr_token_symbol_identifier][curr_state_id]
 
                 if action == 'Shift':
                     new_terminal = Terminal(curr_token_symbol_identifier)
 
-                    if _is_atom(curr_token):
+                    if __is_atom(curr_token):
                         new_terminal.val = curr_token.lexeme
 
                     symbols_stack.append(new_terminal)
@@ -231,19 +264,25 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_string: Dict[Token_Type, st
                     tail = tail[::-1]
                     head_str = prod_str.split(' ')[0]
                     head = Non_terminal(head_str, 'ast')
-                    rule, _ = G.map_prodstr_rules[prod_str][2][0]
-                    eval_rule(rule, head, tail)
+
+                    if not parsing_errors:
+                        rule, _ = G.map_prodstr_rules[prod_str][2][0]
+                        eval_rule(rule, head, tail)
 
                     symbols_stack.append(head)
                     state_after_reduce = action_goto_table.non_terminals_dict[head_str][int(states_stack[-1].id)]
                     states_stack.append(states[state_after_reduce - 1])
 
                 elif action == 'OK':
-                    return True, symbols_stack.pop().ast
+                    return parsing_errors, symbols_stack.pop().ast
+                    
+            elif not curr_token_symbol_identifier in curr_state.transitions:
+                # expected_token = ''
+                # for _, elem in enumerate(curr_state.transitions):
+                #     expected_token = elem
+                #     break
+                      
+                parsing_errors.append(OrbisimParserError(f'unespected token in line {curr_token.line}'))
+                return parsing_errors, None
 
-                        
-                else: return False, None
-
-            else: return False, None
-
-    return False, None
+    return parsing_errors, None

@@ -46,7 +46,6 @@ class Token_Type(Enum):
     bitwise_or = 46
     bitwise_xor = 51
     bitwise_and = 45
-    bitwise_not = 47
     bitwise_shift_left = 48
     bitwise_shift_right = 49
 
@@ -75,7 +74,7 @@ class Token_Type(Enum):
     open_curly_braces = 29
     closed_curly_braces = 30
 
-    
+    instance_access_op = 53
     eof = 100
     space = 101
     new_line = 102
@@ -85,9 +84,10 @@ class Token_Type(Enum):
     
 class Token: # Clase para representar los tokens
 
-    def __init__(self, lexeme: str, token_type: Token_Type): # Ctor
+    def __init__(self, lexeme: str, token_type: Token_Type, line: int = 0): # Ctor
         self.token_type = token_type
         self.lexeme = lexeme
+        self.line = line
 
     def is_operator(self):
         return self.token_type.value in range(2, 12)

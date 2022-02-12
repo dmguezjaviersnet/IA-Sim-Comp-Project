@@ -52,9 +52,9 @@ class Lexer:
         state = self.automaton
         endState = state if state.is_final_state else None
         lexeme = ''
-        move_cursor = 0
-        for symbol in text:
-            move_cursor +=1
+        last_pos = 0
+        for sym_pos, symbol in enumerate(text):
+            last_pos = sym_pos
             if state.has_a_transition(symbol):
                 lexeme += symbol
                 state = state[symbol][0]
@@ -64,32 +64,45 @@ class Lexer:
                     endState.lexeme = lexeme
 
             else:
-              break
+                break
+              
         
         if endState:
             return endState
         else:
-            raise OrbisimLexerError(f'Token {text[:move_cursor]} no reconocido por el lenguaje Orbisim')
+            while last_pos < len(text) and (text[last_pos] != ' '  and text[last_pos] != '\n'):
+                lexeme += text[last_pos]
+                last_pos += 1
+            raise OrbisimLexerError(f'Token {lexeme} no reconocido por el lenguaje Orbisim en la línea', lexeme)
     
     def _tokenizer(self, text):
-
+        line = 1
         while text:
-            
             try:
                 qf = self._walk(text)
                 lexeme = qf.lexeme
+
+                if lexeme == '\n':
+                    line += 1
+
                 text = text[len(lexeme):]
                 ends = [state.tag for state in qf.substates if state.tag]
                 ends.sort()
-                yield lexeme, ends[0][1]
-            except OrbisimLexerError:
-                pass
+                yield lexeme, ends[0][1], line
 
+            except OrbisimLexerError as err:
+                self.errors.append(f'{err.error_info} {line}')
+                text = text[len(err.lexeme):]
 
-                
+        yield '$', self.eof, line
 
-        yield '$', self.eof
+    @staticmethod
+    def get_errors(tokens: List[Token]):
+        errors: List[str] = []
+        for token in tokens:
+            if token.token_type == Token_Type.error:
+                errors.append(f'El token {token.lexeme} no es reconocido por el lenguaje Orbsim')
 
     def __call__(self, text):
-        return [Token(lexeme, token_type) for lexeme, token_type in self._tokenizer(text)]
+        return [Token(lexeme, token_type, line) for lexeme, token_type, line in self._tokenizer(text)], self.errors
     

@@ -1,6 +1,6 @@
 from orbsim_language.orbsim_ast.and_node import AndNode
 from orbsim_language.orbsim_ast.atomic_node import AtomicNode
-from orbsim_language.orbsim_ast.attribute_def_node import AttributeDef
+from orbsim_language.orbsim_ast.attribute_declr_node import AttributeDeclrNode
 from orbsim_language.orbsim_ast.binary_expr_node import BinaryExprNode
 from orbsim_language.orbsim_ast.boolean_node import BooleanNode
 from orbsim_language.orbsim_ast.class_declr_node import ClassDeclrNode
@@ -38,7 +38,11 @@ from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
 from orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
-from orbsim_language.orbsim_ast.bitwise_xor import BitwiseXorNode
+from orbsim_language.orbsim_ast.bitwise_xor_node import BitwiseXorNode
 from orbsim_language.orbsim_ast.bitwise_shift_right_node import BitwiseShiftRightNode
-from orbsim_language.orbsim_ast.bitwsie_shift_left_node import BitwiseShiftLeftNode
-
+from orbsim_language.orbsim_ast.bitwise_shift_left_node import BitwiseShiftLeftNode
+from orbsim_language.orbsim_ast.body_node import BodyNode
+from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
+from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
+from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
+from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode

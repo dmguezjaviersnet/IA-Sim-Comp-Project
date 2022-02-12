@@ -1,2 +1,0 @@
-from test_language.arth_grammar import arth_grammar
-from test_language.test_grammar_lr1 import lr1_test_grammar

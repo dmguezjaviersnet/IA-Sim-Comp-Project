@@ -4,4 +4,4 @@ from dataclasses import dataclass
 @dataclass
 class UnaryExprNode(ExpressionNode):
     expr: 'ExpressionNode'
-
+    comp_type =  None
