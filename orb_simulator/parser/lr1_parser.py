@@ -223,7 +223,7 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_
     symbols_stack = []
     states_stack = [states[0]]
     prods = list(G.map_prodstr_rules.keys())
-    parsing_errors: OrbisimParserError = []
+    parsing_errors: List[str] = []
 
     curr_token_index = 0
 
@@ -282,7 +282,7 @@ def lr1_parse(G: Grammar, tokens: List[Token], token_type_to_string: Dict[Token_
                 #     expected_token = elem
                 #     break
                       
-                parsing_errors.append(OrbisimParserError(f'unespected token in line {curr_token.line}'))
+                parsing_errors.append(f'unespected token in line {curr_token.line}')
                 return parsing_errors, None
 
     return parsing_errors, None

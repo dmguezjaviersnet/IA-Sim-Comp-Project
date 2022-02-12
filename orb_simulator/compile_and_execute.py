@@ -13,7 +13,9 @@ def orbsim_compile_and_execute(text: str):
     tokens, errs = orbsim_lexer(text)
     if errs:
         return errs
-    _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
+    errs, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
+    if errs:
+        return errs
     collector = TypeCollector()
     collector.visit(ast)
     builder = TypeBuilder(collector.context, collector.log)
