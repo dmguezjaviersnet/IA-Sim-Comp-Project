@@ -11,12 +11,14 @@ from automaton.state import State
 from parser.lr1_parser import lr1_parse
 from orbsim_language.orbsim_lexer import orbsim_lexer
 from orbsim_language.orbsim_grammar import orbsim_grammar, orbsim_token_string
-from orbsim_language.ast_print_walk import PrintAST
+
 from orbsim_language.type_collector import TypeCollector
 from orbsim_language.type_builder import TypeBuilder
 from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
 from orbisim_ui import OrbisimUI
+
+
 
 # def test1():
 #     regexengine = Regex_Engine('(a|b|c)?')
@@ -55,7 +57,7 @@ def main():
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
-    # ui = OrbisimUI()
+    ui = OrbisimUI()
     # print(ui.code_text)
     # au = re.automaton
     # test_lexer()
@@ -112,24 +114,24 @@ def main():
     
 
     # print(hash(tup1) == hash(tup2))
-    tokens, errs = orbsim_lexer(
-    ''' 
-        let List a = [2+3, 1, 2];
-        print(a);
-    '''
-    )
+    # tokens, errs = orbsim_lexer(
+    # ''' 
+    #     let List a = [2+3, 1, 2];
+    #     print(a);
+    # '''
+    # )
     
-    _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
-    print('\o/')
-    collector = TypeCollector()
-    collector.visit(ast)
-    builder = TypeBuilder(collector.context, collector.log)
-    builder.visit(ast)
-    checker =  TypeChecker(builder.context, builder.log)
-    checker.check(ast, Scope())
-    exe =  Executor(checker.context)
-    exe.execute(ast, Scope())
-    print('_o/ \o/  \o_')
+    # _, ast = lr1_parse(orbsim_grammar, tokens, orbsim_token_string)
+    # print('\o/')
+    # collector = TypeCollector()
+    # collector.visit(ast)
+    # builder = TypeBuilder(collector.context, collector.log)
+    # builder.visit(ast)
+    # checker =  TypeChecker(builder.context, builder.log)
+    # checker.check(ast, Scope())
+    # exe =  Executor(checker.context)
+    # exe.execute(ast, Scope())
+    # print('_o/ \o/  \o_')
     # a = (1, 2)
     # b = (2, 1)
     # print(hash(a) == hash(b))
