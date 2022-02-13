@@ -336,6 +336,7 @@ class TypeChecker:
     
     @visitor.when(GreaterEqualNode)
     def check(self, node: GreaterEqualNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
         self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type
@@ -347,6 +348,7 @@ class TypeChecker:
     
     @visitor.when(LessThanNode)
     def check(self, node: LessThanNode, scope: 'Scope'):
+        self.check(node.left, scope)
         left_type: OrbsimType = node.left.comp_type
         self.check(node.right, scope)
         right_type: OrbsimType = node.right.comp_type

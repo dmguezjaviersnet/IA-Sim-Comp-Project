@@ -97,7 +97,7 @@ class Executor:
 
     @visitor.when(LoopNode)
     def execute(self, node: 'LoopNode', scope: 'Scope'):
-        while self.execute(node.condition, scope):
+        while self.execute(node.condition, scope).value:
             new_scope = scope.create_child_scope()
             instance = self.execute(node.body, new_scope)
             if instance == 'continue':

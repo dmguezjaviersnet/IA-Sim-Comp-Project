@@ -17,7 +17,7 @@ from orbsim_language.type_builder import TypeBuilder
 from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
 from orbsim_ui import OrbisimUI
-
+from simulation.handler import Handler
 
 
 # def test1():
@@ -58,6 +58,8 @@ def main():
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
     ui = OrbisimUI()
+    # handler = Handler()
+    # handler.start()
     # print(ui.code_text)
     # au = re.automaton
     # test_lexer()

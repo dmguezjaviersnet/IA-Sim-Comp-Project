@@ -2,8 +2,8 @@ import simpy
 import random 
 import numpy as np
 from typing import List
-from orbsim_simulation_structs import Octree
-from orbsim_simulation_entities import OrbsimObj , Factory , Vector3 , Launchpad , Junk
+from simulation.orbsim_simulation_structs.octree import Octree
+from simulation.orbsim_simulation_entities import OrbsimObj , Factory , Vector3 , Launchpad , Junk
 from colorama import Back, Fore, init
 
 

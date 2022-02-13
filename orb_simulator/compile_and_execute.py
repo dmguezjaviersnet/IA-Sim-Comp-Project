@@ -29,7 +29,14 @@ def orbsim_compile_and_execute(text: str):
     
     
 # orbsim_compile_and_execute('''
-#     let Vector3 a =  make Vector3(1,2,3);
+#    let Int max = 4 ;
+# let Int b = max - 5;
+# let Int count = 0;
+# loop (count < 10){
+#         b = 2 * b ;
+#         count = count + 1;
+# };
+
 # ''')
 
 

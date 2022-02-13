@@ -117,12 +117,19 @@ También implementamos A*, pues consideramos que nos hará falta para el proyect
 
 ### El DSL (OrbSim)
 
-Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos.
+Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como builtin.
+
 
 ## Regex Engine:
 
 Usamos la siguiente gramática:
 
+## Interfaz Gráfica:
+
+Para la interfaz gráfica usamos streamlit:
+
+
 
 
 Usamos un parser LL(1)
+
