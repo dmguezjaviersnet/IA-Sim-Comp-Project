@@ -57,9 +57,9 @@ def main():
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
-    # ui = OrbisimUI()
-    handler = Handler()
-    handler.start()
+    ui = OrbisimUI()
+    # handler = Handler()
+    # handler.start()
     # print(ui.code_text)
     # au = re.automaton
     # test_lexer()
