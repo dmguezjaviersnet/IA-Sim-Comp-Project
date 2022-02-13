@@ -9,11 +9,11 @@ from orbsim_simulation_entities.rocket import Rocket
 
 
 class Factory():
-  def __init__(self, loc: Vector3 ) -> None:
+  def __init__(self, position: Vector3 ) -> None:
     self.age: int  = 0 
     
     # localizacion de la fabrica
-    self.loc: int = loc
+    self.position: int = position
     # ranking de la fabrica 
     self.ranking : int = 0 
 
@@ -64,7 +64,7 @@ class Factory():
 
     # generar un nuevo id para el nuevo cohete creado 
     rocket_id = uuid.uuid4()
-    rocket = Rocket(self.loc,rocket_id,satellites=[new_satellite])
+    rocket = Rocket(self.position,rocket_id,satellites=[new_satellite])
     
     #aumenting  ranking of Factory 
     self.ranking = self.ranking + 1 
