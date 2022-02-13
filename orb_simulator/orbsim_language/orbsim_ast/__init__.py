@@ -46,3 +46,5 @@ from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.attribute_call_node import AttributeCallNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
+from orbsim_language.orbsim_ast.break_node import BreakNode
+from orbsim_language.orbsim_ast.continue_node import ContinueNode

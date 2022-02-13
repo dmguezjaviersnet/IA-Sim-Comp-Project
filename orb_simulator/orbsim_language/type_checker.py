@@ -42,6 +42,8 @@ from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.class_declr_node import ClassDeclrNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
+from orbsim_language.orbsim_ast.break_node import BreakNode
+from orbsim_language.orbsim_ast.continue_node import ContinueNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -51,6 +53,7 @@ class TypeChecker:
         self.context: Context = context
         self.log: List[str]   = log
         self.current_type: 'OrbsimType' = None
+        self.insine_loop = False
         
     @visitor.on('node')
     def check(self, node):
@@ -397,11 +400,17 @@ class TypeChecker:
         condition_type: OrbsimType =  node.condition.comp_type 
         if condition_type.name != 'Bool':
             self.log.append(f'SemanticError: Se esperaba una expresión de tipo Bool en la condición del loop')
+        self.insine_loop = True
         self.check(node.body, scope.create_child_scope())
+        self.insine_loop = False
 
     @visitor.when(BodyNode)
     def check(self, node: BodyNode, scope: 'Scope'):
         for st in node.statements:
+            if isinstance(st, ContinueNode) and not self.insine_loop:
+                self.log('SemanticError: continue debe estar dentro de un loop')
+            if isinstance(st, BreakNode) and not self.insine_loop:
+                self.log('SemanticError: break debe estar dentro de un loop')
             self.check(st, scope)
 
     @visitor.when(AttributeCallNode)

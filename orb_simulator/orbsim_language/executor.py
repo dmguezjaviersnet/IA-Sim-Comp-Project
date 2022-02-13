@@ -45,6 +45,10 @@ from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
 from simulation.orbsim_simulation_entities.elements_3d import Vector3
+from orbsim_language.orbsim_ast.break_node import BreakNode
+from orbsim_language.orbsim_ast.continue_node import ContinueNode
+
+
 from errors import OrbisimExecutionError
 class Executor:
 
@@ -55,6 +59,7 @@ class Executor:
             'concat':concat
         }
         self.log: List[str] = []
+        self.break_unchained = False
         # self.scope: 'Scope' = Scope()
 
     @visitor.on('node')
@@ -96,8 +101,11 @@ class Executor:
     def execute(self, node: 'LoopNode', scope: 'Scope'):
         while self.execute(node.condition, scope):
             new_scope = scope.create_child_scope()
-            self.execute(node.body, new_scope)
-    
+            instance = self.execute(node.body, new_scope)
+            if instance == 'continue':
+                continue
+            if instance == 'break':
+                break
     @visitor.when(ConditionalNode)
     def execute(self, node: 'ConditionalNode', scope: 'Scope'):
         if self.execute(node.if_expr, scope):
@@ -108,6 +116,10 @@ class Executor:
     def execute(self, node: 'BodyNode', scope: 'Scope'):
         instance = None
         for st in node.statements:
+            if isinstance(st, ContinueNode):
+                return 'continue'
+            if isinstance(st, BreakNode):
+                return 'break'
             instance = self.execute(st, scope)
         return instance
     
