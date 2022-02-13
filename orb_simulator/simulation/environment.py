@@ -1,3 +1,7 @@
+from math import fabs
+from heapq import heappush, heappop
+
+from numpy import Inf
 from orbsim_simulation_entities import OrbsimObj , Factory , Vector3 , Launchpad , Junk, Vector2
 from typing import *
 class cell: 
@@ -51,6 +55,60 @@ class Environment:
               factories.append(item)
     return factories
 
+  def give_me_adyacent_positions(self,center: Vector2):
+    dirr = [-1,-1,-1,0,1,1,1,0]
+    dirc = [-1,0,1,1,1,0,-1,-1] 
+
+    for r in range(len(dirr)):
+      x = center.x + dirr[r]
+      y = center.y + dirc[r]
+      if self._in_range(x,y):
+        yield Vector2(x,y)
+
+  def _heuristic(src : Vector2, dest: Vector2):
+    return int (fabs(src.x - dest.x) + fabs(src.y - dest.y))
+
+  def get_the_best_way (self , src:Vector2, dest: Vector2,type_element : str ):
+    
+    visited = [[ False for item1 in range(self._widht)]for item in range(self._height)] 
+    parent = [[ None for item1 in range(self._widht)]for item in range(self._height)] 
+    g= [[ Inf for item1 in range(self._widht)]for item in range(self._height)] 
+    h= [[ 0 for item1 in range(self._widht)]for item in range(self._height)]
+    q= []
+
+
+    visited[src.x][src.y] = True
+    g[src.x][src.y] = 0 
+    h[src.x][src.y] = self._heuristic(src,dest)
+    heappush(q,(0,src))
+
+    while len(q) > 0:
+      _ , current = heappop(q)
+
+      if current == dest:
+        return
+    
+      for adyacent in self.give_me_adyacent_positions(current):
+        jump_width = self._heuristic(current, adyacent)
+
+        ## haciendo relax 
+        if g[current.x][current.y] + jump_width < g[adyacent.x][adyacent.y]:
+          g[adyacent.x][adyacent.y] = g [current.x][current.y] + jump_width
+          h[adyacent.x][adyacent.y] = self._heuristic(adyacent,dest)
+          parent [adyacent.x][adyacent.y] = current
+
+        if not visited[adyacent.x][adyacent.y]:
+          heappush(q,(h[adyacent.x][adyacent.y] + g [adyacent.x][adyacent.y],adyacent))
+          visited[adyacent.x][adyacent.y] = True
+    
+    ## obteniendo el camino 
+    path = [dest]
+    current = dest
+    while current != dest:
+      current = parent [current]
+      path.append(current)
+    path.reverse()
+    return path
 
 
 env = Environment(100,100)
