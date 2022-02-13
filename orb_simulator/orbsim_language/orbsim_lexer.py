@@ -16,7 +16,7 @@ orbsim_lexer = Lexer([
     ('break', Token_Type.break_orbsim),
     ('true|false', Token_Type.boolean),
     ('([a-z])([a-z]|[A-Z]|[0-9]|_)*', Token_Type.id_orbsim),
-    ("([A-Z])([a-z]|[A-Z])*", Token_Type.type_id_orbsim),
+    ("([A-Z])([a-z]|[A-Z]|[0-9])*", Token_Type.type_id_orbsim),
     ('[1-9][0-9]*', Token_Type.int),
     ('0', Token_Type.int),
     ('[1-9][0-9]*.[0-9]+', Token_Type.float),

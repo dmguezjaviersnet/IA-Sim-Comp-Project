@@ -30,7 +30,6 @@ from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
-from orbsim_language.built_in_funcs import*
 from orbsim_language.orbsim_ast.attribute_declr_node import AttributeDeclrNode
 from orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
 from orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
@@ -44,6 +43,10 @@ from orbsim_language.orbsim_type import*
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
+from simulation.orbsim_simulation_entities.elements_3d import Vector3
+from orbsim_language.orbsim_ast.break_node import BreakNode
+from orbsim_language.orbsim_ast.continue_node import ContinueNode
+from orbsim_language.builtins import *
 
 from errors import OrbisimExecutionError
 class Executor:
@@ -51,10 +54,9 @@ class Executor:
     
     def __init__(self, context: 'Context'):
         self.context: 'Context' = context
-        self.builtin_funcs = {
-            'concat':concat
-        }
+        
         self.log: List[str] = []
+        self.break_unchained = False
         # self.scope: 'Scope' = Scope()
 
     @visitor.on('node')
@@ -87,8 +89,9 @@ class Executor:
         func = self.context.get_func(node.identifier, len(node.args))
         new_scope = Scope()
         for i in range(len(node.args)):
-            val = self.execute(node.args[i], scope)
-            new_scope.define_var(func.args[i],  func.arg_types[i], val)
+            var_instance = self.execute(node.args[i], scope)
+            new_scope.define_var(func.args[i],  func.arg_types[i])
+            new_scope.get_variable(func.args[i]).instance =  var_instance
         return self.execute(func.body, new_scope)
     
 
@@ -96,8 +99,11 @@ class Executor:
     def execute(self, node: 'LoopNode', scope: 'Scope'):
         while self.execute(node.condition, scope):
             new_scope = scope.create_child_scope()
-            self.execute(node.body, new_scope)
-    
+            instance = self.execute(node.body, new_scope)
+            if instance == 'continue':
+                continue
+            if instance == 'break':
+                break
     @visitor.when(ConditionalNode)
     def execute(self, node: 'ConditionalNode', scope: 'Scope'):
         if self.execute(node.if_expr, scope):
@@ -108,6 +114,10 @@ class Executor:
     def execute(self, node: 'BodyNode', scope: 'Scope'):
         instance = None
         for st in node.statements:
+            if isinstance(st, ContinueNode):
+                return 'continue'
+            if isinstance(st, BreakNode):
+                return 'break'
             instance = self.execute(st, scope)
         return instance
     
@@ -286,7 +296,7 @@ class Executor:
     
     @visitor.when(AssingNode)
     def execute(self, node: AssingNode, scope: 'Scope'):
-        var_info : 'VariableInfo' = scope.get_variable(node.identifier)
+        var_info : 'VariableInfo' = scope.get_variable(node.var_id)
         new_instance_value = self.execute(node.expr, scope)
         var_info.instance = new_instance_value
     
@@ -300,11 +310,19 @@ class Executor:
     @visitor.when(ClassMakeNode)
     def execute(self, node: ClassMakeNode, scope: 'Scope'):
         class_type: 'OrbsimType' = self.context.get_type(node.classname)
-        class_instance = Instance(class_type)
         
-        for attr_index, attr in enumerate(class_type.attributes):
-            attr_instance = self.execute(node.params[attr_index], scope)
-            class_instance.set_attr_instance(attr, attr_instance)
+        
+        if class_type.name == 'Vector3':
+            vals = []
+            for attr_index, attr in enumerate(class_type.attributes):
+                attr_instance: 'Instance' = self.execute(node.params[attr_index], scope)
+                vals.append(attr_instance.value)
+            class_instance = Instance(class_type, Vector3(vals[0], vals[1], vals[2]))
+        else:
+            class_instance = Instance(class_type)
+            for attr_index, attr in enumerate(class_type.attributes):
+                attr_instance = self.execute(node.params[attr_index], scope)
+                class_instance.set_attr_instance(attr, attr_instance)
         return class_instance
 
     @visitor.when(MethodCallNode)
@@ -313,6 +331,10 @@ class Executor:
         var_instance = var.instance
 
         new_scope = Scope()
+        if (var.type.name, node.identifier) in builtins:
+            args = (var.instance ,) + tuple(self.execute(expr, scope) for expr in node.args)
+            return builtins[(var.type.name, node.identifier)](*args)
+        
         method: 'Method' = var_instance.get_method(node.identifier, len(node.args))
         new_scope.define_var('this', var_instance.orbsim_type)
         new_scope.get_variable('this').instance = var_instance

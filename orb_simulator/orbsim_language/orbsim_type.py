@@ -84,8 +84,13 @@ class BoolType(OrbsimType):
 
 class ListType(OrbsimType):
     def __init__(self):
-        OrbsimType.__init__(self, 'List')
-    
+        super().__init__('List')
+        self.elems_type: OrbsimType = None
+
+class AnyType(OrbsimType):
+    def __init__(self):
+        super().__init__('Any')
+        
 class NullType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Null')

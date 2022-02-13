@@ -44,6 +44,7 @@ class Scope:
         self.parent: 'Scope' = parent
         self.local_variables: Dict[str, VariableInfo] = {}
         self.local_functions: Dict[Tuple[str, int], FunctionInfo] = {}
+        
     
     def check_var(self, var: str) -> bool: 
         '''

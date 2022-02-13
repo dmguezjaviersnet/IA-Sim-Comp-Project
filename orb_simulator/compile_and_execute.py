@@ -29,8 +29,7 @@ def orbsim_compile_and_execute(text: str):
     
     
 # orbsim_compile_and_execute('''
-#     let Int a = 2;
-#     print(a);
+#     let Vector3 a =  make Vector3(1,2,3);
 # ''')
 
 

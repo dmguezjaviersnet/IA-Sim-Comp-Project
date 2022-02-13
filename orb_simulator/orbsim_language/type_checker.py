@@ -42,6 +42,8 @@ from orbsim_language.orbsim_ast.class_make_node import ClassMakeNode
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.class_declr_node import ClassDeclrNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
+from orbsim_language.orbsim_ast.break_node import BreakNode
+from orbsim_language.orbsim_ast.continue_node import ContinueNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -51,6 +53,7 @@ class TypeChecker:
         self.context: Context = context
         self.log: List[str]   = log
         self.current_type: 'OrbsimType' = None
+        self.insine_loop = False
         
     @visitor.on('node')
     def check(self, node):
@@ -369,8 +372,8 @@ class TypeChecker:
     def check(self, node: PrintNode, scope: 'Scope'):
         self.check(node.expr, scope)
         expr_type: OrbsimType =  node.expr.comp_type
-        if expr_type.name != 'Int' and expr_type.name != 'Float' and expr_type.name != 'Bool' and expr_type.name != 'String':
-            self.log.append(f'SemanticError: print no admite expresiones de tipo {expr_type.name}')
+        # if expr_type.name != 'Int' and expr_type.name != 'Float' and expr_type.name != 'Bool' and expr_type.name != 'String' and expr_type.name != 'Vector3':
+        #     self.log.append(f'SemanticError: print no admite expresiones de tipo {expr_type.name}')
         
     @visitor.when(AssingNode)
     def check(self, node: AssingNode, scope: 'Scope'):
@@ -397,11 +400,17 @@ class TypeChecker:
         condition_type: OrbsimType =  node.condition.comp_type 
         if condition_type.name != 'Bool':
             self.log.append(f'SemanticError: Se esperaba una expresión de tipo Bool en la condición del loop')
+        self.insine_loop = True
         self.check(node.body, scope.create_child_scope())
+        self.insine_loop = False
 
     @visitor.when(BodyNode)
     def check(self, node: BodyNode, scope: 'Scope'):
         for st in node.statements:
+            if isinstance(st, ContinueNode) and not self.insine_loop:
+                self.log('SemanticError: continue debe estar dentro de un loop')
+            if isinstance(st, BreakNode) and not self.insine_loop:
+                self.log('SemanticError: break debe estar dentro de un loop')
             self.check(st, scope)
 
     @visitor.when(AttributeCallNode)
@@ -444,7 +453,7 @@ class TypeChecker:
                 for arg_index, arg_type in enumerate(t_method.type_args):
                     self.check(node.args[arg_index], scope)
                     arg_comp_type = node.args[arg_index].comp_type
-                    if arg_comp_type != arg_type:
+                    if arg_comp_type != arg_type and arg_type != AnyType():
                         self.log.append(f'Se esperaba una expresión de tipo {arg_type.name} para el argumento {t_method.args[arg_index]} del método {node.identifier} de la clase {node.instance_name}')
                 node.comp_type = t_method.return_type
             except OrbisimSemanticError as err:
@@ -476,8 +485,10 @@ class TypeChecker:
             if list_type:
                 if list_type[::-1][0] != expr.comp_type:
                     self.log.append(f'Todos los elementos de una lista deben ser del mismo tipo')
-                    break
+                    return
             else:
                 list_type.append(expr.comp_type)
         
         node.comp_type = ListType()
+        if list_type:
+            node.comp_type.elems_type = list_type[0]

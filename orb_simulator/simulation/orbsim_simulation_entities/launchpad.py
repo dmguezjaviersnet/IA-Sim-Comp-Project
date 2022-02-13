@@ -2,7 +2,7 @@ import simpy
 import uuid
 import random 
 import math
-from orbsim_simulation_entities.rocket import Rocket
+from simulation.orbsim_simulation_entities.rocket import Rocket
 
 class Launchpad:
   def __init__(self,env: simpy.Environment, quality: int = 10, amount_plataforms: int= 1) -> None:

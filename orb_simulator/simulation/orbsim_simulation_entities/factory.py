@@ -2,10 +2,10 @@ import random
 import simpy
 import uuid
 import numpy as np
-from orbsim_simulation_entities.satellite import Satellite
-from orbsim_simulation_entities.elements_3d import Vector3
-from orbsim_simulation_entities.conf_variables import T_BUILD_SATELLITE , T_BUILD_ROCKET
-from orbsim_simulation_entities.rocket import Rocket
+from simulation.orbsim_simulation_entities.satellite import Satellite
+from simulation.orbsim_simulation_entities.elements_3d import Vector3
+from simulation.orbsim_simulation_entities.conf_variables import T_BUILD_SATELLITE , T_BUILD_ROCKET
+from simulation.orbsim_simulation_entities.rocket import Rocket
 
 
 class Factory():
