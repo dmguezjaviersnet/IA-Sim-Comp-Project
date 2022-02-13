@@ -2,7 +2,7 @@ from math import fabs
 from heapq import heappush, heappop
 
 from numpy import Inf
-from orbsim_simulation_entities import OrbsimObj , Factory , Vector3 , Launchpad , Junk, Vector2
+from simulation.orbsim_simulation_entities import OrbsimObj , Factory , Vector3 , Launchpad , Junk, Vector2
 from typing import *
 class cell: 
   def __init__(self, x , y):

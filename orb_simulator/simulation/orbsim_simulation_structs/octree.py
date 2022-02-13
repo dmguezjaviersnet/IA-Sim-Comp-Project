@@ -1,4 +1,4 @@
-from orbsim_simulation_entities import Vector3
+from simulation.orbsim_simulation_entities import Vector3
 import numpy as np
 
 class Node(object):
