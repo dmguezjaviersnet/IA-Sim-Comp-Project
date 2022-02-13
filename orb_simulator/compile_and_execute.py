@@ -28,15 +28,16 @@ def orbsim_compile_and_execute(text: str):
     exe.execute(ast, Scope())
     
     
-# orbsim_compile_and_execute('''
-#    let Int max = 4 ;
-# let Int b = max - 5;
-# let Int count = 0;
-# loop (count < 10){
-#         b = 2 * b ;
-#         count = count + 1;
-# };
+orbsim_compile_and_execute('''
+   let Int counter = 0;
+let Int doble   = 10;
 
-# ''')
+loop(count < 10){
+    doble = 2 *2;
+};
+
+print(doble);
+
+''')
 
 

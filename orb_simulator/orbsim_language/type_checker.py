@@ -123,7 +123,7 @@ class TypeChecker:
     def check(self, node: VariableNode, scope: 'Scope'):
         if not scope.check_var(node.identifier):
             node.comp_type = NullType()
-            self.log(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
+            self.log.append(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
         else:
             var: 'VariableInfo' = scope.get_variable(node.identifier)
             node.comp_type = var.type
