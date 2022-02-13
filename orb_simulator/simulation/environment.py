@@ -39,6 +39,7 @@ class Environment:
           for item in self._cells[i][j]._elements:
             if type(item) is Launchpad:
               launchpad.append(item)
+    return launchpad
 
   def getting_all_factories ( self, pos : Vector2 , radius: int):
     factories = []
@@ -48,6 +49,17 @@ class Environment:
           for item in self._cells[i][j]._elements:
             if type(item) is Factory:
               factories.append(item)
+    return factories
 
-env = Environment(1000,1000)
-# env.print()
+
+
+env = Environment(100,100)
+env._cells[10][10]._elements.append(Factory (Vector3(10,10,10)))
+env._cells[11][12]._elements.append(Factory (Vector3(11,12,10)))
+env._cells[10][11]._elements.append(Factory (Vector3(10,11,10)))
+
+
+
+factories = env.getting_all_factories(Vector2(10,10), 4)
+for fact in factories:
+  print (fact)
