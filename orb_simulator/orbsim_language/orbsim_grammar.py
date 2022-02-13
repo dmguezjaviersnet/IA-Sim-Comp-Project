@@ -4,7 +4,7 @@ from parser.terminal import Epsilon, Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1
+from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, start_stmt_rule, stop_stmt_rule
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule, class_body_stmt_list_rule2, expr_list_rule3, make_rule, method_call_rule
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1, def_method_stmt_rule
@@ -143,6 +143,8 @@ break_keyword = Terminal('break')
 continue_keyword = Terminal('continue')
 ret_keyword = Terminal('ret')
 make_keyword = Terminal('make')
+start_keyword = Terminal('start')
+stop_keyword = Terminal('stop')
 
 stmt_separator = Terminal(';')
 expr_separator = Terminal(',')
@@ -187,7 +189,7 @@ terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword,
             break_keyword, continue_keyword, ret_keyword, make_keyword, stmt_separator, expr_separator, assign,
             open_curly_braces, closed_curly_braces, open_parenthesis, closed_parenthesis, neg, logic_or, logic_and,
             not_equals, equals, greater_or_equal, less_equal, greater, less, addition, substraction, product, division,
-            module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and,
+            module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and, start_keyword, stop_keyword,
             bitwise_shift_left, bitwise_shift_right, class_member_access_operator, open_sqr_brckt, closed_sqr_brckt, epsilon]
 
 # No terminales
@@ -208,6 +210,8 @@ loop_stmt = Non_terminal('loop_stmt', 'ast')
 conditional_stmt = Non_terminal('conditional_stmt', 'ast')
 print_stmt = Non_terminal('print_stmt', 'ast')
 ret_stmt = Non_terminal('ret_stmt', 'ast')
+start_stmt = Non_terminal('start_stmt', 'ast')
+stop_stmt = Non_terminal('stop_stmt', 'ast')
 loop_body_stmt_list = Non_terminal('loop_body_stmt_list', 'ast')
 loop_body_stmt = Non_terminal('loop_body_stmt', 'ast')
 flow_stmt = Non_terminal('flow_stmt', 'ast')
@@ -236,12 +240,12 @@ method_call = Non_terminal('method_call', 'ast')
 attr_call = Non_terminal('attr_call', 'ast')
 expr_list = Non_terminal('expr_list', 'ast')
 
-non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body_stmt, attr_stmt, def_func_stmt, 
+non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body_stmt, attr_stmt, def_func_stmt,
                 def_method_stmt, func_body_stmt_list, func_body_stmt, let_stmt, assign_stmt, loop_stmt, conditional_stmt,
                 print_stmt, ret_stmt, loop_body_stmt_list, loop_body_stmt, flow_stmt, conditional_body_stmt_list, conditional_body_stmt,
                 arg_list, expression, or_expr, and_expr, not_expr, compare_expr, compare_op, bitwise_or_expr, bitwise_xor_expr,
                 bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, list_creation, func_call, make_instance, method_call, 
-                attr_call, expr_list]
+                attr_call, expr_list, start_stmt, stop_stmt]
 
 # Producciones
 
@@ -255,7 +259,7 @@ p2 = Production(stmt_list,
                 )
 
 p3 = Production(statement,
-                [[class_keyword, type_id, open_curly_braces, class_body_stmt_list, closed_curly_braces], 
+                [[class_keyword, type_id, open_curly_braces, class_body_stmt_list, closed_curly_braces],
                  [let_stmt],
                  [def_func_stmt],
                  [conditional_stmt],
@@ -263,9 +267,11 @@ p3 = Production(statement,
                  [print_stmt],
                  [assign_stmt],
                  [func_call],
-                 [method_call]],
-                [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)],
-                 [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)]]
+                 [method_call],
+                 [start_stmt],
+                 [stop_stmt]],
+                [[(stmt_rule1, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], 
+                 [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)], [(stmt_rule2, True)]]
                 )
 
 p4 = Production(class_body_stmt_list,
@@ -303,10 +309,10 @@ p9 = Production (func_body_stmt_list,
                 )
 
 p10 = Production (func_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt], [func_call], [method_call]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt], [func_call], [method_call], [start_stmt], [stop_stmt]],
                 [[(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)],
                  [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)],
-                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)]]
+                 [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)], [(func_body_stmt_rule, True)]]
                 )
 
 p11 = Production(let_stmt,
@@ -331,10 +337,10 @@ p14 = Production(loop_body_stmt_list,
                 )
 
 p15 = Production(loop_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [flow_stmt], [print_stmt], [func_call], [method_call]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [flow_stmt], [print_stmt], [func_call], [method_call], [start_stmt], [stop_stmt]],
                 [[(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)],
                  [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)],
-                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)]]
+                 [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)], [(loop_body_stmt_rule, True)]]
                 )
 
 p16 = Production(flow_stmt,
@@ -357,10 +363,11 @@ p18 = Production(conditional_body_stmt_list,
                 )
 
 p19 = Production(conditional_body_stmt,
-                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt], [func_call], [method_call]],
+                [[let_stmt], [assign_stmt], [loop_stmt], [conditional_stmt], [ret_stmt], [print_stmt], [func_call], [method_call], [start_stmt], [stop_stmt]],
                 [[(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)],
                  [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)],
-                 [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)]]
+                 [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], [(conditional_body_stmt_rule, True)], 
+                 [(conditional_body_stmt_rule, True)]]
                 )
 
 p20 = Production(ret_stmt,
@@ -371,6 +378,16 @@ p20 = Production(ret_stmt,
 p21 = Production(print_stmt,
                 [[print_keyword, expression]],
                 [[(print_stmt_rule, True)]]
+                )
+
+p43 = Production(start_stmt,
+                [[start_keyword]],
+                [[(start_stmt_rule, True)]]
+                )
+
+p44 = Production(stop_stmt,
+                [[stop_keyword]],
+                [[(stop_stmt_rule, True)]]
                 )
 
 p22 = Production(arg_list,
@@ -484,7 +501,7 @@ p42 = Production(expr_list,
 
 productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20,
                 p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, 
-                p39, p40, p41, p42]
+                p39, p40, p41, p42, p43, p44]
 
 orbsim_grammar = Grammar(terminals, non_terminals, program, productions)
 
@@ -501,6 +518,8 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.return_orbsim : 'ret',
     Token_Type.print_orbsim : 'print',
     Token_Type.make_orbsim : 'make',
+    Token_Type.start_orbsim : 'start',
+    Token_Type.stop_orbsim : 'stop',
     
     Token_Type.int: 'int_val',
     Token_Type.float : 'float_val',

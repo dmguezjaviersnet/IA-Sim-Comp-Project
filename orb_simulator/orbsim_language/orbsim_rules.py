@@ -1,12 +1,12 @@
 from typing import List
 from parser.own_symbol import Symbol
 from orbsim_language.orbsim_ast import ProgramNode, VariableDeclrNode, FuncDeclrNode, MethodDeclrNode
-from orbsim_language.orbsim_ast import ConditionalNode, LoopNode, OrNode, AndNode
+from orbsim_language.orbsim_ast import ConditionalNode, LoopNode, OrNode, AndNode, ContinueNode, BreakNode
 from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterThanNode
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
 from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode, StringNode, BooleanNode
-from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode, ListCreationNode
+from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode, ListCreationNode, StopSimNode, StartSimNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
 from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode, MethodCallNode, AttributeCallNode
 
@@ -95,6 +95,15 @@ def conditional_body_stmt_rule(head: Symbol, tail: List[Symbol]):
 
 def ret_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = RetNode(tail[1].ast)
+
+def print_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = PrintNode(tail[1].ast)
+
+def start_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = StartSimNode()
+
+def stop_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = StopSimNode()
 
 def print_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = PrintNode(tail[1].ast)
