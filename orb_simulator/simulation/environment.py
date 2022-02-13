@@ -55,6 +55,13 @@ class Environment:
               factories.append(item)
     return factories
 
+  def _is_bad_cell_to_go_through(self, pos : Vector2 ):
+    for item in self._cells[pos.x][pos.y]._elements:
+      if type(item) is  Junk: return True
+    return False 
+
+
+
   def give_me_adyacent_positions(self,center: Vector2):
     dirr = [-1,-1,-1,0,1,1,1,0]
     dirc = [-1,0,1,1,1,0,-1,-1] 
@@ -97,7 +104,10 @@ class Environment:
           h[adyacent.x][adyacent.y] = self._heuristic(adyacent,dest)
           parent [adyacent.x][adyacent.y] = current
 
-        if not visited[adyacent.x][adyacent.y]:
+        if ((not visited[adyacent.x][adyacent.y])
+            and
+            (not self._is_bad_cell_to_go_through(adyacent))
+            ) :
           heappush(q,(h[adyacent.x][adyacent.y] + g [adyacent.x][adyacent.y],adyacent))
           visited[adyacent.x][adyacent.y] = True
     
@@ -111,13 +121,13 @@ class Environment:
     return path
 
 
-env = Environment(100,100)
-env._cells[10][10]._elements.append(Factory (Vector3(10,10,10)))
-env._cells[11][12]._elements.append(Factory (Vector3(11,12,10)))
-env._cells[10][11]._elements.append(Factory (Vector3(10,11,10)))
+# env = Environment(100,100)
+# env._cells[10][10]._elements.append(Factory (Vector3(10,10,10)))
+# env._cells[11][12]._elements.append(Factory (Vector3(11,12,10)))
+# env._cells[10][11]._elements.append(Factory (Vector3(10,11,10)))
 
 
 
-factories = env.getting_all_factories(Vector2(10,10), 4)
-for fact in factories:
-  print (fact)
+# factories = env.getting_all_factories(Vector2(10,10), 4)
+# for fact in factories:
+#   print (fact)
