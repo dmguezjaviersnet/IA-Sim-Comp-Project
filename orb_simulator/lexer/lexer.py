@@ -76,6 +76,7 @@ class Lexer:
             raise OrbisimLexerError(f'Token {lexeme} no reconocido por el lenguaje Orbisim en la línea', lexeme)
     
     def _tokenizer(self, text):
+        self.errors.clear()
         line = 1
         while text:
             try:
