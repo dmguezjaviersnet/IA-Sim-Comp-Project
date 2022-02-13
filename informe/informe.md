@@ -69,8 +69,36 @@ Para parsear implementamos clases `Lr0Item` y `Lr1Item`, y el algoritmo de parsi
 También implementamos A*, pues consideramos que nos hará falta para el proyecto cuando esté más concebido, y ya empecemos a correr simulaciones.
 
 ### El DSL (OrbSim)
+## Lenguaje Orbsim 
+Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como builtin y 
+ser útiles para crear objetos de la simulación.
 
-Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como builtin.
+Declaración de variables en Orbsim:
+`let <Type> id '=' <Expr>`
+```
+let Int a = 1;
+```
+
+
+Definiendo  una clase en Orbsim:
+```
+class Point {
+    Int a;
+    Int b;
+    func Point add (Point b){
+        ret make Point(this.a + b.a, this.b + b.b);
+        };
+    };
+...
+```
+
+Creando una instancia de una clase en Orbsim:
+```
+   let Point a =  make Point(2,3);
+   ...
+```
+
+
 
 
 ## Regex Engine:
@@ -79,8 +107,14 @@ Usamos la siguiente gramática:
 
 ## Interfaz Gráfica:
 
-Para la interfaz gráfica usamos streamlit:
+Para la interfaz gráfica se usó streamlit. Se tiene un editor 
 
+Si el código compila y ejecuta correctament:
+
+![main](./images/img1.png)
+
+En caso de haya algún error de compilación o ejecución.
+![main](./images/img2.png)
 
 
 
