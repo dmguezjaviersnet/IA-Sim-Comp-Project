@@ -79,6 +79,27 @@ Declaración de variables en Orbsim:
 let Int a = 1;
 ```
 
+Condicionales en Orbsim:
+`if (<CondExpr>) then {List[stmt]} else {List[stmt]};`
+
+```
+let Int a = 2;
+let Int b = 20;
+ 
+if (a > b) then {
+    b = b-2+1;
+} 
+else{
+    b = a +2-1;
+};
+....
+```
+
+Ciclos en Orbsim:
+
+`loop (<CondExpr>) {List[stmt]};`
+
+
 
 Definiendo  una clase en Orbsim:
 ```
@@ -97,6 +118,10 @@ Creando una instancia de una clase en Orbsim:
    let Point a =  make Point(2,3);
    ...
 ```
+
+Las clases tienen atributos cuyo valor se le asigna al crear
+una instancia de la misma siempre verificando que los tipos de las expresiones a evaluar coincidan con los tipos de los atributos.
+
 
 
 
