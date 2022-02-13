@@ -132,22 +132,29 @@ class Handler:
     self._end_simulation.succeed()
 
   # puede ser usado para annadir un nuevo lugar de lanzamiento
-  def add_lauchpad(self):
-    new_launchpad = Launchpad(self._env)
+  def add_lauchpad(self, new_launchpad: Launchpad):
+    # new_launchpad = Launchpad(self._env)
+    for launchpad in self._launchpad:
+      if launchpad.position == new_launchpad.position:
+        return False
     self._lauchpad.append(new_launchpad)
     self._amount_launchpads += 1
+    return True
 
   # esto puede ser usado para annadir un nuevo objeto a la simulacion 
-  def add_objetc(self):
-    new_object = OrbsimObj.random(self._world_size)
+  def add_objetc(self, new_object : OrbsimObj):
+    # new_object = OrbsimObj.random(self._world_size)
     self.objects.append(new_object)
 
   # esto puede ser llamado para annadir una nueva fabrica
-  def add_factory(self):
-    new_factory = Factory(Vector3.random(self._world_size))
+  def add_factory(self, new_factory : Factory):
+    # new_factory = Factory(Vector3.random(self._world_size))
+    for factory in self._factories:
+      if factory.position == new_factory.position: 
+        return False
     self._factories.append(new_factory)
     self._amount_factories+=1
-
+    return True
 
 
 if __name__ == '__main__':
