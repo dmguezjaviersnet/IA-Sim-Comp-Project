@@ -21,11 +21,6 @@ __is_atom = lambda token : (token.token_type == Token_Type.int or token.token_ty
     token.token_type == Token_Type.string or token.token_type == Token_Type.boolean or 
     token.token_type == Token_Type.id_orbsim or token.token_type == Token_Type.type_id_orbsim)
 
-def __get_key(val: str, coll: Dict[Token_Type, str]):
-    for key, value in coll.items():
-        if value == val:
-            return key
-
 def __build_lr0_items(G: Grammar) -> List[Lr0_item]:
     lr0_items: List[Lr0_item] = []
 
