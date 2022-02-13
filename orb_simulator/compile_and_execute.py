@@ -28,8 +28,8 @@ def orbsim_compile_and_execute(text: str):
     exe.execute(ast, Scope())
     
     
-orbsim_compile_and_execute('''
-    let Vector3 a =  make Vector3(1,2,3);
-''')
+# orbsim_compile_and_execute('''
+#     let Vector3 a =  make Vector3(1,2,3);
+# ''')
 
 
