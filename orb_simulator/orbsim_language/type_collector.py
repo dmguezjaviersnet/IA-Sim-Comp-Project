@@ -25,13 +25,16 @@ class TypeCollector:
         string_type =  StringType()
         self.context.types['String']  = string_type
         string_type.define_method('concat', string_type, ['s1'], [string_type])
+        string_type.define_method('len', IntType(), [], [])
         bool_type = BoolType()
         self.context.types['Bool']  =  bool_type
         int_type =  IntType()
         self.context.types['Int'] =  int_type
         float_type = FloatType()
         self.context.types['Float'] =  float_type
-        self.context.types['List'] = ListType()
+        list_type = ListType()
+        self.context.types['List'] = list_type
+        list_type.define_method('len', IntType(), [], [])
         self.context.types['Void'] = VoidType()
         vector3: OrbsimType  = self.context.create_type('Vector3')
         vector3.define_attribute('x', IntType())

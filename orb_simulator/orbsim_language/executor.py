@@ -30,7 +30,6 @@ from orbsim_language.orbsim_ast.variable_node import VariableNode
 from orbsim_language.orbsim_ast.assign_node import AssingNode
 from orbsim_language.orbsim_ast.func_declr_node import FuncDeclrNode
 from orbsim_language.orbsim_ast.fun_call_node import FunCallNode
-from orbsim_language.built_in_funcs import*
 from orbsim_language.orbsim_ast.attribute_declr_node import AttributeDeclrNode
 from orbsim_language.orbsim_ast.bitwise_and_node import BitwiseAndNode
 from orbsim_language.orbsim_ast.bitwise_or_node import BitwiseOrNode
@@ -47,7 +46,7 @@ from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
 from simulation.orbsim_simulation_entities.elements_3d import Vector3
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
-
+from orbsim_language.builtins import *
 
 from errors import OrbisimExecutionError
 class Executor:
@@ -55,9 +54,7 @@ class Executor:
     
     def __init__(self, context: 'Context'):
         self.context: 'Context' = context
-        self.builtin_funcs = {
-            'concat':concat
-        }
+        
         self.log: List[str] = []
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
@@ -333,6 +330,10 @@ class Executor:
         var_instance = var.instance
 
         new_scope = Scope()
+        if (var.type.name, node.identifier) in builtins:
+            args = (var.instance ,) + tuple(self.execute(expr, scope) for expr in node.args)
+            return builtins[(var.type.name, node.identifier)](*args)
+        
         method: 'Method' = var_instance.get_method(node.identifier, len(node.args))
         new_scope.define_var('this', var_instance.orbsim_type)
         new_scope.get_variable('this').instance = var_instance
