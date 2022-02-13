@@ -89,8 +89,9 @@ class Executor:
         func = self.context.get_func(node.identifier, len(node.args))
         new_scope = Scope()
         for i in range(len(node.args)):
-            val = self.execute(node.args[i], scope)
-            new_scope.define_var(func.args[i],  func.arg_types[i], val)
+            var_instance = self.execute(node.args[i], scope)
+            new_scope.define_var(func.args[i],  func.arg_types[i])
+            new_scope.get_variable(func.args[i]).instance =  var_instance
         return self.execute(func.body, new_scope)
     
 
@@ -295,7 +296,7 @@ class Executor:
     
     @visitor.when(AssingNode)
     def execute(self, node: AssingNode, scope: 'Scope'):
-        var_info : 'VariableInfo' = scope.get_variable(node.identifier)
+        var_info : 'VariableInfo' = scope.get_variable(node.var_id)
         new_instance_value = self.execute(node.expr, scope)
         var_info.instance = new_instance_value
     

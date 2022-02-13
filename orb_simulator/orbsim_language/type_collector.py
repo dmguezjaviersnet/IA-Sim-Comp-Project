@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Any, List
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
-from orbsim_language.orbsim_type import ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType
+from orbsim_language.orbsim_type import AnyType, ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
 
@@ -35,7 +35,10 @@ class TypeCollector:
         list_type = ListType()
         self.context.types['List'] = list_type
         list_type.define_method('len', IntType(), [], [])
+        list_type.define_method('add', ListType(), ['elem'], [AnyType()])
+        list_type.define_method('remove', ListType(), ['elem'], [AnyType()])
         self.context.types['Void'] = VoidType()
+        self.context.types['Any'] = AnyType()
         vector3: OrbsimType  = self.context.create_type('Vector3')
         vector3.define_attribute('x', IntType())
         vector3.define_attribute('y', IntType())
