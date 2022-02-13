@@ -3,9 +3,10 @@ import uuid
 import random 
 import math
 from orbsim_simulation_entities.rocket import Rocket
+from orbsim_simulation_entities.elements_3d import Vector3
 
 class Launchpad:
-  def __init__(self,env: simpy.Environment, quality: int = 10, amount_plataforms: int= 1) -> None:
+  def __init__(self,env: simpy.Environment,position: Vector3, quality: int = 10, amount_plataforms: int= 1 ) -> None:
     
     # inicializando la edad de la plataforma 
     self.age: int = 0   
@@ -26,6 +27,8 @@ class Launchpad:
     # poniendole un identificador para representar la plataforma entre 
     # los objetos globales de la simulacion 
     self.unique_id : uuid.UUID = uuid.uuid4()
+
+    self.position = position
 
   # este proceso se llama para simular el lanzamiento de un cohete a la orbita 
   def launchrocket (self,rocket: Rocket ,storeobjects : simpy.Store):
