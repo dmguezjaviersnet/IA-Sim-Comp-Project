@@ -2,21 +2,21 @@
 
 # El peligro en la órbita
 
-## El DSL (OrbSim)
-
-P
-
 ![main](./images/photo_2021-10-25_12-23-48.jpg)
 
-- Parser LL(1)
-- Evaluador de gramáticas atributadas (construcción de un AST)
-- Autómata, con sus operaciones y método para llevar de NFA a DFA, para el análisis de expresiones regulares para el lexer.
-  
-También implementamos A*, pues consideramos que nos hará falta para el proyecto cuando esté más concebido, y ya empecemos a correr simulaciones.
 
-## Regex Engine:
+## El proceso de compilación
 
-Usamos la siguiente gramática:
+
+### Gramáticas
+
+Implementamos clases `Grammar`, `Production`, `Terminal`, `NonTerminal` para representar gramáticas de forma intuitiva y sencilla.
+
+### Lexer y Regex Engine
+
+Implementamos nuestro propio Regex Engine como vimos en conferencia, haciendo uso de clases que implementamos como `Automaton` con los métodos para computar __epsilon clausura__ y __goto__, y también un método para convertir de autómata no determinista (__NFA__) a determinista (__DFA__). También implementamos una clase `State`, para representar los estados de un autómata (y el autómata en sí de otra forma), que nos facilitó el trabajo.
+
+Diseñamos la siguiente gramática LL(1) de expresiones regulares básica para el Regex Engine:
 
 ```
    E -> T X
@@ -48,5 +48,30 @@ Usamos la siguiente gramática:
       | ?
       | +
 ```
+
+Como es obvio, implementamos el algoritmo de parsing para gramáticas LL(1) visto en conferencia, para poder parsear los tokens de Regex, a un AST con algunas de las operaciones de Regex:
+
+- Concatenación
+- Union |
+- Clausura *
+- Clausura positiva +
+- Rangos [0-9], [a-z]
+- ?
+
+Luego en la evaluación de ese AST es donde construimos el autómata que reconoce esa expresión regular.
+
+Entonces para tokenizar, creamos una clase `Lexer`, que recibe como parámetro de entrada un diccionario que a cada expresión regular (un string) que represente un token en nuestro lenguaje, le corresponda un `Token_Type`. Dependiendo del orden que pasemos como argumento las expresiones regulares que queremos reconocer y tokenizar en nuestro lenguaje, es la prioridad que se le dará a dicho Token a la hora de reconocerlo, por tanto si está más arriba en la declaración, significa que tiene mayor prioridad.
+
+### Parser
+
+Para parsear implementamos clases `Lr0Item` y `Lr1Item`, y el algoritmo de parsing para gramáticas LR(1) visto en conferencia utilizando la clase `State` que mencionamos previamente para representar cada estado del autómata LR(1), con sus correspondientes items LR(1). Para esto también añadimos un proceso de serialización para no tener que computar la tabla __ACTION-GOTO__ más de una vez, ya que es un proceso que puede demorar bastante.
+  
+También implementamos A*, pues consideramos que nos hará falta para el proyecto cuando esté más concebido, y ya empecemos a correr simulaciones.
+
+## Regex Engine:
+
+Usamos la siguiente gramática:
+
+
 
 Usamos un parser LL(1)
