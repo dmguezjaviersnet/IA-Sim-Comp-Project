@@ -14,7 +14,7 @@ class Handler:
                     amount_rockets = 10,
                     amount_launchpads = 2,
                     amount_factories = 4, 
-                    delay_move_object= 10):
+                    delay_move_object= 1000):
     self._env = simpy.Environment()
     self._world_size = world_size
     self._world_depth = world_depth
@@ -26,6 +26,7 @@ class Handler:
     self._objects = self._generate_objects() 
     self._factories = self._generate_factories()
     self._launchpads = self._generate_launchpads()
+    self._end_simulation = self._env.event()
 
 
   def main (self):
@@ -96,10 +97,10 @@ class Handler:
 
       if collitions: 
 
-        print (Fore.RED, '-'*10, 'Hubo una colision entre los objetos','-'*10)
-        for item in collitions:
-          print ('[', [str(i) for i in item] ,']')
-        print('-' * 55 , Fore.RESET)
+        # print (Fore.RED, '-'*10, 'Hubo una colision entre los objetos','-'*10)
+        # for item in collitions:
+        #   print ('[', [str(i) for i in item] ,']')
+        # print('-' * 55 , Fore.RESET)
 
         count_junk = 0 
         for item in collitions:
@@ -107,7 +108,7 @@ class Handler:
           count_junk += len(new_junk) 
           self._objects  = self._objects + new_junk
         
-        print ('se generaron' , count_junk, 'objetos que son basura')
+        # print ('se generaron' , count_junk, 'objetos que son basura')
 
 
   def _addProcess(self):
@@ -125,10 +126,10 @@ class Handler:
 
   def start(self):
     self._addProcess()
-    self._env.run()
+    self._env.run(until= self._end_simulation)
   
   def stop (self):
-    pass
+    self._end_simulation.succeed()
 
   # puede ser usado para annadir un nuevo lugar de lanzamiento
   def add_lauchpad(self):
