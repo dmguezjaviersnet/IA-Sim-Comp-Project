@@ -92,7 +92,7 @@ Implementamos el algoritmo de parsing para gramáticas LL(1) visto en conferenci
 - Union |
 - Clausura *
 - Clausura positiva +
-- Rangos [0-9], [a-z]
+- Rangos [0-9], [a-z], [A-Z]
 - ?
 
 Luego en la evaluación de ese AST es donde construimos el autómata que reconoce esa expresión regular.
@@ -110,6 +110,19 @@ lexer = Lexer([
 ### Parser
 
 Para parsear implementamos clases `Lr0Item` y `Lr1Item`, y el algoritmo de parsing para gramáticas LR(1) visto en conferencia utilizando la clase `State` que mencionamos previamente para representar cada estado del autómata LR(1), con sus correspondientes items LR(1). Para esto también añadimos un proceso de serialización para no tener que computar la tabla __ACTION-GOTO__ más de una vez, ya que es un proceso que puede demorar bastante.
+
+### AST
+En `orbsim_languaje.orbsim_ast` están los nodos para la representación del AST.
+### Chequeo Semántico
+Para el chequeo semántico se realizan tres recorridos sobre el AST usando el patrón visitor:
+*TypeCollector*:Parar recolectar los tipos definidos en el lenguaje Orbsim. Estos tipos
+pueden ser builtin o declarados mediante clases en el código.
+*TypeBuilder*: Parar identificar los atributos y métodos definidos para los tipos.
+*TypeChecker*: Para identificar el cumplimiento de las reglas semántica definidas para Orbsim
+
+
+
+
 
 ### El DSL (OrbSim)
 ## Lenguaje Orbsim 
