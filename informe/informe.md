@@ -4,6 +4,10 @@
 
 ![main](./images/photo_2021-10-25_12-23-48.jpg)
 
+## Para ejecutar el proyecto
+```
+streamlit run ./orbsim_main.py
+```
 ## El proceso de compilación
 
 ### Gramáticas
@@ -241,5 +245,3 @@ Otros ejemplos:
 ![main](./images/img5.png)
 ![main](./images/img6.png)
 ![main](./images/img9.png)
-También implementamos A*, pues consideramos que nos hará falta para el proyecto cuando esté más concebido, y ya empecemos a correr simulaciones.
-
