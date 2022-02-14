@@ -44,6 +44,7 @@ from orbsim_language.orbsim_ast.class_declr_node import ClassDeclrNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
+from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -497,3 +498,13 @@ class TypeChecker:
         node.comp_type = ListType()
         if list_type:
             node.comp_type.elems_type = list_type[0]
+    
+    @visitor.when(NegNumberNode)
+    def check(self, node: NegNumberNode, scope: 'Scope'):
+        self.check(node.expr, scope)
+        if node.comp_type != IntType() and node.comp_type != FloatType():
+            self.comp_type = NullType()
+            self.log.append(f'Operación no válida para el tipo {node.comp_type.name}')
+        else:
+            self.comp_type = node.comp_type
+

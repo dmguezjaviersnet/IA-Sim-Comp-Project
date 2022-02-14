@@ -47,6 +47,7 @@ from simulation.orbsim_simulation_entities.elements_3d import Vector3
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
 from orbsim_language.builtins import *
+from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 
 from errors import OrbisimExecutionError
 class Executor:
@@ -354,5 +355,10 @@ class Executor:
         
         return Instance(ListType(), list_val) 
 
+    @visitor.when(NegNumberNode)
+    def execute(self, node: NegNumberNode, scope: 'Scope'):
+        
+        expr_instance = self.execute(node.expr, scope)
+        return Instance(IntType(), expr_instance) 
     
         
