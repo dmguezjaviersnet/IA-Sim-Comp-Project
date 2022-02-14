@@ -62,7 +62,7 @@ class Environment:
 
 
 
-  def give_me_adyacent_positions(self,center: Vector2):
+  def give_me_adyacent_positions(self,center: Vector2) -> Vector2:
     dirr = [-1,-1,-1,0,1,1,1,0]
     dirc = [-1,0,1,1,1,0,-1,-1] 
 
@@ -119,6 +119,27 @@ class Environment:
       path.append(current)
     path.reverse()
     return path
+  
+  def get_the_most_close_launcpad(self, position : Vector2):
+
+    visited = [[ False for item1 in range(self._widht)]for item in range(self._height)] 
+    q = []
+
+    visited[position.x][position.y] = True
+    heappush(q,(0,position))
+
+    while len(q) > 0 :
+      _ , current = heappop(q)
+
+      for item in self._cells[current.x][current.y]._elements:
+        if type(item) is Launchpad: return item
+
+      for adyacent in self.give_me_adyacent_positions(current):
+        if not visited[adyacent.x][adyacent.y]:
+          visited[adyacent.x][adyacent.y] = True
+          heappush(q,(1,adyacent))
+
+    return None
 
 
 # env = Environment(100,100)
