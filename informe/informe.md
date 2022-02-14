@@ -135,6 +135,17 @@ Algunas reglas sintácticas que definimos en nuestro lenguaje:
 - La declaración de una clase, un ciclo, una condicional o una función se realiza entre llaves.
 - Todas las instrucciones terminan con ;
 
+Algunas reglas semánticas que definimos en nuestro lenguaje:
+- No pueden exister dos variables con el mismo nombre en el mismo Scope.
+- No pueden haber dos funciones  con el mismo nombre y la misma cantidad de parámetros.
+- Dos métodos con el mismo nombre y la misma cantidad de parámetros no pueden estar definidos en un mismo tipo.
+- La operación % solo es entre números enteros
+- Las operaciones aritméticas +,-,*,/ puede ser entre dos números enteros o entre dos números float.
+- Los elementos de una lista tienen que ser del mismo tipo
+- 
+
+# Tipos Builtins:
+`Int`, `Float`, `String`, `List`(una lista de elementos del mismo tipo), `Bool`, `Vector3`
 Declaración de variables en Orbsim:
 `let <Type> id '=' <Expr>`
 ```
