@@ -44,6 +44,7 @@ from orbsim_language.orbsim_ast.class_declr_node import ClassDeclrNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
+from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -90,17 +91,20 @@ class TypeChecker:
             self.log.append(err.error_info)
         
         arg_types = []
-        for t in node.arg_types:
+        new_scope = Scope()
+        for index_arg, t in enumerate(node.arg_types):
             try:
                 arg_type = self.context.get_type(t)
                 arg_types.append(arg_type)
+                new_scope.define_var(node.args[index_arg], arg_type)
             except OrbisimSemanticError as err:
                 self.log(err.error_info)
         if len(arg_types) == len(node.arg_types):
             if not self.context.define_fun(node.identifier, fun_ret_type, node.args, arg_types):
                 self.log(f'Ya está definida una función con nombre {node.identifier}')
-        
-        self.check(node.body, scope.create_child_scope())
+        else:
+            
+            self.check(node.body, new_scope)
     
     @visitor.when(VariableDeclrNode)
     def check(self, node: VariableDeclrNode, scope: 'Scope'):
@@ -123,7 +127,7 @@ class TypeChecker:
     def check(self, node: VariableNode, scope: 'Scope'):
         if not scope.check_var(node.identifier):
             node.comp_type = NullType()
-            self.log(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
+            self.log.append(f'SemanticError: La variable{node.identifier} no se encuentra definida en el programa')
         else:
             var: 'VariableInfo' = scope.get_variable(node.identifier)
             node.comp_type = var.type
@@ -494,3 +498,13 @@ class TypeChecker:
         node.comp_type = ListType()
         if list_type:
             node.comp_type.elems_type = list_type[0]
+    
+    @visitor.when(NegNumberNode)
+    def check(self, node: NegNumberNode, scope: 'Scope'):
+        self.check(node.expr, scope)
+        if node.comp_type != IntType() and node.comp_type != FloatType():
+            self.comp_type = NullType()
+            self.log.append(f'Operación no válida para el tipo {node.comp_type.name}')
+        else:
+            self.comp_type = node.comp_type
+
