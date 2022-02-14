@@ -359,6 +359,6 @@ class Executor:
     def execute(self, node: NegNumberNode, scope: 'Scope'):
         
         expr_instance = self.execute(node.expr, scope)
-        return Instance(IntType(), expr_instance) 
+        return Instance(IntType(), -expr_instance.value) 
     
         
