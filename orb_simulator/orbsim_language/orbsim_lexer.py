@@ -12,6 +12,8 @@ orbsim_lexer = Lexer([
     ('make', Token_Type.make_orbsim),
     ('class', Token_Type.class_orbsim),
     ('print', Token_Type.print_orbsim),
+    ('start', Token_Type.start_orbsim),
+    ('stop', Token_Type.stop_orbsim),
     ('continue', Token_Type.continue_orbsim),
     ('break', Token_Type.break_orbsim),
     ('true|false', Token_Type.boolean),

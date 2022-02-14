@@ -10,7 +10,46 @@
 
 ### Gramáticas
 
-Implementamos clases `Grammar`, `Production`, `Terminal`, `NonTerminal` para representar gramáticas de forma intuitiva y sencilla.
+Implementamos clases `Grammar`, `Production`, `Terminal`, `NonTerminal` para representar gramáticas de forma intuitiva y sencilla. `Grammar` se construye con una lista de terminales, una lista de no-terminales, un no-terminal inicial y una lista de producciones. La producción nosotros la consideramos como un no-terminal, con todas sus posibles partes derechas.
+
+```python
+# No terminales
+E = Non_terminal('E', 'ast')
+T = Non_terminal('T', 'ast', 'tmp')
+F = Non_terminal('F', 'ast')
+nts = [E, T, F]
+
+# Terminales
+mul = Terminal('*')
+div = Terminal('/')
+add = Terminal('+')
+sub = Terminal('-')
+openb = Terminal('(')
+closedb = Terminal(')')
+integer = Terminal('integer')
+empty = Epsilon()
+eof = Eof()
+terminals = [add, sub, mul, div, openb, closedb, integer, empty, eof]
+
+# Producciones
+p1 = Production(E,
+                [[T, add, E], [T, sub, E], [T]],
+                [[(E1_rule, True)], [(E2_rule, True)], [(E3_rule, True)]]
+                )
+
+p2 = Production(T, 
+                [[F, mul, T], [F, div, T], [F]], 
+                [[(T1_rule, True)], [(T2_rule, True)], [(T3_rule, True)]]
+                )
+
+p3 = Production(F, 
+                [[openb, E, closedb], [integer]],
+                [[(F1_rule, True)], [(F2_rule, True)]]
+                )
+prods = [p1, p2, p3]
+
+arth_grammar = Grammar(terminals, nts, E, prods)
+```
 
 ### Lexer y Regex Engine
 
@@ -49,7 +88,7 @@ Diseñamos la siguiente gramática LL(1) de expresiones regulares básica para e
       | +
 ```
 
-Como es obvio, implementamos el algoritmo de parsing para gramáticas LL(1) visto en conferencia, para poder parsear los tokens de Regex, a un AST con algunas de las operaciones de Regex:
+Implementamos el algoritmo de parsing para gramáticas LL(1) visto en conferencia, para poder parsear los tokens de Regex, a un AST con algunas de las operaciones de Regex:
 
 - Concatenación
 - Union |
@@ -61,6 +100,14 @@ Como es obvio, implementamos el algoritmo de parsing para gramáticas LL(1) vist
 Luego en la evaluación de ese AST es donde construimos el autómata que reconoce esa expresión regular.
 
 Entonces para tokenizar, creamos una clase `Lexer`, que recibe como parámetro de entrada un diccionario que a cada expresión regular (un string) que represente un token en nuestro lenguaje, le corresponda un `Token_Type`. Dependiendo del orden que pasemos como argumento las expresiones regulares que queremos reconocer y tokenizar en nuestro lenguaje, es la prioridad que se le dará a dicho Token a la hora de reconocerlo, por tanto si está más arriba en la declaración, significa que tiene mayor prioridad.
+
+``` python
+lexer = Lexer([
+    ('loop', Token_Type.loop),
+    ('func', Token_Type.func),
+    ("([A-Z])([a-z]|[A-Z]|[0-9])*", Token_Type.type_id_orbsim)
+])
+```
 
 ### Parser
 

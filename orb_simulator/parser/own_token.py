@@ -75,6 +75,10 @@ class Token_Type(Enum):
     closed_curly_braces = 30
 
     instance_access_op = 53
+
+    start_orbsim = 54
+    stop_orbsim = 55
+    
     eof = 100
     space = 101
     new_line = 102
