@@ -4,7 +4,7 @@ from orbsim_language.orbsim_ast import ProgramNode, VariableDeclrNode, FuncDeclr
 from orbsim_language.orbsim_ast import ConditionalNode, LoopNode, OrNode, AndNode, ContinueNode, BreakNode
 from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterThanNode
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
-from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode
+from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode, NegNumberNode
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode, StringNode, BooleanNode
 from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode, ListCreationNode, StopSimNode, StartSimNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
@@ -77,6 +77,12 @@ def loop_body_stmt_list_rule2(head: Symbol, tail: List[Symbol]):
 
 def loop_body_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
+
+def flow_stmt_rule1(head: Symbol, tail: List[Symbol]):
+    head.ast = ContinueNode()
+
+def flow_stmt_rule2(head: Symbol, tail: List[Symbol]):
+    head.ast = BreakNode()
 
 def conditional_stmt_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = ConditionalNode(tail[2].ast, BodyNode(tail[6].ast), None)

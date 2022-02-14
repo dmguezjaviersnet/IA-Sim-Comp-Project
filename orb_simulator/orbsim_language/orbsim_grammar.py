@@ -4,7 +4,7 @@ from parser.terminal import Epsilon, Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, class_body_stmt_list_rule1, class_body_stmt_list_rule1, start_stmt_rule, stop_stmt_rule
+from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, flow_stmt_rule2, class_body_stmt_list_rule1, class_body_stmt_list_rule1, flow_stmt_rule1, flow_stmt_rule, start_stmt_rule, stop_stmt_rule
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule, class_body_stmt_list_rule2, expr_list_rule3, make_rule, method_call_rule
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1, def_method_stmt_rule
@@ -345,7 +345,7 @@ p15 = Production(loop_body_stmt,
 
 p16 = Production(flow_stmt,
                 [[continue_keyword], [break_keyword]],
-                [[(atom_rule1, True)], [(atom_rule1, True)]]
+                [[(flow_stmt_rule1, True)], [(flow_stmt_rule2, True)]]
                 )
 
 p17 = Production(conditional_stmt,
