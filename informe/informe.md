@@ -109,7 +109,7 @@ lexer = Lexer([
 
 ### Parser
 
-Para parsear implementamos clases `Lr0Item` y `Lr1Item`, y el algoritmo de parsing para gramáticas LR(1) visto en conferencia utilizando la clase `State` que mencionamos previamente para representar cada estado del autómata LR(1), con sus correspondientes items LR(1). Para esto también añadimos un proceso de serialización para no tener que computar la tabla __ACTION-GOTO__ más de una vez, ya que es un proceso que puede demorar bastante.
+Para parsear implementamos clases `Lr0Item` con la representación de hasta dónde hemos leído los símbolos de una producción y `Lr1Item` el lookahead además, y el algoritmo de parsing para gramáticas LR(1) visto en conferencia utilizando la clase `State` que mencionamos previamente para representar cada estado del autómata LR(1), con sus correspondientes items LR(1). Para esto también añadimos un proceso de serialización para no tener que computar la tabla __ACTION-GOTO__ más de una vez, ya que es un proceso que puede demorar bastante. Nuestras clases `Lr0Item` y `Lr1Item` son hasheables, esto nos hizo falta porque durante el proceso de construcción del autómata LR(1) necesitábamos saber cuando generábamos un estado que ya existía, y que íbamos guardando en un diccionario de hash: estado.
 
 ### El DSL (OrbSim)
 
