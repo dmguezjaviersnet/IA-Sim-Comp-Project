@@ -217,6 +217,9 @@ def factor_rule1(head: Symbol, tail: List[Symbol]):
 def factor_rule2(head: Symbol, tail: List[Symbol]):
     head.ast = tail[1].ast
 
+def factor_rule3(head: Symbol, tail: List[Symbol]):
+    head.ast = NegNumberNode(tail[1].ast)
+
 def atom_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = IntegerNode(tail[0].val)
 
