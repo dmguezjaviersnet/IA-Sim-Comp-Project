@@ -463,7 +463,7 @@ p35 = Production(factor,
 
 p36 = Production(atom,
                 [[int], [float], [boolean], [string], [id_orbsim], [func_call], [make_instance], [method_call], [attr_call], [list_creation]],
-                [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)], 
+                [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)],
                  [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule6, True)],
                  [(atom_rule6, True)], [(atom_rule6, True)], [(atom_rule6, True)],
                  [(atom_rule6, True)]]

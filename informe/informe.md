@@ -109,7 +109,7 @@ lexer = Lexer([
 
 ### Parser
 
-Para parsear implementamos clases `Lr0Item` y `Lr1Item`, y el algoritmo de parsing para gramáticas LR(1) visto en conferencia utilizando la clase `State` que mencionamos previamente para representar cada estado del autómata LR(1), con sus correspondientes items LR(1). Para esto también añadimos un proceso de serialización para no tener que computar la tabla __ACTION-GOTO__ más de una vez, ya que es un proceso que puede demorar bastante.
+Para parsear implementamos clases `Lr0Item` con la representación de hasta dónde hemos leído los símbolos de una producción y `Lr1Item` el lookahead además, y el algoritmo de parsing para gramáticas LR(1) visto en conferencia utilizando la clase `State` que mencionamos previamente para representar cada estado del autómata LR(1), con sus correspondientes items LR(1). Para esto también añadimos un proceso de serialización para no tener que computar la tabla __ACTION-GOTO__ más de una vez, ya que es un proceso que puede demorar bastante. Nuestras clases `Lr0Item` y `Lr1Item` son hasheables, esto nos hizo falta porque durante el proceso de construcción del autómata LR(1) necesitábamos saber cuando generábamos un estado que ya existía, y que íbamos guardando en un diccionario de hash: estado.
 
 ### AST
 En `orbsim_languaje.orbsim_ast` están los nodos para la representación del AST.
@@ -125,9 +125,15 @@ pueden ser builtin o declarados mediante clases en el código.
 
 
 ### El DSL (OrbSim)
-## Lenguaje Orbsim 
-Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como builtin y 
-ser útiles para crear objetos de la simulación.
+
+Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como built-in.
+
+Algunas reglas sintácticas que definimos en nuestro lenguaje:
+
+- Los nombres de funciones y variables empiezan con minúscula.
+- Los nombres de tipos built-in, así como de clases empiezan con mayúscula.
+- La declaración de una clase, un ciclo, una condicional o una función se realiza entre llaves.
+- Todas las instrucciones terminan con ;
 
 Declaración de variables en Orbsim:
 `let <Type> id '=' <Expr>`
@@ -184,7 +190,6 @@ func Int fib(Int n){
 let Int f = fib(5);
 ```
 
-
 Definiendo  una clase en Orbsim:
 `class <ID> {};`
 ```
@@ -204,21 +209,13 @@ Creando una instancia de una clase en Orbsim:
    ...
 ```
 
-Las clases tienen atributos cuyo valor se le asigna al crear
-una instancia de la misma siempre verificando que los tipos de las expresiones a evaluar coincidan con los tipos de los atributos.
-
-
-
-Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como built-in.
-
-
-Usamos la siguiente gramática:
+Las clases tienen atributos cuyo valor se le asigna al crear una instancia de la misma siempre verificando que los tipos de las expresiones a evaluar coincidan con los tipos de los atributos.
 
 ## Interfaz Gráfica:
 
 Para la interfaz gráfica se usó streamlit. Se tiene un editor 
 
-Si el código compila y ejecuta correctament:
+Si el código compila y ejecuta correctamente:
 
 ![main](./images/img1.png)
 
