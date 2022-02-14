@@ -173,10 +173,7 @@ func Int fib(Int n){
 };
 
 let Int f = fib(5);
-```
 
-
-```
 
 
 Definiendo  una clase en Orbsim:
