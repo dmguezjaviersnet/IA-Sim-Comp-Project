@@ -29,14 +29,17 @@ def orbsim_compile_and_execute(text: str):
     
     
 orbsim_compile_and_execute('''
-   let Int counter = 0;
-let Int doble   = 10;
-
-loop(count < 10){
-    doble = 2 *2;
+func Int fib(Int n){
+    if (n == 1 || n == 0) then {
+        ret 1;
+    }
+    else{
+        ret fib(n-1) + fib(n-2);
+    };
 };
 
-print(doble);
+let Int f = fib(5);
+print(f);
 
 ''')
 

@@ -90,17 +90,20 @@ class TypeChecker:
             self.log.append(err.error_info)
         
         arg_types = []
-        for t in node.arg_types:
+        new_scope = Scope()
+        for index_arg, t in enumerate(node.arg_types):
             try:
                 arg_type = self.context.get_type(t)
                 arg_types.append(arg_type)
+                new_scope.define_var(node.args[index_arg], arg_type)
             except OrbisimSemanticError as err:
                 self.log(err.error_info)
         if len(arg_types) == len(node.arg_types):
             if not self.context.define_fun(node.identifier, fun_ret_type, node.args, arg_types):
                 self.log(f'Ya está definida una función con nombre {node.identifier}')
-        
-        self.check(node.body, scope.create_child_scope())
+        else:
+            
+            self.check(node.body, new_scope)
     
     @visitor.when(VariableDeclrNode)
     def check(self, node: VariableDeclrNode, scope: 'Scope'):

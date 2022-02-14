@@ -98,7 +98,38 @@ else{
 Ciclos en Orbsim:
 
 `loop (<CondExpr>) {List[stmt]};`
+```
+let Int counter = 0;
+let Int doble   = 10;
 
+loop(counter < 10){
+    doble = 2*2;
+    counter = counter + 1;
+};
+....
+```
+
+
+
+Declaración de funciones en Orbsim:
+`func <type> id (List[Params]) {Body};  `
+
+
+```
+func Int fib(Int n){
+    if (n == 1 || n == 0) then {
+        ret 1;
+    }
+    else{
+        ret fib(n-1) + fib(n-2);
+    };
+};
+
+let Int f = fib(5);
+```
+
+
+```
 
 
 Definiendo  una clase en Orbsim:
