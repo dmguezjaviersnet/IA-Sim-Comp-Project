@@ -502,9 +502,9 @@ class TypeChecker:
     @visitor.when(NegNumberNode)
     def check(self, node: NegNumberNode, scope: 'Scope'):
         self.check(node.expr, scope)
-        if node.comp_type != IntType() and node.comp_type != FloatType():
+        if node.expr.comp_type != IntType() and node.expr.comp_type != FloatType():
             self.comp_type = NullType()
             self.log.append(f'Operación no válida para el tipo {node.comp_type.name}')
         else:
-            self.comp_type = node.comp_type
+            node.comp_type = node.expr.comp_type
 

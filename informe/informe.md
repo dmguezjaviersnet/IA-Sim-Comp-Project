@@ -175,8 +175,10 @@ func Int fib(Int n){
 };
 
 let Int f = fib(5);
+```
 
-Definiendo una clase en Orbsim:
+Definiendo  una clase en Orbsim:
+`class <ID> {};`
 ```
 class Point {
     Int a;
@@ -206,8 +208,14 @@ Si el código compila y ejecuta correctamente:
 
 En caso de haya algún error de compilación o ejecución.
 ![main](./images/img2.png)
+![main](./images/img3.png)
+![main](./images/img7.png)
+![main](./images/img4.png)
+![main](./images/img8.png)
 
-Usamos un parser LL(1)
-
+Otros ejemplos:
+![main](./images/img5.png)
+![main](./images/img6.png)
+![main](./images/img9.png)
 También implementamos A*, pues consideramos que nos hará falta para el proyecto cuando esté más concebido, y ya empecemos a correr simulaciones.
 

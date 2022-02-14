@@ -8,8 +8,11 @@ from orbsim_language.type_builder import TypeBuilder
 from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
 from orbsim_language.context import Scope
+from simulation.handler import Handler
+handler = Handler()
 
 def orbsim_compile_and_execute(text: str):
+
     tokens, errs = orbsim_lexer(text)
     if errs:
         return errs
@@ -24,7 +27,7 @@ def orbsim_compile_and_execute(text: str):
     checker.check(ast, Scope())
     if checker.log:
         return checker.log
-    exe =  Executor(checker.context)
+    exe =  Executor(checker.context, handler)
     exe.execute(ast, Scope())
     
     

@@ -48,14 +48,16 @@ from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
 from orbsim_language.builtins import *
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
+from orbsim_language.orbsim_ast.start_sim_node import StartSimNode
+from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
 
 from errors import OrbisimExecutionError
 class Executor:
 
     
-    def __init__(self, context: 'Context'):
+    def __init__(self, context: 'Context', handler):
         self.context: 'Context' = context
-        
+        self.handler = handler
         self.log: List[str] = []
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
@@ -359,6 +361,9 @@ class Executor:
     def execute(self, node: NegNumberNode, scope: 'Scope'):
         
         expr_instance = self.execute(node.expr, scope)
-        return Instance(IntType(), expr_instance) 
+        return Instance(IntType(), -expr_instance.value) 
     
-        
+    @visitor.when(StartSimNode)
+    def execute(self, node: StartSimNode, scope: 'Scope'):
+        # self.handler.start()
+        pass

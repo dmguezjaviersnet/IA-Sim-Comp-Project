@@ -73,7 +73,7 @@ class Lexer:
             while last_pos < len(text) and (text[last_pos] != ' '  and text[last_pos] != '\n'):
                 lexeme += text[last_pos]
                 last_pos += 1
-            raise OrbisimLexerError(f'Token {lexeme} no reconocido por el lenguaje Orbisim en la línea', lexeme)
+            raise OrbisimLexerError(f'LexerError:Token {lexeme} no reconocido por el lenguaje Orbisim en la línea', lexeme)
     
     def _tokenizer(self, text):
         self.errors.clear()
