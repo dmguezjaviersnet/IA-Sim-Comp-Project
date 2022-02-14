@@ -6,13 +6,13 @@ from orbsim_simulation_entities.elements_3d import Vector3
 import numpy as np
 
 class Agent: 
-  def __init__(self, loc:Vector3 , unique_id,params) -> None:
+  def __init__(self, position:Vector3 , unique_id,params) -> None:
     """Create a new agent in the given location.
     
-    loc: tuple coordenates 
+    position: tuple coordenates 
     params: dictionary of parameters
     """
-    self.loc: Vector3 = loc
+    self.position: Vector3 = position
     self.age:int  = 0 
     self.unique_id : UUID = unique_id
 
