@@ -75,7 +75,7 @@ class Environment:
   def _heuristic(src : Vector2, dest: Vector2):
     return int (fabs(src.x - dest.x) + fabs(src.y - dest.y))
 
-  def get_the_best_way (self , src:Vector2, dest: Vector2,type_element : str ):
+  def get_the_best_way (self , src:Vector2, dest: Vector2,type_element : str  = None):
     
     visited = [[ False for item1 in range(self._widht)]for item in range(self._height)] 
     parent = [[ None for item1 in range(self._widht)]for item in range(self._height)] 
