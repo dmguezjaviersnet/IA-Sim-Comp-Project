@@ -1,2 +1,1 @@
-from simulation.orbsim_simulation_structs.octree import Octree
-from simulation.orbsim_simulation_structs.quadtree import QuadTree
+from orb_simulator.simulation.quadtree import QuadTree
