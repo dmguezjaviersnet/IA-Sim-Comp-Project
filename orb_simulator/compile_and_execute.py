@@ -30,18 +30,7 @@ def orbsim_compile_and_execute(text: str):
     
     
 # orbsim_compile_and_execute('''
-# func Int fib(Int n){
-#     if (n == 1 || n == 0) then {
-#         ret 1;
-#     }
-#     else{
-#         ret fib(n-1) + fib(n-2);
-#     };
-# };
-
-# let Int f = fib(5);
-# print(f);
-
+# let Int a = randint(1,2);
 # ''')
 
 

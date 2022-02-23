@@ -1,6 +1,7 @@
 from orbsim_language.orbsim_ast.string_node import StringNode
 from orbsim_language.instance import Instance
 from orbsim_language.orbsim_type import*
+import random
 import copy
 
 
@@ -20,10 +21,19 @@ def remove(list: 'Instance', val_remove: 'Instance'):
     new_list.remove(val_remove.value)
     return Instance(ListType(), new_list)
 
-builtins={
+def randint(inf: 'Instance', sup: 'Instance'):
+    randvalue =  random.randint(inf.value, sup.value)
+    return Instance(IntType(), randvalue)
+
+
+builtins_methods={
     ('String','concat'): concat,
     ('String','len'): orb_len,
     ('List', 'len'): orb_len,
     ('List', 'add'): add,
     ('List', 'remove'): remove
+}
+
+builtins_functions = {
+    'randint': randint
 }

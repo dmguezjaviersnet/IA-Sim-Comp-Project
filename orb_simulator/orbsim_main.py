@@ -52,6 +52,7 @@ def test_lexer():
     
 
 def main():
+    pass
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()

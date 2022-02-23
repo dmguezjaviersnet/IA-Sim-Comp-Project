@@ -94,7 +94,11 @@ class TupleType(OrbsimType):
 class AnyType(OrbsimType):
     def __init__(self):
         super().__init__('Any')
-        
+
+class SimType(OrbsimType):
+    def __init__(self):
+        super().__init__('Sim')
+
 class NullType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Null')

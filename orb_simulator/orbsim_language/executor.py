@@ -60,7 +60,7 @@ class Executor:
     def __init__(self, context: 'Context'):
         self.context: 'Context' = context
         self.log: List[str] = []
-        self.handler = PygameHandler()
+        # self.handler = PygameHandler()
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
 
@@ -93,6 +93,10 @@ class Executor:
     def execute(self, node: FunCallNode, scope: 'Scope'):
         func = self.context.get_func(node.identifier, len(node.args))
         new_scope = Scope()
+        if (node.identifier) in builtins_functions:
+            args = tuple(self.execute(expr, scope) for expr in node.args)
+            return builtins_functions[(node.identifier)](*args)
+        
         for i in range(len(node.args)):
             var_instance = self.execute(node.args[i], scope)
             new_scope.define_var(func.args[i],  func.arg_types[i])
@@ -328,9 +332,9 @@ class Executor:
         var_instance = var.instance
 
         new_scope = Scope()
-        if (var.type.name, node.identifier) in builtins:
+        if (var.type.name, node.identifier) in builtins_methods:
             args = (var.instance ,) + tuple(self.execute(expr, scope) for expr in node.args)
-            return builtins[(var.type.name, node.identifier)](*args)
+            return builtins_methods[(var.type.name, node.identifier)](*args)
         
         method: 'Method' = var_instance.get_method(node.identifier, len(node.args))
         new_scope.define_var('this', var_instance.orbsim_type)
@@ -359,10 +363,11 @@ class Executor:
     
     @visitor.when(StartSimNode)
     def execute(self, node: StartSimNode, scope: 'Scope'):
-        self.handler.start()
-        self.handler.start_pygame()
-        self.handler.generate_orbits(random.randint(2,10))
-        self.handler.generate_objects_in_orbits(random.randint(3,20))
+        pass
+        # self.handler.start()
+        # self.handler.start_pygame()
+        # self.handler.generate_orbits(random.randint(2,10))
+        # self.handler.generate_objects_in_orbits(random.randint(3,20))
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
         # t1.start()
         # t1.join()
