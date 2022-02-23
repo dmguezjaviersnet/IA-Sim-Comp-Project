@@ -23,6 +23,7 @@ class PygameHandler(threading.Thread):
         self.screen_center = (self.screen.get_rect().centerx, self.screen.get_rect().centery)
         self.orbsim_icon = pygame.image.load('./images/orbsim_logo.png')
         pygame.display.set_icon(self.orbsim_icon)
+        self.main_region_rect: pygame.Rect =  pygame.Rect(self.screen.get_rect().centerx -512, self.screen.get_rect().centery - 540, 1024, 1024)
         self.orbits: List['ElipticOrbit'] = []
         self.objects: List['Junk'] = []
         self.earth = Sphere(self.screen.get_rect().centerx, self.screen.get_rect().centery)
@@ -77,8 +78,8 @@ class PygameHandler(threading.Thread):
                 o.draw_elipse(self.screen, (255,0,0))
        
            
-        
-        
+            
+            pygame.draw.rect(self.screen,BLUE, self.main_region_rect, 1)
        
             self.junks_group.draw(self.screen)
             self.earth_group.draw(self.screen)
