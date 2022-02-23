@@ -39,10 +39,7 @@ class TypeCollector:
         list_type.define_method('remove', ListType(), ['elem'], [AnyType()])
         self.context.types['Void'] = VoidType()
         self.context.types['Any'] = AnyType()
-        vector3: OrbsimType  = self.context.create_type('Vector3')
-        vector3.define_attribute('x', IntType())
-        vector3.define_attribute('y', IntType())
-        vector3.define_attribute('z', IntType())
+        
         for st in node.statements:
             self.visit(st)
     

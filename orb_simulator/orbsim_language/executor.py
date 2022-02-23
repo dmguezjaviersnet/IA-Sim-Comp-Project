@@ -43,7 +43,6 @@ from orbsim_language.orbsim_type import*
 from orbsim_language.orbsim_ast.method_call_node import MethodCallNode
 from orbsim_language.orbsim_ast.method_declr_node import MethodDeclrNode
 from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
-from simulation.orbsim_simulation_entities.elements_3d import Vector3
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
 from orbsim_language.builtins import *
@@ -56,9 +55,8 @@ from errors import OrbisimExecutionError
 class Executor:
 
     
-    def __init__(self, context: 'Context', handler):
+    def __init__(self, context: 'Context'):
         self.context: 'Context' = context
-        self.handler = handler
         self.log: List[str] = []
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
@@ -315,18 +313,10 @@ class Executor:
     def execute(self, node: ClassMakeNode, scope: 'Scope'):
         class_type: 'OrbsimType' = self.context.get_type(node.classname)
         
-        
-        if class_type.name == 'Vector3':
-            vals = []
-            for attr_index, attr in enumerate(class_type.attributes):
-                attr_instance: 'Instance' = self.execute(node.params[attr_index], scope)
-                vals.append(attr_instance.value)
-            class_instance = Instance(class_type, Vector3(vals[0], vals[1], vals[2]))
-        else:
-            class_instance = Instance(class_type)
-            for attr_index, attr in enumerate(class_type.attributes):
-                attr_instance = self.execute(node.params[attr_index], scope)
-                class_instance.set_attr_instance(attr, attr_instance)
+        class_instance = Instance(class_type)
+        for attr_index, attr in enumerate(class_type.attributes):
+            attr_instance = self.execute(node.params[attr_index], scope)
+            class_instance.set_attr_instance(attr, attr_instance)
         return class_instance
 
     @visitor.when(MethodCallNode)
