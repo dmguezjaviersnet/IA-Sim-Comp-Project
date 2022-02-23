@@ -1,3 +1,4 @@
+import random
 from orbsim_language.orbsim_ast.body_node import BodyNode
 import orbsim_language.visitor as visitor
 from orbsim_language.orbsim_ast.program_node import ProgramNode
@@ -360,8 +361,8 @@ class Executor:
     def execute(self, node: StartSimNode, scope: 'Scope'):
         self.handler.start()
         self.handler.start_pygame()
-        self.handler.generate_orbits(8)
-        self.handler.generate_objects_in_orbits(8)
+        self.handler.generate_orbits(random.randint(2,10))
+        self.handler.generate_objects_in_orbits(random.randint(3,20))
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
         # t1.start()
         # t1.join()
