@@ -49,6 +49,7 @@ from orbsim_language.builtins import *
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 from orbsim_language.orbsim_ast.start_sim_node import StartSimNode
 from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
+from orbsim_pygame import PygameHandler
 import orbsim_pygame
 import threading
 from errors import OrbisimExecutionError
@@ -58,6 +59,7 @@ class Executor:
     def __init__(self, context: 'Context'):
         self.context: 'Context' = context
         self.log: List[str] = []
+        self.handler = PygameHandler()
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
 
@@ -356,8 +358,12 @@ class Executor:
     
     @visitor.when(StartSimNode)
     def execute(self, node: StartSimNode, scope: 'Scope'):
-        t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
-        t1.start()
+        self.handler.start()
+        self.handler.start_pygame()
+        self.handler.generate_orbits(8)
+        self.handler.generate_objects_in_orbits(8)
+        # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
+        # t1.start()
         # t1.join()
         
         

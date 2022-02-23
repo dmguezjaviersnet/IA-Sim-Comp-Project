@@ -9,9 +9,9 @@ BLUE = (44, 176, 218)
 screen_width = 1920
 screen_height = 1080
 screen =  pygame.display.set_mode((screen_width, screen_height))
-orbsim_icon = pygame.image.load('./images/orbsim_logo.png')
+# orbsim_icon = pygame.image.load('./images/orbsim_logo.png')
 
-pygame.display.set_icon(orbsim_icon)
+# pygame.display.set_icon(orbsim_icon)
 
 earth = ['./earth3.png', './earth2.png']
 class Sphere(pygame.sprite.Sprite):
@@ -49,28 +49,28 @@ class Sphere(pygame.sprite.Sprite):
     # def draw(self, surface):
     #     surface.blit(self.rot_image, self.rect)
 
-class Crosshair(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y):
-        super().__init__()
-        self.image = pygame.image.load('./images/pointer.png')
-        self.rect = self.image.get_rect()
-        self.rect.center =[pos_x, pos_y]
-        # print(self.rect)
-        self.image.set_colorkey(( 255,   0, 255))
+# class Crosshair(pygame.sprite.Sprite):
+#     def __init__(self, pos_x, pos_y):
+#         super().__init__()
+#         # self.image = pygame.image.load('./images/pointer.png')
+#         self.rect = self.image.get_rect()
+#         self.rect.center =[pos_x, pos_y]
+#         # print(self.rect)
+#         self.image.set_colorkey(( 255,   0, 255))
 
-    def shoot(self):
-        pass
-        pygame.sprite.spritecollide(crosshair, target_group, True)
-    def update(self) -> None:
-        self.rect.center = pygame.mouse.get_pos()
+#     def shoot(self):
+#         pass
+#         pygame.sprite.spritecollide(crosshair, target_group, True)
+#     def update(self) -> None:
+#         self.rect.center = pygame.mouse.get_pos()
         
-class Target(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y):
-        super().__init__()
-        self.image = pygame.image.load('./big_rock.png')
-        self.rect = self.image.get_rect()
-        self.rect.center = [pos_x, pos_y]
-        self.image.set_colorkey(( 255,   0, 255))
+# class Target(pygame.sprite.Sprite):
+#     def __init__(self, pos_x, pos_y):
+#         super().__init__()
+#         self.image = pygame.image.load('./big_rock.png')
+#         self.rect = self.image.get_rect()
+#         self.rect.center = [pos_x, pos_y]
+#         self.image.set_colorkey(( 255,   0, 255))
 
 
 class Junk(pygame.sprite.Sprite):
@@ -188,7 +188,7 @@ target_group = pygame.sprite.Group()
 earth_group = pygame.sprite.Group()
 
 pygame.mouse.set_visible(False)
-background = pygame.image.load('./bg.jpg')
+# background = pygame.image.load('./bg.jpg')
 # for i in range (10):
 crosshair = Crosshair(random.randint(0,1920),random.randint(0,1080))
 crosshair_group.add(crosshair)

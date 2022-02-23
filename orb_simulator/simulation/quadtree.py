@@ -521,8 +521,8 @@ def main():
 		top_left_y = int(round(random.uniform(0, window.getHeight())))
 		# bottom_right_x = int(round(random.uniform(0, window.getWidth())))
 		# bottom_right_y = int(round(random.uniform(0, window.getHeight())))
-		width = int(round(random.uniform(10, 15)))
-		height = int(round(random.uniform(8, 12)))
+		width = int(round(random.uniform(30, 45)))
+		height = int(round(random.uniform(20, 25)))
 		bottom_right_x = top_left_x + width
 		bottom_right_y = top_left_y + height
 
