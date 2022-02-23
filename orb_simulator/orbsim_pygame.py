@@ -18,6 +18,7 @@ class PygameHandler(threading.Thread):
         self.background = pygame.image.load('./images/bg.jpg')
         self.screen_width = 1920
         self.screen_height = 1080
+        # pygame.mouse.set_visible(False)
         self.screen =  pygame.display.set_mode((self.screen_width, self.screen_height))
         self.clock = pygame.time.Clock()
         self.screen_center = (self.screen.get_rect().centerx, self.screen.get_rect().centery)
@@ -30,7 +31,6 @@ class PygameHandler(threading.Thread):
         self.earth_group = pygame.sprite.Group()
         self.junks_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
-        self.running = False
         pygame.init()
 
     def generate_orbits(self, number_of_orbits):
@@ -40,8 +40,8 @@ class PygameHandler(threading.Thread):
     def generate_objects_in_orbits(self, number_of_objects):
         self.junks_group.empty()
         self.objects.clear()
-        for obj in self.orbits:
-            new_obj = generate_object_in_orbit(number_of_objects, obj)
+        for orb in self.orbits:
+            new_obj = generate_object_in_orbit(number_of_objects, orb)
             self.objects.append(new_obj)
             self.junks_group.add(new_obj)
 
@@ -67,11 +67,11 @@ class PygameHandler(threading.Thread):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         self.earth.animate()
-                    if event.key == pygame.K_DOWN:
+                    elif event.key == pygame.K_DOWN:
                         self.earth.not_animate()
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        for o in self.junks_group.sprites():
-                            o.change_selected()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for o in self.junks_group.sprites():
+                        o.change_selected()
         
 
             for o in self.orbits:

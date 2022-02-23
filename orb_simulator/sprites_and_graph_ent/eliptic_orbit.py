@@ -31,5 +31,5 @@ class ElipticOrbit:
         # pygame.draw.circle(screen, (255, 0, 0), self.vertex2, 4,0)
         # pygame.draw.circle(screen, (255, 0, 0), self.covertex1, 4,0)
         # pygame.draw.circle(screen, (255, 0, 0), self.covertex2, 4,0)
-        pygame.draw.circle(screen, (255, 255, 0), self.rect.topleft, 10,0)
+        # pygame.draw.circle(screen, (255, 255, 0), self.rect.topleft, 10,0)
       
