@@ -17,8 +17,6 @@ from orbsim_language.type_builder import TypeBuilder
 from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
 from orbsim_ui import OrbisimUI
-from simulation.handler import Handler
-
 
 # def test1():
 #     regexengine = Regex_Engine('(a|b|c)?')
