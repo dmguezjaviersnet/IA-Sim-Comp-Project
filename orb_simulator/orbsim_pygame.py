@@ -51,6 +51,7 @@ def start_simulation():
                     for o in junks_group.sprites():
                         o.change_selected()
         
+        
         for o in orbits:
             o.draw_elipse(screen, (255,0,0))
        
