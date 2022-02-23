@@ -60,7 +60,7 @@ class Crosshair(pygame.sprite.Sprite):
 
     def shoot(self):
         pass
-        # pygame.sprite.spritecollide(crosshair, target_group, True)
+        pygame.sprite.spritecollide(crosshair, target_group, True)
     def update(self) -> None:
         self.rect.center = pygame.mouse.get_pos()
         

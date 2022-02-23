@@ -50,7 +50,8 @@ from orbsim_language.builtins import *
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 from orbsim_language.orbsim_ast.start_sim_node import StartSimNode
 from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
-
+import orbsim_pygame
+import threading
 from errors import OrbisimExecutionError
 class Executor:
 
@@ -365,5 +366,8 @@ class Executor:
     
     @visitor.when(StartSimNode)
     def execute(self, node: StartSimNode, scope: 'Scope'):
-        # self.handler.start()
-        pass
+        t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
+        t1.start()
+        # t1.join()
+        
+        
