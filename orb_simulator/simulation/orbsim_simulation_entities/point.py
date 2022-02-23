@@ -1,14 +1,9 @@
 from dataclasses import dataclass
 
-from numpy import isin
-
 @dataclass
 class Point:
     x: int
     y: int
-    # fx: int
-    # fy: int
-    # rad: int
     # connected_points = []
     
     @property
