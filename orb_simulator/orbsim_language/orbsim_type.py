@@ -87,6 +87,10 @@ class ListType(OrbsimType):
         super().__init__('List')
         self.elems_type: OrbsimType = None
 
+class TupleType(OrbsimType):
+    def __init__(self):
+        super().__init__('Tuple')
+        self.elems_type: OrbsimType = None
 class AnyType(OrbsimType):
     def __init__(self):
         super().__init__('Any')

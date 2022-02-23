@@ -1,0 +1,4 @@
+show_orbit_lines
+hide_orbit_lines
+animate_earth
+show_object_center
