@@ -3,7 +3,7 @@ import pygame
 import gc
 from simulation.orbsim_simulation_entities import SpaceDebris
 from simulation.orbsim_simulation_entities import Point
-from simulation.orbsim_simulation_structs import QuadTree, quadtree_pygame_window, leaves
+from simulation.orbsim_simulation_structs import QuadTree, leaves
 from sprites_and_graph_ent.eliptic_orbit import ElipticOrbit
 from sprites_and_graph_ent.junk import Junk
 from sprites_and_graph_ent.earth import Sphere
@@ -34,7 +34,6 @@ class PygameHandler():
         self.earth_group = pygame.sprite.Group()
         self.junks_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
-        global quadtree_pygame_window
         pygame.init()
 
     def generate_orbits(self, number_of_orbits):
@@ -57,7 +56,6 @@ class PygameHandler():
         self.draw()
         # t1.start()
         
-
     def draw(self):
         for o in self.orbits:
                 o.draw_elipse(self.screen, (255,0,0))
@@ -106,7 +104,8 @@ class PygameHandler():
                 # pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
                 # obj.draw_points(self.screen)
                 obj.draw_selection(self.screen)
-        
+            global leaves
+            leaves.clear()
             self.junks_group.update()
             self.earth_group.update()
             self.clock.tick(30)
@@ -160,7 +159,6 @@ def start_simulation():
         for o in orbits:
             o.draw_elipse(screen, (255,0,0))
 
-       
         junks_group.draw(screen)
         earth_group.draw(screen)
         
@@ -175,6 +173,6 @@ def start_simulation():
         pygame.display.flip()
 
 h = PygameHandler()
-h.generate_orbits(3)
-h.generate_objects_in_orbits(2)
+h.generate_orbits(6)
+h.generate_objects_in_orbits(6)
 h.start_pygame()

@@ -1,1 +1,1 @@
-from simulation.orbsim_simulation_structs.quadtree import QuadTree, quadtree_pygame_window, leaves
+from simulation.orbsim_simulation_structs.quadtree import QuadTree, leaves

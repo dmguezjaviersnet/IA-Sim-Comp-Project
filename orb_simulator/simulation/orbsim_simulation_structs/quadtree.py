@@ -3,7 +3,7 @@ from typing import Tuple, List
 from simulation.orbsim_simulation_entities import OrbsimObj, Point
 import pygame.draw
 
-MAX_DEPTH = 6
+MAX_DEPTH = 8
 MAX_LIMIT = 3
 
 quadtree_pygame_window = None
