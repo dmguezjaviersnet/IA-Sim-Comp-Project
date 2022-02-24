@@ -45,7 +45,7 @@ class PygameHandler(threading.Thread):
         self.junks_group.empty()
         self.objects.clear()
         for orb in self.orbits:
-            orb_objs = generate_objects_in_orbit(number_of_objects, orb)
+            orb_objs = generate_object_in_orbit(number_of_objects, orb)
             for obj in orb_objs:
                 self.objects.append(obj)
                 self.junks_group.add(obj)
@@ -81,6 +81,7 @@ class PygameHandler(threading.Thread):
             for orb in self.orbits:
                 orb.draw_elipse(self.screen, (255,0,0))
 
+            start = time.time()
             qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                     Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
             

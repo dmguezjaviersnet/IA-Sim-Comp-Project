@@ -2,7 +2,7 @@ import pygame
 from tools import GREEN_COLOR, SELECT_BLUE_COLOR, SOLID_BLUE_COLOR, next_point_moving_in_elipse
 import math
 import random
-class Junk(pygame.sprite.Sprite):
+class SpaceDebris(pygame.sprite.Sprite):
     
     def __init__(self, pos_x, pos_y, type: str, a, b, orbit_center, vel: int = 0.5):
         super().__init__()
@@ -12,7 +12,7 @@ class Junk(pygame.sprite.Sprite):
         if type == 'satellite':
             path = './images/satellite1.png'
         self.type =  type
-        self.image = pygame.Surface([random.randint(2,80),random.randint(2,80)])
+        self.image = pygame.Surface([random.randint(2,30),random.randint(2,30)])
         self.default_color = SOLID_BLUE_COLOR
         self.collision_color = GREEN_COLOR
         self.is_colliding = False
