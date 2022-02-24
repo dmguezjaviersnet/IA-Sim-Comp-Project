@@ -107,7 +107,7 @@ class PygameHandler(threading.Thread):
             
             for obj in self.objects:
                 obj.update_color()
-                pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
+                # pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
                 obj.draw_points(self.screen)
                 obj.draw_selection(self.screen)
 
