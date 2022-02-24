@@ -11,23 +11,24 @@ from tools import next_point_moving_in_elipse
 from tools import BLUE
 from simulation.generate_objects import *
 import threading
-import time
 import sys
 class PygameHandler(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
         self.running = False
-        self.background = pygame.image.load('./images/bg.jpg')
+        
         self.screen_width = 1024
         self.screen_height = 1024
-        # pygame.mouse.set_visible(False)
-        self.screen =  pygame.display.set_mode((self.screen_width, self.screen_height))
-        self.clock = pygame.time.Clock()
-        self.screen_center = (self.screen.get_rect().centerx, self.screen.get_rect().centery)
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        self.background = pygame.image.load('./images/bg.jpg')
         self.orbsim_icon = pygame.image.load('./images/orbsim_logo.png')
+        self.screen_center = (self.screen.get_rect().centerx, self.screen.get_rect().centery)
+        self.main_region_rect = pygame.Rect(self.screen.get_rect().centerx -512, self.screen.get_rect().centery - 540, 1024, 1024)
         pygame.display.set_icon(self.orbsim_icon)
-        self.main_region_rect: pygame.Rect =  pygame.Rect(self.screen.get_rect().centerx -512, self.screen.get_rect().centery - 540, 1024, 1024)
+
+        self.clock = pygame.time.Clock()
+        # pygame.mouse.set_visible(False)
         self.orbits: List['ElipticOrbit'] = []
         self.objects: List['Junk'] = []
         self.earth = Sphere(self.screen.get_rect().centerx, self.screen.get_rect().centery)
@@ -57,20 +58,14 @@ class PygameHandler(threading.Thread):
         t1.start()
         
     def draw(self):
-        max_time = 0
         sys.stdout = sys.__stdout__
-        # for o in self.orbits:
-        #         o.draw_elipse(self.screen, (255,0,0))
         while self.running:
             self.screen.blit(self.background, (0,0))
        
-            # self.screen.fill((255,255,255))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-                # pygame.draw.circle(screen, BLUE, (200,300),20,0)
-                # pygame.draw.rect(screen, (255,255,0), rect,2)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
@@ -84,21 +79,17 @@ class PygameHandler(threading.Thread):
             for orb in self.orbits:
                 orb.draw_elipse(self.screen, (255,0,0))
             # start = time.time()
-            # qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]), 
-            #         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
+            qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]), 
+                    Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
             
-            # for object in self.objects:
-            #     # t1 = threading.Thread(target=qTree.insert, args=(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),0, 0, ''),))
-            #     qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
-            #                  0, 0, ''))
+            for object in self.objects:
+                # t1 = threading.Thread(target=qTree.insert, args=(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),0, 0, ''),))
+                qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
+                             0, 0, ''))
             #     # t1.start()
             #     # t1.join()
-            # end = time.time()
-            # if end - start > max_time:
-            #     max_time = end - start
-            # print(max_time)
-            # qTree.insert(SpaceDebris((Point(self.earth.rect.topleft[0], self.earth.rect.topleft[1]), Point(self.earth.rect.bottomright[0], self.earth.rect.bottomright[1])),
-            #                 0, 0, ''))
+            qTree.insert(SpaceDebris((Point(self.earth.rect.topleft[0], self.earth.rect.topleft[1]), Point(self.earth.rect.bottomright[0], self.earth.rect.bottomright[1])),
+                        0, 0, ''))
 
             # for leaf in leaves:
             #     leaf.find_neighbors()
@@ -112,78 +103,11 @@ class PygameHandler(threading.Thread):
                 pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
                 obj.draw_points(self.screen)
                 obj.draw_selection(self.screen)
+
             global leaves
             leaves.clear()
+
             self.junks_group.update()
             self.earth_group.update()
-            # print(gc.get_referents(qTree))
-            
-           
             self.clock.tick(60)
             pygame.display.flip()
-            # gc.collect()
-
-def start_simulation():
-    pygame.quit()
-    background = pygame.image.load('./images/bg.jpg')
-    screen_width = 1920
-    screen_height = 1080
-    screen =  pygame.display.set_mode((screen_width, screen_height))
-    pygame.init()
-    clock = pygame.time.Clock()
-    rect: pygame.Rect =  pygame.Rect(screen.get_rect().centerx -512, screen.get_rect().centery - 541, 1024, 1024)
-    screen_center = (screen.get_rect().centerx, screen.get_rect().centery)
-    orbits: List['ElipticOrbit'] =  generate_orbits(screen_center, 1000)
-    earth = Sphere(screen.get_rect().centerx, screen.get_rect().centery)
-    earth_group = pygame.sprite.Group()
-    junks_group = pygame.sprite.Group()
-    earth_group.add(earth)
-    orbsim_icon = pygame.image.load('./images/orbsim_logo.png')
-    pygame.display.set_icon(orbsim_icon)
-    
-    
-    for o in orbits:
-        new_obj = generate_object_in_orbit(10, o)
-        junks_group.add(new_obj)
-    
-    while True:
-        screen.blit(background, (0,0))
-       
-    # screen.fill((255,255,255))
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            # pygame.draw.circle(screen, BLUE, (200,300),20,0)
-            # pygame.draw.rect(screen, (255,255,0), rect,2)
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    earth.animate()
-                if event.key == pygame.K_DOWN:
-                    earth.not_animate()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    for o in junks_group.sprites():
-                        o.change_selected()
-        
-
-        for o in orbits:
-            o.draw_elipse(screen, (255,0,0))
-
-        junks_group.draw(screen)
-        earth_group.draw(screen)
-        
-        for o in junks_group.sprites():
-            pygame.draw.circle(screen, (255,0,0), o.rect.center, 3, 1)
-            o.draw_points(screen)
-            o.draw_selection(screen)
-        
-        junks_group.update()
-        earth_group.update()
-        clock.tick(60)
-        pygame.display.flip()
-
-h = PygameHandler()
-h.generate_orbits(6)
-h.generate_objects_in_orbits(6)
-h.start_pygame()
