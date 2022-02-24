@@ -7,7 +7,7 @@ class Sphere(pygame.sprite.Sprite):
         self.is_animating = False
         rot_angle = 0
         while rot_angle < 360:
-            self.sprites.append(pygame.image.load(f'./images/earth/img_rotate_{rot_angle}_grades.png').convert())
+            self.sprites.append(pygame.image.load(f'./images/earth/img_rotate_{rot_angle}_grades.png').convert_alpha())
             rot_angle += 15
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
