@@ -7,6 +7,7 @@ import random
 import gc
 from enum import Enum, IntEnum
 from simulation.orbsim_simulation_entities import OrbsimObj, Point, SpaceDebris, OrbsimAgent
+from simulation.generate_objects import*
 
 MAX_DEPTH = 8
 MAX_LIMIT = 3
@@ -51,16 +52,20 @@ class Direction(Enum):
 class Window:
 	width = 1024
 	height = 1024
-	windowScreen = pygame.display.set_mode([width,height])
-
+	window_screen = pygame.display.set_mode([width,height])
+	background = pygame.image.load('./images/bg.jpg').convert()
+	screen_center = (window_screen.get_rect().centerx, window_screen.get_rect().centery)
 	def getHeight(self):
 		return self.height
 
 	def getWidth(self):
 		return self.width
-
+	def getBackground(self):
+		return self.background
+	def getScreenCenter(self):
+		return self.screen_center
 	def getWindowReference(self):
-		return self.windowScreen
+		return self.window_screen
 
 
 class Color(Enum):
@@ -121,14 +126,14 @@ def detect_full_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]):
 
 	return False
 
-def drawLine(windowScreen, color, point1, point2):
-	pygame.draw.line(windowScreen, color, point1,point2)
+def drawLine(window_screen, color, point1, point2):
+	pygame.draw.line(window_screen, color, point1,point2)
 
-def drawPointSizedObject(windowScreen, color, coords, rad,width = 0):
-	pygame.draw.circle(windowScreen,color,coords,rad,width)
+def drawPointSizedObject(window_screen, color, coords, rad,width = 0):
+	pygame.draw.circle(window_screen,color,coords,rad,width)
 
-def drawBoxSizedObject(windowScreen, color, coords: Tuple[Point, Point], width=0):
-	pygame.draw.rect(windowScreen, color, (coords[0].x, coords[0].y, coords[1].x-coords[0].x, coords[1].y-coords[0].y))
+def drawBoxSizedObject(window_screen, color, coords: Tuple[Point, Point], width=0):
+	pygame.draw.rect(window_screen, color, (coords[0].x, coords[0].y, coords[1].x-coords[0].x, coords[1].y-coords[0].y))
 
 def setWindowCaption(caption):
 	pygame.display.set_caption(caption)
@@ -511,11 +516,23 @@ class QuadTree:
 def main():
 	window = Window()
 	windowRef = window.getWindowReference()
+	windowBG = window.getBackground()
+	windowCenter = window.getScreenCenter()
 	objects_amount = 50
 	collectors_amount = 1;
 	setWindowCaption("Collision Detection Using Quad Trees")
 
 	objects: List[OrbsimObj] = []
+	orbitas = generate_orbits(windowCenter, 18)
+	sprites = []
+	sprites_group = pygame.sprite.Group()
+	for orb in orbitas:
+		objs_orb = generate_object_in_orbit(16, orb)
+		for obj in objs_orb:
+			sprites.append(obj)
+			sprites_group.add(obj)
+	
+	
 	collectors: List[OrbsimAgent]
 	for i in range(objects_amount):
 		top_left_x = int(round(random.uniform(0, window.getWidth())))
@@ -569,32 +586,42 @@ def main():
 
 	done = False
 	clock = pygame.time.Clock()
-	windowRef.fill(Color.WHITE.value)
+	# windowRef.fill(Color.WHITE.value)
+	windowRef.blit(windowBG, (0,0))
 	while not done:
 		max_time = 0
-            
+		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				done = True
 
 		# draw here
-		windowRef.fill(Color.WHITE.value)
+		windowRef.blit(windowBG, (0,0))
+		# windowRef.fill(Color.WHITE.value)
 		start = time.time()
 		qTree = QuadTree((Point(0,0), Point(window.width, window.height)))
-		for object in objects:
-			if object.bottom_right.x == window.getWidth() or object.top_left.x == 0:
-				object.orientation_x = -1 * object.orientation_x
+		# for object in objects:
+		# 	if object.bottom_right.x == window.getWidth() or object.top_left.x == 0:
+		# 		object.orientation_x = -1 * object.orientation_x
 
-			if object.bottom_right.y == window.getHeight() or object.top_left.y == 0:
-				object.orientation_y = -1 * object.orientation_y
+		# 	if object.bottom_right.y == window.getHeight() or object.top_left.y == 0:
+		# 		object.orientation_y = -1 * object.orientation_y
 
-			object.top_left.set_x(max(min(object.top_left.x + object.speed.x*object.orientation_x, window.getWidth()),0))
-			object.top_left.set_y(max(min(object.top_left.y + object.speed.y*object.orientation_y, window.getHeight()),0))
-			object.bottom_right.set_x(max(min(object.bottom_right.x + object.speed.x*object.orientation_x, window.getWidth()),0))
-			object.bottom_right.set_y(max(min(object.bottom_right.y + object.speed.y*object.orientation_y, window.getHeight()),0))
+		# 	object.top_left.set_x(max(min(object.top_left.x + object.speed.x*object.orientation_x, window.getWidth()),0))
+		# 	object.top_left.set_y(max(min(object.top_left.y + object.speed.y*object.orientation_y, window.getHeight()),0))
+		# 	object.bottom_right.set_x(max(min(object.bottom_right.x + object.speed.x*object.orientation_x, window.getWidth()),0))
+		# 	object.bottom_right.set_y(max(min(object.bottom_right.y + object.speed.y*object.orientation_y, window.getHeight()),0))
 
-			drawBoxSizedObject(windowRef, Color.BLACK.value, [object.top_left, object.bottom_right], 2)
-			qTree.insert(object)
+		# 	drawBoxSizedObject(windowRef, Color.BLUE.value, [object.top_left, object.bottom_right], 2)
+		# 	qTree.insert(object)
+
+		for object in sprites:
+			qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
+                              0, 0, ''))
+		for orb in orbitas:
+			orb.draw_elipse(windowRef, (255,0,0))
+		sprites_group.draw(windowRef)
+		sprites_group.update()
 
 		end = time.time()
 		if end - start > max_time: 
@@ -602,8 +629,8 @@ def main():
 		
 		print(max_time)
 		
-		for leaf in leaves:
-			leaf.find_neighbors()
+		# for leaf in leaves:
+		# 	leaf.find_neighbors()
 
 		# qTree.find_collisions()
 		pygame.display.flip()
@@ -615,7 +642,7 @@ def main():
 		# free any unreferenced memory to avoid defragmentation. Possible perfomance improvements.
 		# gc.collect()
 		leaves.clear()
-		clock.tick(int(60)) # fps
+		clock.tick(int(30)) # fps
 
 	pygame.quit()
 
