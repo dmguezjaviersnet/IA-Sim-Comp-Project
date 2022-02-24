@@ -25,6 +25,10 @@ def randint(inf: 'Instance', sup: 'Instance'):
     randvalue =  random.randint(inf.value, sup.value)
     return Instance(IntType(), randvalue)
 
+def randfloat(inf: 'Instance', sup: 'Instance'):
+    randvalue =  random.randrange(inf.value, sup.value)
+    randvalue = random.random() + randvalue
+    return Instance(IntType(), randvalue)
 
 builtins_methods={
     ('String','concat'): concat,
@@ -35,5 +39,6 @@ builtins_methods={
 }
 
 builtins_functions = {
-    'randint': randint
+    'randint': randint,
+    'randfloat': randfloat
 }

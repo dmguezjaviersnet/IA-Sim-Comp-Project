@@ -60,7 +60,7 @@ class Executor:
     def __init__(self, context: 'Context'):
         self.context: 'Context' = context
         self.log: List[str] = []
-        # self.handler = PygameHandler()
+        self.handler = PygameHandler()
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
 
@@ -144,7 +144,7 @@ class Executor:
     
     @visitor.when(FloatNode)
     def execute(self, node: 'FloatNode', scope: 'Scope'):
-        return Instance(FloatNode(), float(node.val))
+        return Instance(FloatType(), float(node.val))
     
     @visitor.when(StringNode)
     def execute(self, node: 'StringNode', scope: 'Scope'):
@@ -363,11 +363,11 @@ class Executor:
     
     @visitor.when(StartSimNode)
     def execute(self, node: StartSimNode, scope: 'Scope'):
-        pass
-        # self.handler.start()
-        # self.handler.start_pygame()
-        # self.handler.generate_orbits(random.randint(2,10))
-        # self.handler.generate_objects_in_orbits(random.randint(3,20))
+        
+        self.handler.start()
+        self.handler.start_pygame()
+        self.handler.generate_orbits(random.randint(2,10))
+        self.handler.generate_objects_in_orbits(random.randint(3,20))
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
         # t1.start()
         # t1.join()

@@ -11,7 +11,7 @@ class Junk(pygame.sprite.Sprite):
         if type == 'satellite':
             path = './images/satellite1.png'
         self.type =  type
-        self.image =  pygame.image.load(path)
+        self.image =  pygame.image.load(path).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.center = [pos_x, pos_y]
 

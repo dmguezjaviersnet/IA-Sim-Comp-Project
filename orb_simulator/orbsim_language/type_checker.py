@@ -136,9 +136,17 @@ class TypeChecker:
     def check(self, node: FunCallNode, scope: 'Scope'):
         if not self.context.check_fun(node.identifier, len(node.args)): # si existe una función definida con ese nombre y esa cantidad de parámetros
             node.comp_type = NullType()
-            self.log(f'SemanticError: No existe una función con nombre {node.identifier}')
+            self.log.append(f'SemanticError: No existe una función con nombre {node.identifier}')
         else:
+            
+
             func: 'FunctionInfo' = self.context.get_func(node.identifier, len(node.args))
+            
+            for index_arg, arg in enumerate(node.args):
+                self.check(arg, scope)
+                if func.arg_types[index_arg] != arg.comp_type:
+                    self.log.append(f'SemanticError: Argumento es de tipo {arg.comp_type.name} pero se esperaba de tipo {func.arg_types[index_arg].name}')
+            
             node.comp_type = func.return_type
             
     

@@ -52,7 +52,8 @@ class PygameHandler(threading.Thread):
         
 
     def draw(self):
-        
+        for o in self.orbits:
+                o.draw_elipse(self.screen, (255,0,0))
         while self.running:
             self.screen.blit(self.background, (0,0))
        
