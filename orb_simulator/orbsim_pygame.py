@@ -7,11 +7,12 @@ from simulation.orbsim_simulation_structs import QuadTree, leaves
 from sprites_and_graph_ent.eliptic_orbit import ElipticOrbit
 from sprites_and_graph_ent.junk import Junk
 from sprites_and_graph_ent.earth import Sphere
+from tools import*
 from tools import next_point_moving_in_elipse
-from tools import BLUE
 from simulation.generate_objects import *
 import threading
 import sys
+import time
 class PygameHandler(threading.Thread):
 
     def __init__(self):
@@ -35,7 +36,7 @@ class PygameHandler(threading.Thread):
         self.earth_group = pygame.sprite.Group()
         self.junks_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
-        pygame.init()
+       
 
     def generate_orbits(self, number_of_orbits):
         orbits = generate_orbits(self.screen_center, number_of_orbits)
@@ -58,36 +59,35 @@ class PygameHandler(threading.Thread):
         t1.start()
         
     def draw(self):
+        pygame.init()
+        max_time = 0
+        self.screen.blit(self.background, (0,0))
         sys.stdout = sys.__stdout__
         while self.running:
             self.screen.blit(self.background, (0,0))
        
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+                    self.running = False
+                    
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         self.earth.animate()
-                    elif event.key == pygame.K_DOWN:
-                        self.earth.not_animate()
+                   
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.junks_group.sprites():
                         o.change_selected()
 
-            for orb in self.orbits:
-                orb.draw_elipse(self.screen, (255,0,0))
-            # start = time.time()
+            
+            start = time.time()
             qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]), 
                     Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
             
             for object in self.objects:
-                # t1 = threading.Thread(target=qTree.insert, args=(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),0, 0, ''),))
                 qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
                              0, 0, ''))
-            #     # t1.start()
-            #     # t1.join()
+           
             qTree.insert(SpaceDebris((Point(self.earth.rect.topleft[0], self.earth.rect.topleft[1]), Point(self.earth.rect.bottomright[0], self.earth.rect.bottomright[1])),
                         0, 0, ''))
 
@@ -95,15 +95,21 @@ class PygameHandler(threading.Thread):
             #     leaf.find_neighbors()
             
             # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
-       
+            end = time.time()
+            if end - start > max_time: 
+                max_time = end - start
+		
+            print(max_time)
+            for orb in self.orbits:
+                orb.draw_elipse(self.screen, PLUM_COLOR)
             self.junks_group.draw(self.screen)
             self.earth_group.draw(self.screen)
-        
+            
             for obj in self.objects:
-                pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
+                # pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
                 obj.draw_points(self.screen)
                 obj.draw_selection(self.screen)
-
+            
             global leaves
             leaves.clear()
 
@@ -111,3 +117,4 @@ class PygameHandler(threading.Thread):
             self.earth_group.update()
             self.clock.tick(60)
             pygame.display.flip()
+        pygame.quit()

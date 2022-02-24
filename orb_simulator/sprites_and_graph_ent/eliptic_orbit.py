@@ -26,7 +26,7 @@ class ElipticOrbit:
         return self.semi_major_axis == other.semi_major_axis and self.semi_minor_axis == other.semi_minor_axis
 
     def draw_elipse(self, screen, color = (255,255,255)):
-        pygame.draw.ellipse(screen, color,self.rect, 1)
+        pygame.draw.ellipse(screen, color,self.rect, 2)
         # pygame.draw.circle(screen, (255, 0, 0), self.vertex1, 4,0)
         # pygame.draw.circle(screen, (255, 0, 0), self.vertex2, 4,0)
         # pygame.draw.circle(screen, (255, 0, 0), self.covertex1, 4,0)

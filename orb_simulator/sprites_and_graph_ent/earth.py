@@ -10,6 +10,8 @@ class Sphere(pygame.sprite.Sprite):
             self.sprites.append(pygame.image.load(f'./images/earth/img_rotate_{rot_angle}_grades.png').convert_alpha())
             rot_angle += 15
         self.current_sprite = 0
+        
+        # t1 = threading.Thread(target=orbsim_pygame.start_simulation
         self.image = self.sprites[self.current_sprite]
         self.rect =  self.image.get_rect()
         # print(self.rect)
@@ -28,7 +30,7 @@ class Sphere(pygame.sprite.Sprite):
             self.image = self.sprites[int(self.current_sprite)]
     
     def animate(self):
-        self.is_animating = True
+        self.is_animating = not self.is_animating
     
     def not_animate(self):
         self.is_animating = False
