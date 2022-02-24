@@ -364,10 +364,11 @@ class Executor:
     @visitor.when(StartSimNode)
     def execute(self, node: StartSimNode, scope: 'Scope'):
         
-        self.handler.start()
+        # self.handler.start()
+
         self.handler.start_pygame()
-        self.handler.generate_orbits(random.randint(29,100))
-        self.handler.generate_objects_in_orbits(random.randint(93,200))
+        self.handler.generate_orbits(random.randint(4,6))
+        self.handler.generate_objects_in_orbits(random.randint(1,20))
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
         # t1.start()
         # t1.join()

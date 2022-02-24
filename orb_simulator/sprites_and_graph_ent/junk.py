@@ -1,5 +1,6 @@
 import pygame
 from tools import next_point_moving_in_elipse, BLUE
+import math
 
 class Junk(pygame.sprite.Sprite):
     
@@ -11,7 +12,7 @@ class Junk(pygame.sprite.Sprite):
         if type == 'satellite':
             path = './images/satellite1.png'
         self.type =  type
-        self.image = pygame.Surface([5,5.5]) 
+        self.image = pygame.Surface([10,10]) 
         self.image.fill(BLUE)
         self.rect = self.image.get_rect()
         self.rect.center = [pos_x, pos_y]
@@ -22,12 +23,22 @@ class Junk(pygame.sprite.Sprite):
         self.a = a 
         self.b = b
         self.orbit_center = orbit_center
+        self.G = 67
+        self.earth_mass = 9.8
+
+        self.r = math.dist(self.rect.center, self.orbit_center)
+        self.circular_speed = math.sqrt(self.G*self.earth_mass/self.r)
+        self.circular_speed = 1 - 1/self.circular_speed
         self.selected =  False
     
     def update(self) -> None:
         nex_pos = next_point_moving_in_elipse(self.orbit_center,self.a, self.b, int(self.orbit_angle))
         self.rect.center = [nex_pos[0], nex_pos[1]]
-        self.orbit_angle += self.orbit_vel
+        self.r = math.dist(self.rect.center, self.orbit_center)
+        self.circular_speed = self.orbit_vel - 1/self.r
+        # print(self.r)
+        
+        self.orbit_angle += self.circular_speed
         if self.orbit_angle > 360:
             self.orbit_angle = 0
     

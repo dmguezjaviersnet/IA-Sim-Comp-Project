@@ -11,12 +11,12 @@ from tools import next_point_moving_in_elipse
 from tools import BLUE
 from simulation.generate_objects import *
 import threading
-
-
-class PygameHandler():
+import time
+import sys
+class PygameHandler(threading.Thread):
 
     def __init__(self):
-        # threading.Thread.__init__(self)
+        threading.Thread.__init__(self)
         self.running = False
         self.background = pygame.image.load('./images/bg.jpg')
         self.screen_width = 1024
@@ -47,28 +47,30 @@ class PygameHandler():
             orb_objs = generate_object_in_orbit(number_of_objects, orb)
             for obj in orb_objs:
                 self.objects.append(obj)
-
-            self.junks_group.add(orb_objs)
+                self.junks_group.add(obj)
 
     def start_pygame(self):
+        # gc.collect()
         self.running = True
-        # t1 = threading.Thread(target=self.draw, args=())
-        self.draw()
-        # t1.start()
+        t1 = threading.Thread(target=self.draw, args=())
+        # self.draw()
+        t1.start()
         
     def draw(self):
-        for o in self.orbits:
-                o.draw_elipse(self.screen, (255,0,0))
+        max_time = 0
+        sys.stdout = sys.__stdout__
+        # for o in self.orbits:
+        #         o.draw_elipse(self.screen, (255,0,0))
         while self.running:
             self.screen.blit(self.background, (0,0))
        
-            # screen.fill((255,255,255))
+            # self.screen.fill((255,255,255))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-            # pygame.draw.circle(screen, BLUE, (200,300),20,0)
-            # pygame.draw.rect(screen, (255,255,0), rect,2)
+                # pygame.draw.circle(screen, BLUE, (200,300),20,0)
+                # pygame.draw.rect(screen, (255,255,0), rect,2)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
@@ -81,34 +83,43 @@ class PygameHandler():
 
             for orb in self.orbits:
                 orb.draw_elipse(self.screen, (255,0,0))
+            # start = time.time()
+            # qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]), 
+            #         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
             
-            qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]), 
-                    Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
-            
-            for object in self.objects:
-                qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
-                            0, 0, ''))
-            
-            qTree.insert(SpaceDebris((Point(self.earth.rect.topleft[0], self.earth.rect.topleft[1]), Point(self.earth.rect.bottomright[0], self.earth.rect.bottomright[1])),
-                            0, 0, ''))
+            # for object in self.objects:
+            #     # t1 = threading.Thread(target=qTree.insert, args=(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),0, 0, ''),))
+            #     qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
+            #                  0, 0, ''))
+            #     # t1.start()
+            #     # t1.join()
+            # end = time.time()
+            # if end - start > max_time:
+            #     max_time = end - start
+            # print(max_time)
+            # qTree.insert(SpaceDebris((Point(self.earth.rect.topleft[0], self.earth.rect.topleft[1]), Point(self.earth.rect.bottomright[0], self.earth.rect.bottomright[1])),
+            #                 0, 0, ''))
 
             # for leaf in leaves:
             #     leaf.find_neighbors()
             
-            pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
+            # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
        
             self.junks_group.draw(self.screen)
             self.earth_group.draw(self.screen)
         
-            for obj in self.junks_group.sprites():
-                # pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
-                # obj.draw_points(self.screen)
+            for obj in self.objects:
+                pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
+                obj.draw_points(self.screen)
                 obj.draw_selection(self.screen)
             global leaves
             leaves.clear()
             self.junks_group.update()
             self.earth_group.update()
-            self.clock.tick(30)
+            # print(gc.get_referents(qTree))
+            
+           
+            self.clock.tick(60)
             pygame.display.flip()
             # gc.collect()
 
