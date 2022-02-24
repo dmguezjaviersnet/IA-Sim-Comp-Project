@@ -1,8 +1,8 @@
 import pygame
-from tools import next_point_moving_in_elipse, BLUE
+from tools import next_point_moving_in_elipse, BLUE, GREEN
 import math
 
-class Junk(pygame.sprite.Sprite):
+class SpaceDebris(pygame.sprite.Sprite):
     
     def __init__(self, pos_x, pos_y, type: str, a, b, orbit_center, vel: int = 0.5):
         super().__init__()
@@ -12,11 +12,13 @@ class Junk(pygame.sprite.Sprite):
         if type == 'satellite':
             path = './images/satellite1.png'
         self.type =  type
-        self.image = pygame.Surface([10,10]) 
-        self.image.fill(BLUE)
+        self.image = pygame.Surface([10,10])
+        self.default_color = BLUE
+        self.collision_color = GREEN
+        self.is_colliding = False
+        self.image.fill(self.default_color)
         self.rect = self.image.get_rect()
         self.rect.center = [pos_x, pos_y]
-
         self.image.set_colorkey((255, 0, 255))
         self.orbit_angle = 0
         self.orbit_vel = vel
@@ -49,10 +51,13 @@ class Junk(pygame.sprite.Sprite):
     def draw_selection(self, surface):
         
         if self.selected:
-            pygame.draw.line(surface,BLUE, self.orbit_center, self.rect.center,2)
-            pygame.draw.rect(surface,BLUE, self.rect,2)
+            pygame.draw.line(surface, BLUE, self.orbit_center, self.rect.center,2)
+            pygame.draw.rect(surface, BLUE, self.rect,2)
     
     def change_selected(self):
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
             self.selected = not self.selected
+
+    def update_color(self, color=None):
+        self.image.fill(self.collision_color if self.is_colliding else self.default_color)

@@ -1,6 +1,8 @@
 from enum import Enum, IntEnum
 from typing import Tuple, List
+from xml.etree.ElementTree import QName
 from simulation.orbsim_simulation_entities import OrbsimObj, Point
+from sprites_and_graph_ent.space_debris import SpaceDebris
 import pygame.draw
 
 MAX_DEPTH = 8
@@ -32,23 +34,23 @@ class Direction(Enum):
     W = 6
     E = 7
 
-def detect_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]) -> bool:
-	if (rect1[0].x < rect2[1].x and rect1[0].y < rect2[1].y
-		and rect1[1].x > rect2[0].x and rect1[1].y > rect2[0].y):
+def detect_overlap(rect1_tl: Tuple[int, int], rect1_br: Tuple[int, int], rect2_tl: Tuple[int, int], rect2_br: Tuple[int, int]) -> bool:
+	if (rect1_tl[0] < rect2_br[0] and rect1_tl[1] < rect2_br[1]
+		and rect1_br[0] > rect2_tl[0] and rect1_br[1] > rect2_tl[1]):
 		return True
 
 	return False
 
-def detect_collision(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]) -> bool:
-	if (rect1[0].x <= rect2[1].x and rect1[0].y <= rect2[1].y
-		and rect1[1].x >= rect2[0].x and rect1[1].y >= rect2[0].y):
+def detect_collision(rect1_tl: Tuple[int, int], rect1_br: Tuple[int, int], rect2_tl: Tuple[int, int], rect2_br: Tuple[int, int]) -> bool:
+	if (rect1_tl[0] <= rect2_br[0] and rect1_tl[1] <= rect2_br[1]
+		and rect1_br[0] >= rect2_tl[0] and rect1_br[1] >= rect2_tl[1]):
 		return True
 
 	return False
 
-def detect_full_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]) -> bool:
-	if (rect1[0].x <= rect2[0].x and rect1[0].y <= rect2[0].y
-		and rect1[1].x >= rect2[1].x and rect1[1].y >= rect2[1].y):
+def detect_full_overlap(rect1_tl: Tuple[int, int], rect1_br: Tuple[int, int], rect2_tl: Tuple[int, int], rect2_br: Tuple[int, int]) -> bool:
+	if (rect1_tl[0] <= rect2_tl[0] and rect1_tl[1] <= rect2_tl[1]
+		and rect1_br[0] >= rect2_br[0] and rect1_br[1] >= rect2_br[1]):
 		return True
 
 	return False
@@ -61,10 +63,11 @@ def draw_quadtree_line(color, point1, point2):
 class QTNode:
 	def __init__(self, parent: 'QTNode', bounding_box: Tuple[Point, Point], depth):
 		self.parent = parent
-		self.bounding_box = bounding_box # bounding box is a property of the QTree and not the QTNode
+		self.bounding_box_tl = (bounding_box[0].x, bounding_box[0].y)
+		self.bounding_box_br = (bounding_box[1].x, bounding_box[1].y)
 		self.depth = depth
 		self.children: List[QTNode] = []
-		self.objects: List[OrbsimObj] = []
+		self.objects: List[SpaceDebris] = []
 		self.center_x = ((bounding_box[0].x + bounding_box[1].x) / 2)
 		self.center_y = ((bounding_box[0].y + bounding_box[1].y) / 2)
 	
@@ -79,36 +82,36 @@ class QTNode:
 		# if (self.__is_empty()):
 		# 	return
 
-		q1 = QTNode(self, (Point(self.bounding_box[0].x, self.bounding_box[0].y), Point(self.center_x, self.center_y)), self.depth + 1)
-		q2 = QTNode(self, (Point(self.center_x, self.bounding_box[0].y), Point(self.bounding_box[1].x, self.center_y)), self.depth + 1)
-		q3 = QTNode(self, (Point(self.bounding_box[0].x, self.center_y), Point(self.center_x, self.bounding_box[1].y)), self.depth + 1)
-		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box[1].x, self.bounding_box[1].y)), self.depth + 1)
+		q1 = QTNode(self, (Point(self.bounding_box_tl[0], self.bounding_box_tl[1]), Point(self.center_x, self.center_y)), self.depth + 1)
+		q2 = QTNode(self, (Point(self.center_x, self.bounding_box_tl[1]), Point(self.bounding_box_br[0], self.center_y)), self.depth + 1)
+		q3 = QTNode(self, (Point(self.bounding_box_tl[0], self.center_y), Point(self.center_x, self.bounding_box_br[1])), self.depth + 1)
+		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box_br[0], self.bounding_box_br[1])), self.depth + 1)
 
-		draw_quadtree_line(LineColor.RED.value, (self.center_x, self.bounding_box[0].y), (self.center_x, self.bounding_box[1].y))
-		draw_quadtree_line(LineColor.RED.value, (self.bounding_box[0].x, self.center_y), (self.bounding_box[1].x, self.center_y))
+		draw_quadtree_line(LineColor.RED.value, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
+		draw_quadtree_line(LineColor.RED.value, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
 
 		# assert len(self.objects) > MAX_LIMIT
 		for object in self.objects:
-			if (detect_overlap((object.top_left, object.bottom_right), q1.bounding_box)):
+			if detect_overlap(object.rect.topleft, object.rect.bottomright, q1.bounding_box_tl, q1.bounding_box_br):
 				q1.insert(object)
-			if (detect_overlap((object.top_left, object.bottom_right), q2.bounding_box)):
+			if detect_overlap(object.rect.topleft, object.rect.bottomright,  q2.bounding_box_tl, q2.bounding_box_br):
 				q2.insert(object)
-			if (detect_overlap((object.top_left, object.bottom_right), q3.bounding_box)):
+			if detect_overlap(object.rect.topleft, object.rect.bottomright,  q3.bounding_box_tl, q3.bounding_box_br):
 				q3.insert(object)
-			if (detect_overlap((object.top_left, object.bottom_right), q4.bounding_box)):
+			if detect_overlap(object.rect.topleft, object.rect.bottomright,  q4.bounding_box_tl, q4.bounding_box_br):
 				q4.insert(object)
 
 		self.children = [q1 ,q2 ,q3 ,q4]
 		self.objects = None
 
-	def find(self, object: OrbsimObj) -> List['QTNode']:
+	def find(self, object: SpaceDebris) -> List['QTNode']:
 		if (self.__is_leaf()): # invariant: if its a leaf, it has to be present in bounding box
 			return [self]
 		
 		overlapping_leaves = []
 		for i in range(4):
 			q_node = self.children[i]
-			if (detect_overlap((object.top_left, object.bottom_right), q_node.bounding_box)):
+			if (detect_overlap(object.rect.topleft, object.rect.bottomright, q_node.bounding_box_tl, q_node.bounding_box_br)):
 				if (q_node.__is_leaf()):
 					overlapping_leaves.append(q_node)
 				
@@ -117,14 +120,14 @@ class QTNode:
 		return overlapping_leaves
 	
 	# inserts a point into the quadtree
-	def insert(self, object: OrbsimObj):
+	def insert(self, object: SpaceDebris):
 		# if (not detect_overlap((object.top_left, object.bottom_right), self.boundingBox)):
 		# 	return
 
 		for q_node in self.find(object):
 			if (q_node.__is_leaf()):
 				q_node.objects.append(object)
-				if not detect_full_overlap((object.top_left, object.bottom_right), q_node.bounding_box):
+				if not detect_full_overlap(object.rect.topleft, object.rect.bottomright, q_node.bounding_box_tl, q_node.bounding_box_br):
 					if  q_node.depth < MAX_DEPTH:
 						q_node.split()
 
@@ -132,34 +135,19 @@ class QTNode:
 
 	# splits current quad tree into 4 smaller quad trees
 	# Method to detect collisions for the quadtree built for the frame
-	def count_collisions(self):
-		# dfs
-		if (self.__is_empty()):
-			return self.collisions
+	def check_collisions(self):
+		# a leaf can contain maximum maxLimit # of objects. So, an n^2 approach here is ok
+		for i, _ in enumerate(self.objects):
+			j = i + 1
+			while j < len(self.objects):
+				if detect_collision(self.objects[i].rect.topleft, self.objects[i].rect.bottomright, 
+									self.objects[j].rect.topleft, self.objects[j].rect.bottomright):
 
-		if (self.__is_leaf()):
-			# a leaf can contain maximum maxLimit # of objects. So, an n^2 approach here is ok
-			i = 0
-			objects_amount = len(self.objects)
-			while (i < objects_amount):
-				j = i + 1
-				while (j < objects_amount):
-					if (detect_collision(self.objects[i], self.objects[j])):
-						# coord1 = (self.points[i].x, self.points[i].y)
-						# coord2 = (self.points[j].x, self.points[j].y)
-						# rad = self.points[i].rad
-						# drawPointSizedObject(Window().getWindowReference(), Color.RED.value, coord1, rad)
-						# drawPointSizedObject(Window().getWindowReference(), Color.RED.value, coord2, rad)
-						self.collisions += 1
-					j += 1
-				i += 1
-			return self.collisions
+					self.objects[i].is_colliding = True
+					self.objects[j].is_colliding = True
+
+				j += 1
 	
-		# recurse on children
-		for i in range(4):
-			self.collisions += self.children[i].count_collisions()
-		return self.collisions
-
 	def find_ge_size_neighbor(self, direction: Direction) -> 'QTNode':
         # Dirección Norte
 		if direction == Direction.N:

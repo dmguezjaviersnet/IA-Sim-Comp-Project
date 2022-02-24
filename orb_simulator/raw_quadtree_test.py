@@ -620,6 +620,7 @@ def main():
                               0, 0, ''))
 		for orb in orbitas:
 			orb.draw_elipse(windowRef, (255,0,0))
+			
 		sprites_group.draw(windowRef)
 		sprites_group.update()
 

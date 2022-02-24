@@ -1,5 +1,5 @@
 from sprites_and_graph_ent import ElipticOrbit
-from sprites_and_graph_ent import Junk
+from sprites_and_graph_ent import SpaceDebris
 import random
 from tools import next_point_moving_in_elipse
 
@@ -27,7 +27,7 @@ def generate_new_object_in_orbit(orbit: 'ElipticOrbit'):
     vel =  random.random() *2
     type = random.randint(1,2)
     next_point = next_point_moving_in_elipse(point,  a, b, angle)
-    junk = Junk(next_point[0], next_point[1], 'satellite' if type == 1 else 'rock', a, b, point, vel if vel > 0 else 0.1)
+    junk = SpaceDebris(next_point[0], next_point[1], 'satellite' if type == 1 else 'rock', a, b, point, vel if vel > 0 else 0.1)
     return
 
 def generate_object_in_orbit(number_objects:int, orbit: 'ElipticOrbit')-> None:
@@ -40,7 +40,7 @@ def generate_object_in_orbit(number_objects:int, orbit: 'ElipticOrbit')-> None:
         vel =  random.random() *2
         type = random.randint(1,2)
         next_point = next_point_moving_in_elipse(point,  a, b, angle)
-        junk = Junk(next_point[0], next_point[1], 'satellite' if type == 1 else 'rock', a, b, point, vel if vel > 0 else 0.1)
+        junk = SpaceDebris(next_point[0], next_point[1], 'satellite' if type == 1 else 'rock', a, b, point, vel if vel > 0 else 0.1)
         objs.append(junk)
     return objs
 

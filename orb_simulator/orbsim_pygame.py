@@ -1,11 +1,10 @@
 from typing import List
 import pygame
 import gc
-from simulation.orbsim_simulation_entities import SpaceDebris
 from simulation.orbsim_simulation_entities import Point
 from simulation.orbsim_simulation_structs import QuadTree, leaves
 from sprites_and_graph_ent.eliptic_orbit import ElipticOrbit
-from sprites_and_graph_ent.junk import Junk
+from sprites_and_graph_ent.space_debris import SpaceDebris
 from sprites_and_graph_ent.earth import Sphere
 from tools import next_point_moving_in_elipse
 from tools import BLUE
@@ -24,13 +23,13 @@ class PygameHandler(threading.Thread):
         self.background = pygame.image.load('./images/bg.jpg')
         self.orbsim_icon = pygame.image.load('./images/orbsim_logo.png')
         self.screen_center = (self.screen.get_rect().centerx, self.screen.get_rect().centery)
-        self.main_region_rect = pygame.Rect(self.screen.get_rect().centerx -512, self.screen.get_rect().centery - 540, 1024, 1024)
+        self.main_region_rect = pygame.Rect(self.screen.get_rect().centerx -510, self.screen.get_rect().centery - 510, 1024, 1024)
         pygame.display.set_icon(self.orbsim_icon)
 
         self.clock = pygame.time.Clock()
         # pygame.mouse.set_visible(False)
         self.orbits: List['ElipticOrbit'] = []
-        self.objects: List['Junk'] = []
+        self.objects: List['SpaceDebris'] = []
         self.earth = Sphere(self.screen.get_rect().centerx, self.screen.get_rect().centery)
         self.earth_group = pygame.sprite.Group()
         self.junks_group = pygame.sprite.Group()
@@ -60,7 +59,7 @@ class PygameHandler(threading.Thread):
     def draw(self):
         sys.stdout = sys.__stdout__
         while self.running:
-            self.screen.blit(self.background, (0,0))
+            self.screen.blit(self.background, (0, 0))
        
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -78,33 +77,30 @@ class PygameHandler(threading.Thread):
 
             for orb in self.orbits:
                 orb.draw_elipse(self.screen, (255,0,0))
-            # start = time.time()
-            qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]), 
+
+            qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                     Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
             
             for object in self.objects:
-                # t1 = threading.Thread(target=qTree.insert, args=(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),0, 0, ''),))
-                qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
-                             0, 0, ''))
-            #     # t1.start()
-            #     # t1.join()
-            qTree.insert(SpaceDebris((Point(self.earth.rect.topleft[0], self.earth.rect.topleft[1]), Point(self.earth.rect.bottomright[0], self.earth.rect.bottomright[1])),
-                        0, 0, ''))
+                object.is_colliding = False
+                qTree.insert(object)
 
-            # for leaf in leaves:
-            #     leaf.find_neighbors()
-            
+            qTree.insert(self.earth)
+
+            global leaves
+            for leaf in leaves:
+                leaf.check_collisions()
             # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
        
             self.junks_group.draw(self.screen)
             self.earth_group.draw(self.screen)
         
             for obj in self.objects:
-                pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
+                obj.update_color()
+                pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
                 obj.draw_points(self.screen)
                 obj.draw_selection(self.screen)
 
-            global leaves
             leaves.clear()
 
             self.junks_group.update()
