@@ -16,8 +16,8 @@ class PygameHandler(threading.Thread):
         threading.Thread.__init__(self)
         self.running = False
         self.background = pygame.image.load('./images/bg.jpg')
-        self.screen_width = 1920
-        self.screen_height = 1080
+        self.screen_width = 1024
+        self.screen_height = 1024
         # pygame.mouse.set_visible(False)
         self.screen =  pygame.display.set_mode((self.screen_width, self.screen_height))
         self.clock = pygame.time.Clock()
