@@ -5,8 +5,15 @@ from typing import Any, Tuple
 from PIL import Image
 import math
 
-BLUE = (44, 176, 218)
-GREEN = (0, 255, 0)
+# COLORS
+SELECT_BLUE_COLOR = (44, 176, 218)
+WHITE_COLOR = (255, 255, 255)
+GREEN_COLOR = (0, 255, 0)
+BLACK_COLOR = (0, 0, 0)
+RED_COLOR= (255, 0, 0)
+SOLID_BLUE_COLOR = (0, 0, 255)
+PLUM_COLOR = (221,160,221)
+WINE_COLOR = (88, 24, 31)
 
 def make_pickle_file(file_name, data):
     with open(f"{file_name}.pickle", "wb") as outfile:

@@ -6,11 +6,12 @@ from simulation.orbsim_simulation_structs import QuadTree, leaves
 from sprites_and_graph_ent.eliptic_orbit import ElipticOrbit
 from sprites_and_graph_ent.space_debris import SpaceDebris
 from sprites_and_graph_ent.earth import Sphere
+from tools import*
 from tools import next_point_moving_in_elipse
-from tools import BLUE
 from simulation.generate_objects import *
 import threading
 import sys
+import time
 class PygameHandler(threading.Thread):
 
     def __init__(self):
@@ -34,7 +35,7 @@ class PygameHandler(threading.Thread):
         self.earth_group = pygame.sprite.Group()
         self.junks_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
-        pygame.init()
+       
 
     def generate_orbits(self, number_of_orbits):
         orbits = generate_orbits(self.screen_center, number_of_orbits)
@@ -44,7 +45,7 @@ class PygameHandler(threading.Thread):
         self.junks_group.empty()
         self.objects.clear()
         for orb in self.orbits:
-            orb_objs = generate_object_in_orbit(number_of_objects, orb)
+            orb_objs = generate_objects_in_orbit(number_of_objects, orb)
             for obj in orb_objs:
                 self.objects.append(obj)
                 self.junks_group.add(obj)
@@ -57,20 +58,22 @@ class PygameHandler(threading.Thread):
         t1.start()
         
     def draw(self):
+        pygame.init()
+        max_time = 0
+        self.screen.blit(self.background, (0,0))
         sys.stdout = sys.__stdout__
         while self.running:
             self.screen.blit(self.background, (0, 0))
        
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+                    self.running = False
+                    
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         self.earth.animate()
-                    elif event.key == pygame.K_DOWN:
-                        self.earth.not_animate()
+                   
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.junks_group.sprites():
                         o.change_selected()
@@ -91,10 +94,16 @@ class PygameHandler(threading.Thread):
             for leaf in leaves:
                 leaf.check_collisions()
             # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
-       
+            end = time.time()
+            if end - start > max_time: 
+                max_time = end - start
+		
+            print(max_time)
+            for orb in self.orbits:
+                orb.draw_elipse(self.screen, PLUM_COLOR)
             self.junks_group.draw(self.screen)
             self.earth_group.draw(self.screen)
-        
+            
             for obj in self.objects:
                 obj.update_color()
                 pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
@@ -107,3 +116,4 @@ class PygameHandler(threading.Thread):
             self.earth_group.update()
             self.clock.tick(60)
             pygame.display.flip()
+        pygame.quit()

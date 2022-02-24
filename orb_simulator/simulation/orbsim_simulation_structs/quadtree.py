@@ -4,6 +4,8 @@ from xml.etree.ElementTree import QName
 from simulation.orbsim_simulation_entities import OrbsimObj, Point
 from sprites_and_graph_ent.space_debris import SpaceDebris
 import pygame.draw
+from tools import RED_COLOR
+
 
 MAX_DEPTH = 8
 MAX_LIMIT = 3
@@ -11,12 +13,12 @@ MAX_LIMIT = 3
 quadtree_pygame_window = None
 leaves: List['QTNode'] = []
 
-class LineColor(Enum):
-	WHITE = (255, 255, 255)
-	GREEN = (0, 255, 0)
-	BLACK = (0, 0, 0)
-	RED = (255, 0, 0)
-	BLUE = (0, 0, 255)
+# class LineColor(Enum):
+# 	WHITE = (255, 255, 255)
+# 	GREEN = (0, 255, 0)
+# 	BLACK = (0, 0, 0)
+# 	RED = (255, 0, 0)
+# 	BLUE = (0, 0, 255)
 
 class Child(IntEnum):
     NW = 0
@@ -87,8 +89,8 @@ class QTNode:
 		q3 = QTNode(self, (Point(self.bounding_box_tl[0], self.center_y), Point(self.center_x, self.bounding_box_br[1])), self.depth + 1)
 		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box_br[0], self.bounding_box_br[1])), self.depth + 1)
 
-		draw_quadtree_line(LineColor.RED.value, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
-		draw_quadtree_line(LineColor.RED.value, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
+		draw_quadtree_line(RED_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
+		draw_quadtree_line(RED_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
 
 		# assert len(self.objects) > MAX_LIMIT
 		for object in self.objects:
