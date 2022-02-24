@@ -1,6 +1,6 @@
 from typing import Callable, Dict, Tuple
-from orbsim_simulation_entities.orbsim_agent import OrbsimAgent
-from orbsim_simulation_entities.point import Point
+from simulation.orbsim_simulation_entities.orbsim_agent import OrbsimAgent
+from simulation.orbsim_simulation_entities.point import Point
 
 class SpaceDebrisCollector(OrbsimAgent):
 	def __init__(self, container: Tuple[Point, Point], mass: float, volume: float, name: str, behaviour: Dict[str, Callable],

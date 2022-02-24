@@ -1,11 +1,12 @@
 from enum import Enum, IntEnum
 from typing import Tuple, List
-from orbsim_simulation_entities import OrbsimObj, Point
+from simulation.orbsim_simulation_entities import OrbsimObj, Point
 import pygame.draw
 
-MAX_DEPTH = 8
+MAX_DEPTH = 6
 MAX_LIMIT = 3
-pygame_window = None
+
+quadtree_pygame_window = None
 leaves: List['QTNode'] = []
 
 class LineColor(Enum):
@@ -52,8 +53,9 @@ def detect_full_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]) 
 
 	return False
 
-def drawLine(windowScreen, color, point1, point2):
-	pygame.draw.line(windowScreen, color, point1, point2)
+def draw_quadtree_line(color, point1, point2):
+	global quadtree_pygame_window
+	pygame.draw.line(quadtree_pygame_window, color, point1, point2)
 
 
 class QTNode:
@@ -82,8 +84,8 @@ class QTNode:
 		q3 = QTNode(self, (Point(self.bounding_box[0].x, self.center_y), Point(self.center_x, self.bounding_box[1].y)), self.depth + 1)
 		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box[1].x, self.bounding_box[1].y)), self.depth + 1)
 
-		drawLine(pygame_window, LineColor.RED.value, (self.center_x, self.bounding_box[0].y), (self.center_x, self.bounding_box[1].y))
-		drawLine(pygame_window, LineColor.RED.value, (self.bounding_box[0].x, self.center_y), (self.bounding_box[1].x, self.center_y))
+		draw_quadtree_line(LineColor.RED.value, (self.center_x, self.bounding_box[0].y), (self.center_x, self.bounding_box[1].y))
+		draw_quadtree_line(LineColor.RED.value, (self.bounding_box[0].x, self.center_y), (self.bounding_box[1].x, self.center_y))
 
 		# assert len(self.objects) > MAX_LIMIT
 		for object in self.objects:
@@ -97,7 +99,7 @@ class QTNode:
 				q4.insert(object)
 
 		self.children = [q1 ,q2 ,q3 ,q4]
-		self.objects.clear()
+		self.objects = None
 
 	def find(self, object: OrbsimObj) -> List['QTNode']:
 		if (self.__is_leaf()): # invariant: if its a leaf, it has to be present in bounding box
@@ -416,12 +418,14 @@ class QTNode:
 
 # Quad Tree data structure
 class QuadTree:
-    def __init__(self, bounding_box: Tuple[int, int]):
-        self.root = QTNode(None, bounding_box, 0)
-        self.collisions = 0
+	def __init__(self, screen, bounding_box: Tuple[Point, Point]):
+		self.root = QTNode(None, bounding_box, 0)
+		self.collisions = 0
+		global quadtree_pygame_window
+		quadtree_pygame_window = screen
+	
+	def insert(self, obj):
+		self.root.insert(obj)
 
-    def insert(self, obj):
-        self.root.insert(obj)
-
-    def find_collisions(self):
-        self.find_collisions()
+	def find_collisions(self):
+		self.find_collisions()

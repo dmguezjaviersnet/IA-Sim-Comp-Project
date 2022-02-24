@@ -1,6 +1,6 @@
 from typing import Tuple
-from orbsim_simulation_entities.orbsim_obj import OrbsimObj
-from orbsim_simulation_entities.point import Point
+from simulation.orbsim_simulation_entities.orbsim_obj import OrbsimObj
+from simulation.orbsim_simulation_entities.point import Point
 
 class SpaceDebris(OrbsimObj):
 
