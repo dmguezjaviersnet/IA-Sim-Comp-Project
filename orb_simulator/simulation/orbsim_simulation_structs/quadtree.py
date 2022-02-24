@@ -1,15 +1,20 @@
-from typing import List, Tuple
-import pygame
-import math
-import sys
-import random
-import gc
 from enum import Enum, IntEnum
-from orbsim_simulation_entities import OrbsimObj, Point, SpaceDebris, OrbsimAgent
+from typing import Tuple, List
+from simulation.orbsim_simulation_entities import OrbsimObj, Point
+import pygame.draw
 
-MAX_DEPTH = 8
+MAX_DEPTH = 6
 MAX_LIMIT = 3
+
+quadtree_pygame_window = None
 leaves: List['QTNode'] = []
+
+class LineColor(Enum):
+	WHITE = (255, 255, 255)
+	GREEN = (0, 255, 0)
+	BLACK = (0, 0, 0)
+	RED = (255, 0, 0)
+	BLUE = (0, 0, 255)
 
 class Child(IntEnum):
     NW = 0
@@ -27,118 +32,38 @@ class Direction(Enum):
     W = 6
     E = 7
 
-# class Point:
-# 	def __init__(self,x ,y, fx = 1, fy = 1, radius = 3):
-# 		self.x = x
-# 		self.y = y
-# 		self.fx = fx
-# 		self.fy = fy
-# 		self.rad = radius
-
-# 	def addPoint(self,p):
-# 		return Point(self.x + p.x, self.y + p.y)
-
-# 	def setX(self,x):
-# 		self.x = x
-
-# 	def setY(self,y):
-# 		self.y = y
-
-# 	def updateVelocity(self,velocity):
-# 		self.velocity = velocity	
-
-class Window:
-	width = 1024
-	height = 1024
-	windowScreen = pygame.display.set_mode([width,height])
-
-	def getHeight(self):
-		return self.height
-
-	def getWidth(self):
-		return self.width
-
-	def getWindowReference(self):
-		return self.windowScreen
-
-
-class Color(Enum):
-	WHITE = (255,255,255)
-	GREEN = (0,255,0)
-	BLACK = (0,0,0)
-	RED = (255,0,0)
-	BLUE = (0,0,255)
-
-# Function to check if a 'point' is contained in a 'region'
-def contained(object: OrbsimObj, region: Tuple[int, int]):
-	top_left = region[0]
-	top_left_x = top_left.x
-	top_left_y = top_left.y
-	bottom_right = region[1]
-	bottom_right_x = bottom_right.x
-	bottom_right_y = bottom_right.y
-
-	obj_top_left_x = object.top_left.x
-	obj_top_left_y = object.top_left.y
-	obj_bottom_right_x = object.bottom_right.x
-	obj_bottom_right_y = object.bottom_right.y
-
-	checkX = (obj_top_left_x >= top_left_x) or (obj_bottom_right_x <= bottom_right_x)
-	checkY = (obj_top_left_y >= top_left_y) or (obj_bottom_right_y <= bottom_right_y)
-	return checkX and checkY
-
-# Function to check if two circles are colliding
-def detectCircleCollision(point1, point2):
-	# point1, point2 are the circles
-	dx = point2.x - point1.x
-	dy = point2.y - point1.y
-	combinedRadii = point1.rad + point2.rad
-
-	# Distance formula
-	if ((dx * dx) + (dy * dy) < combinedRadii * combinedRadii):
-		return True
-	return False
-
-def detect_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]):
+def detect_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]) -> bool:
 	if (rect1[0].x < rect2[1].x and rect1[0].y < rect2[1].y
 		and rect1[1].x > rect2[0].x and rect1[1].y > rect2[0].y):
 		return True
 
 	return False
 
-def detect_collision(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]):
+def detect_collision(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]) -> bool:
 	if (rect1[0].x <= rect2[1].x and rect1[0].y <= rect2[1].y
 		and rect1[1].x >= rect2[0].x and rect1[1].y >= rect2[0].y):
 		return True
 
 	return False
 
-def detect_full_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]):
+def detect_full_overlap(rect1: Tuple[Point, Point], rect2: Tuple[Point, Point]) -> bool:
 	if (rect1[0].x <= rect2[0].x and rect1[0].y <= rect2[0].y
 		and rect1[1].x >= rect2[1].x and rect1[1].y >= rect2[1].y):
 		return True
 
 	return False
 
-def drawLine(windowScreen, color, point1, point2):
-	pygame.draw.line(windowScreen, color, point1,point2)
+def draw_quadtree_line(color, point1, point2):
+	global quadtree_pygame_window
+	pygame.draw.line(quadtree_pygame_window, color, point1, point2)
 
-def drawPointSizedObject(windowScreen, color, coords, rad,width = 0):
-	pygame.draw.circle(windowScreen,color,coords,rad,width)
 
-def drawBoxSizedObject(windowScreen, color, coords: Tuple[Point, Point], width=0):
-	pygame.draw.rect(windowScreen, color, (coords[0].x, coords[0].y, coords[1].x-coords[0].x, coords[1].y-coords[0].y))
-
-def setWindowCaption(caption):
-	pygame.display.set_caption(caption)
-
-# Quad Tree Node data structure	
 class QTNode:
 	def __init__(self, parent: 'QTNode', bounding_box: Tuple[Point, Point], depth):
 		self.parent = parent
-		self.boundingBox = bounding_box # bounding box is a property of the QTree and not the QTNode
+		self.bounding_box = bounding_box # bounding box is a property of the QTree and not the QTNode
 		self.depth = depth
-		self.children = []
+		self.children: List[QTNode] = []
 		self.objects: List[OrbsimObj] = []
 		self.center_x = ((bounding_box[0].x + bounding_box[1].x) / 2)
 		self.center_y = ((bounding_box[0].y + bounding_box[1].y) / 2)
@@ -154,27 +79,27 @@ class QTNode:
 		# if (self.__is_empty()):
 		# 	return
 
-		q1 = QTNode(self, (Point(self.boundingBox[0].x, self.boundingBox[0].y), Point(self.center_x, self.center_y)), self.depth + 1)
-		q2 = QTNode(self, (Point(self.center_x, self.boundingBox[0].y), Point(self.boundingBox[1].x, self.center_y)), self.depth + 1)
-		q3 = QTNode(self, (Point(self.boundingBox[0].x, self.center_y), Point(self.center_x, self.boundingBox[1].y)), self.depth + 1)
-		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.boundingBox[1].x, self.boundingBox[1].y)), self.depth + 1)
+		q1 = QTNode(self, (Point(self.bounding_box[0].x, self.bounding_box[0].y), Point(self.center_x, self.center_y)), self.depth + 1)
+		q2 = QTNode(self, (Point(self.center_x, self.bounding_box[0].y), Point(self.bounding_box[1].x, self.center_y)), self.depth + 1)
+		q3 = QTNode(self, (Point(self.bounding_box[0].x, self.center_y), Point(self.center_x, self.bounding_box[1].y)), self.depth + 1)
+		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box[1].x, self.bounding_box[1].y)), self.depth + 1)
 
-		drawLine(Window().getWindowReference(), Color.RED.value, (self.center_x, self.boundingBox[0].y), (self.center_x, self.boundingBox[1].y))
-		drawLine(Window().getWindowReference(), Color.RED.value, (self.boundingBox[0].x, self.center_y), (self.boundingBox[1].x, self.center_y))
+		draw_quadtree_line(LineColor.RED.value, (self.center_x, self.bounding_box[0].y), (self.center_x, self.bounding_box[1].y))
+		draw_quadtree_line(LineColor.RED.value, (self.bounding_box[0].x, self.center_y), (self.bounding_box[1].x, self.center_y))
 
 		# assert len(self.objects) > MAX_LIMIT
 		for object in self.objects:
-			if (detect_overlap((object.top_left, object.bottom_right), q1.boundingBox)):
+			if (detect_overlap((object.top_left, object.bottom_right), q1.bounding_box)):
 				q1.insert(object)
-			if (detect_overlap((object.top_left, object.bottom_right), q2.boundingBox)):
+			if (detect_overlap((object.top_left, object.bottom_right), q2.bounding_box)):
 				q2.insert(object)
-			if (detect_overlap((object.top_left, object.bottom_right), q3.boundingBox)):
+			if (detect_overlap((object.top_left, object.bottom_right), q3.bounding_box)):
 				q3.insert(object)
-			if (detect_overlap((object.top_left, object.bottom_right), q4.boundingBox)):
+			if (detect_overlap((object.top_left, object.bottom_right), q4.bounding_box)):
 				q4.insert(object)
 
 		self.children = [q1 ,q2 ,q3 ,q4]
-		self.objects.clear()
+		self.objects = None
 
 	def find(self, object: OrbsimObj) -> List['QTNode']:
 		if (self.__is_leaf()): # invariant: if its a leaf, it has to be present in bounding box
@@ -183,7 +108,7 @@ class QTNode:
 		overlapping_leaves = []
 		for i in range(4):
 			q_node = self.children[i]
-			if (detect_overlap((object.top_left, object.bottom_right), q_node.boundingBox)):
+			if (detect_overlap((object.top_left, object.bottom_right), q_node.bounding_box)):
 				if (q_node.__is_leaf()):
 					overlapping_leaves.append(q_node)
 				
@@ -199,7 +124,7 @@ class QTNode:
 		for q_node in self.find(object):
 			if (q_node.__is_leaf()):
 				q_node.objects.append(object)
-				if not detect_full_overlap((object.top_left, object.bottom_right), q_node.boundingBox):
+				if not detect_full_overlap((object.top_left, object.bottom_right), q_node.bounding_box):
 					if  q_node.depth < MAX_DEPTH:
 						q_node.split()
 
@@ -483,7 +408,7 @@ class QTNode:
             # TODO: implement other directions symmetric to NORTH case
 			assert False
             
-	def find_neighbors(self):
+	def find_neighbors(self) -> List['QTNode']:
 		all_neighbors = []
 		for direction in Direction:
 			neighbor = self.find_ge_size_neighbor(direction)
@@ -493,122 +418,14 @@ class QTNode:
 
 # Quad Tree data structure
 class QuadTree:
-	def __init__(self, bounding_box: Tuple[int, int]):
+	def __init__(self, screen, bounding_box: Tuple[Point, Point]):
 		self.root = QTNode(None, bounding_box, 0)
 		self.collisions = 0
-
+		global quadtree_pygame_window
+		quadtree_pygame_window = screen
+	
 	def insert(self, obj):
 		self.root.insert(obj)
 
 	def find_collisions(self):
-		self.root.count_collisions()
-	
-	# returns true if quadtree is empty
-	# returns first reference to where the point should be inserted
-	
-
-def main():
-	window = Window()
-	windowRef = window.getWindowReference()
-	objects_amount = 50
-	collectors_amount = 1;
-	setWindowCaption("Collision Detection Using Quad Trees")
-
-	objects: List[OrbsimObj] = []
-	collectors: List[OrbsimAgent]
-	for i in range(objects_amount):
-		top_left_x = int(round(random.uniform(0, window.getWidth())))
-		top_left_y = int(round(random.uniform(0, window.getHeight())))
-		# bottom_right_x = int(round(random.uniform(0, window.getWidth())))
-		# bottom_right_y = int(round(random.uniform(0, window.getHeight())))
-		width = int(round(random.uniform(30, 45)))
-		height = int(round(random.uniform(20, 25)))
-		bottom_right_x = top_left_x + width
-		bottom_right_y = top_left_y + height
-
-		speed = Point(round(random.uniform(0, 5)), round(random.uniform(0, 5)))
-		
-		# if top_left_x > bottom_right_x:
-		# 	temp = top_left_x
-		# 	top_left_x = bottom_right_x
-		# 	bottom_right_x = temp
-		
-		# if top_left_y > bottom_right_y:
-		# 	temp = top_left_y
-		# 	top_left_y = bottom_right_y
-		# 	bottom_right_y = temp
-
-
-		# if i == 0:
-		# 	object = SpaceDebris((Point(375, 75), Point(382, 77)), 3, f'sd{i}')
-			
-		# if i == 1:
-		# 	object = SpaceDebris((Point(1006, 163), Point(1017, 167)), 3, f'sd{i}')
-
-		# if i == 2:   
-		# 	object = SpaceDebris((Point(79, 909), Point(91, 918)), 3, f'sd{i}')
-		
-		# if i == 3:	
-		# 	object = SpaceDebris((Point(375, 1007), Point(378, 1015)), 3, f'sd{i}')
-
-		# if i == 4:
-		# 	object = SpaceDebris((Point(923, 764), Point(930, 772)), 3, f'sd{i}')
-
-		# if i == 5:
-		# 	object = SpaceDebris((Point(664, 822), Point(677, 831)), 3, f'sd{i}')
-		
-		# if i == 6:
-		# 	object = SpaceDebris((Point(100, 150), Point(150, 300)), 3, f'sd{i}')
-                                                                                                                               
-		object = SpaceDebris((Point(top_left_x, top_left_y), Point(bottom_right_x, bottom_right_y)), 3, speed, f'sd{i}')
-		objects.append(object)
-
-		for i in range(collectors_amount):
-			pass
-
-	done = False
-	clock = pygame.time.Clock()
-	windowRef.fill(Color.WHITE.value)
-	while not done:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				done = True
-
-		# draw here
-		windowRef.fill(Color.WHITE.value)
-		qTree = QuadTree((Point(0,0), Point(window.width, window.height)))
-		for object in objects:
-			if object.bottom_right.x == window.getWidth() or object.top_left.x == 0:
-				object.orientation_x = -1 * object.orientation_x
-
-			if object.bottom_right.y == window.getHeight() or object.top_left.y == 0:
-				object.orientation_y = -1 * object.orientation_y
-
-			object.top_left.set_x(max(min(object.top_left.x + object.speed.x*object.orientation_x, window.getWidth()),0))
-			object.top_left.set_y(max(min(object.top_left.y + object.speed.y*object.orientation_y, window.getHeight()),0))
-			object.bottom_right.set_x(max(min(object.bottom_right.x + object.speed.x*object.orientation_x, window.getWidth()),0))
-			object.bottom_right.set_y(max(min(object.bottom_right.y + object.speed.y*object.orientation_y, window.getHeight()),0))
-
-			drawBoxSizedObject(windowRef, Color.BLACK.value, [object.top_left, object.bottom_right], 2)
-			qTree.insert(object)
-		
-		for leaf in leaves:
-			leaf.find_neighbors()
-
-		# qTree.find_collisions()
-		pygame.display.flip()
-
-		# print(qTree.collisions)
-		print(len(leaves))
-		# for object in objects:
-		# 	print(object.top_left.x, object.top_left.y, object.bottom_right.x, object.bottom_right.y)
-		# free any unreferenced memory to avoid defragmentation. Possible perfomance improvements.
-		gc.collect()
-		leaves.clear()
-		clock.tick(int(60)) # fps
-
-	pygame.quit()
-
-if __name__ == '__main__':
-	pygame.init()
-	main()
+		self.find_collisions()

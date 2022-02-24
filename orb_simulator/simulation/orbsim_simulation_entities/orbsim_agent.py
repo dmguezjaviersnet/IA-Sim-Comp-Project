@@ -1,6 +1,6 @@
 from typing import Callable, Dict, Tuple
-from orbsim_simulation_entities.point import Point
-from orbsim_simulation_entities.orbsim_obj import OrbsimObj
+from simulation.orbsim_simulation_entities.point import Point
+from simulation.orbsim_simulation_entities.orbsim_obj import OrbsimObj
 
 class OrbsimAgent(OrbsimObj): 
 	def __init__(self, container: Tuple[Point, Point], mass: float, volume: float, behaviour: Dict[str, Callable], speed: Point, name: str) -> None:

@@ -1,6 +1,9 @@
 from typing import List
 import pygame
-import random
+import gc
+from simulation.orbsim_simulation_entities import SpaceDebris
+from simulation.orbsim_simulation_entities import Point
+from simulation.orbsim_simulation_structs import QuadTree, quadtree_pygame_window, leaves
 from sprites_and_graph_ent.eliptic_orbit import ElipticOrbit
 from sprites_and_graph_ent.junk import Junk
 from sprites_and_graph_ent.earth import Sphere
@@ -10,10 +13,10 @@ from simulation.generate_objects import *
 import threading
 
 
-class PygameHandler(threading.Thread):
+class PygameHandler():
 
     def __init__(self):
-        threading.Thread.__init__(self)
+        # threading.Thread.__init__(self)
         self.running = False
         self.background = pygame.image.load('./images/bg.jpg')
         self.screen_width = 1024
@@ -31,6 +34,7 @@ class PygameHandler(threading.Thread):
         self.earth_group = pygame.sprite.Group()
         self.junks_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
+        global quadtree_pygame_window
         pygame.init()
 
     def generate_orbits(self, number_of_orbits):
@@ -41,14 +45,17 @@ class PygameHandler(threading.Thread):
         self.junks_group.empty()
         self.objects.clear()
         for orb in self.orbits:
-            new_obj = generate_object_in_orbit(number_of_objects, orb)
-            self.objects.append(new_obj)
-            self.junks_group.add(new_obj)
+            orb_objs = generate_object_in_orbit(number_of_objects, orb)
+            for obj in orb_objs:
+                self.objects.append(obj)
+
+            self.junks_group.add(orb_objs)
 
     def start_pygame(self):
         self.running = True
-        t1 = threading.Thread(target=self.draw, args=())
-        t1.start()
+        # t1 = threading.Thread(target=self.draw, args=())
+        self.draw()
+        # t1.start()
         
 
     def draw(self):
@@ -73,30 +80,38 @@ class PygameHandler(threading.Thread):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.junks_group.sprites():
                         o.change_selected()
-        
 
-            for o in self.orbits:
-                o.draw_elipse(self.screen, (255,0,0))
-       
-           
+            for orb in self.orbits:
+                orb.draw_elipse(self.screen, (255,0,0))
             
-            pygame.draw.rect(self.screen,BLUE, self.main_region_rect, 1)
+            qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]), 
+                    Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
+            
+            for object in self.objects:
+                qTree.insert(SpaceDebris((Point(object.rect.topleft[0], object.rect.topleft[1]), Point(object.rect.bottomright[0], object.rect.bottomright[1])),
+                            0, 0, ''))
+            
+            qTree.insert(SpaceDebris((Point(self.earth.rect.topleft[0], self.earth.rect.topleft[1]), Point(self.earth.rect.bottomright[0], self.earth.rect.bottomright[1])),
+                            0, 0, ''))
+
+            # for leaf in leaves:
+            #     leaf.find_neighbors()
+            
+            pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
        
             self.junks_group.draw(self.screen)
             self.earth_group.draw(self.screen)
         
-            for o in self.junks_group.sprites():
-                pygame.draw.circle(self.screen, (255,0,0), o.rect.center, 3, 1)
-                o.draw_points(self.screen)
-                o.draw_selection(self.screen)
+            for obj in self.junks_group.sprites():
+                # pygame.draw.circle(self.screen, (255,0,0), obj.rect.center, 3, 1)
+                # obj.draw_points(self.screen)
+                obj.draw_selection(self.screen)
         
             self.junks_group.update()
             self.earth_group.update()
-            self.clock.tick(60)
+            self.clock.tick(30)
             pygame.display.flip()
-
-
-
+            # gc.collect()
 
 def start_simulation():
     pygame.quit()
@@ -144,11 +159,7 @@ def start_simulation():
 
         for o in orbits:
             o.draw_elipse(screen, (255,0,0))
-       
-        for o in orbits:
-            o.draw_elipse(screen, (255,0,0))
-        
-        
+
        
         junks_group.draw(screen)
         earth_group.draw(screen)
@@ -163,4 +174,7 @@ def start_simulation():
         clock.tick(60)
         pygame.display.flip()
 
-
+h = PygameHandler()
+h.generate_orbits(3)
+h.generate_objects_in_orbits(2)
+h.start_pygame()

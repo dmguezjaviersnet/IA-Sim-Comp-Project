@@ -1,5 +1,5 @@
 from typing import List
-from orbsim_simulation_entities.point import Point
+from simulation.orbsim_simulation_entities.point import Point
 
 class Vertex:
 

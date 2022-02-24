@@ -1,6 +1,6 @@
 import simpy
 from typing import Tuple
-from orbsim_simulation_entities.point import Point
+from simulation.orbsim_simulation_entities.point import Point
 
 # Esta clase me representa un objeto de la simulacion, es la clase
 # mas "abstracta" de la representacion de los objetos del environment 

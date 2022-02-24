@@ -16,7 +16,7 @@ class Junk(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = [pos_x, pos_y]
 
-        self.image.set_colorkey(( 255,   0, 255))
+        self.image.set_colorkey((255, 0, 255))
         self.orbit_angle = 0
         self.orbit_vel = vel
         self.a = a 
@@ -31,7 +31,7 @@ class Junk(pygame.sprite.Sprite):
         if self.orbit_angle > 360:
             self.orbit_angle = 0
     
-    def draw_points(self, screen, color = (255,255,255)):
+    def draw_points(self, screen, color = (255, 255, 255)):
         pygame.draw.circle(screen, (255, 255, 0), self.rect.topleft, 2,0)
         pygame.draw.circle(screen, (255, 255, 0), self.rect.bottomright, 2,0)
 
