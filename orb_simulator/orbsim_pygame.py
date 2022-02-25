@@ -17,7 +17,7 @@ class PygameHandler(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.running = False
-        
+        self.pause = False
         self.screen_width = 1024
         self.screen_height = 1024
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -60,10 +60,11 @@ class PygameHandler(threading.Thread):
     def draw(self):
         pygame.init()
         max_time = 0
+        counter_time = 0
         self.screen.blit(self.background, (0,0))
         sys.stdout = sys.__stdout__
         while self.running:
-            self.screen.blit(self.background, (0, 0))
+           
        
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -73,48 +74,52 @@ class PygameHandler(threading.Thread):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         self.earth.animate()
+                    elif event.key == pygame.K_p:
+                        self.pause = not self.pause
                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.junks_group.sprites():
                         o.change_selected()
+            if not self.pause:
+                self.screen.blit(self.background, (0, 0))
 
-            for orb in self.orbits:
-                orb.draw_elipse(self.screen, (255,0,0))
+                for orb in self.orbits:
+                    orb.draw_elipse(self.screen, (255,0,0))
 
-            start = time.time()
-            qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
-                    Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
-            
-            for object in self.objects:
-                object.is_colliding = False
-                qTree.insert(object)
+                start = time.time()
+                qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
+                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
 
-            qTree.insert(self.earth)
+                for object in self.objects:
+                    object.is_colliding = False
+                    qTree.insert(object)
 
-            global leaves
-            for leaf in leaves:
-                leaf.check_collisions()
-            # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
-            end = time.time()
-            if end - start > max_time: 
-                max_time = end - start
-		
-            print(max_time)
-            for orb in self.orbits:
-                orb.draw_elipse(self.screen, PLUM_COLOR)
-            self.junks_group.draw(self.screen)
-            self.earth_group.draw(self.screen)
-            
-            for obj in self.objects:
-                obj.update_color()
-                # pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
-                obj.draw_points(self.screen)
-                obj.draw_selection(self.screen)
+                qTree.insert(self.earth)
 
-            leaves.clear()
+                global leaves
+                for leaf in leaves:
+                    leaf.check_collisions()
+                # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
+                end = time.time()
+                if end - start > max_time: 
+                    max_time = end - start
+    
+                print(max_time)
+                for orb in self.orbits:
+                    orb.draw_elipse(self.screen, PLUM_COLOR)
+                self.junks_group.draw(self.screen)
+                self.earth_group.draw(self.screen)
 
-            self.junks_group.update()
-            self.earth_group.update()
-            self.clock.tick(60)
-            pygame.display.flip()
+                for obj in self.objects:
+                    obj.update_color()
+                    # pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
+                    obj.draw_points(self.screen)
+                    obj.draw_selection(self.screen)
+
+                leaves.clear()
+
+                self.junks_group.update()
+                self.earth_group.update()
+                self.clock.tick(60)
+                pygame.display.flip()
         pygame.quit()

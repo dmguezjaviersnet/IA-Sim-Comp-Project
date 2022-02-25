@@ -10,8 +10,7 @@ class Event:
     ocurrence_time : int
 
     
-# evento de Poisson homogéneos para simular  la ocurrencia de eventos discretos en la 
-# ocurrencia del movimiento de las basuras
+# evento de Poisson homogéneos para simular  la ocurrencia de eventos discretos
 def poisson_process_homogeneous(T, plambda = 0.0025):
     t = 0
     l:List[Event] = []
@@ -19,7 +18,7 @@ def poisson_process_homogeneous(T, plambda = 0.0025):
         rand1 = random.random()
         t = t - (1/plambda)*math.log(rand1)
         # rand2 = random.random()
-        new_event = Event(f'evento{len(l)+1}',t);
+        new_event = Event(f'evento{len(l)+1}',t)
         print(new_event)
         l.append(new_event)
     
