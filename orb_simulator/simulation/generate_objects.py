@@ -2,7 +2,7 @@ from typing import List
 
 from urllib3 import Retry
 from sprites_and_graph_ent import ElipticOrbit
-from sprites_and_graph_ent import SpaceDebris
+from sprites_and_graph_ent import SpaceDebris, Satellite
 import random
 from tools import next_point_moving_in_elipse
 
@@ -33,8 +33,11 @@ def generate_new_object_in_orbit(orbit: 'ElipticOrbit'):
     vel =  random.random() *2
     type = random.randint(1,2)
     next_point = next_point_moving_in_elipse(point,  a, b, angle)
-    junk = SpaceDebris(next_point[0], next_point[1], 'satellite' if type == 1 else 'rock', a, b, point, vel if vel > 0 else 0.1)
-    return junk
+    if random.randint(0,1):
+         obj = SpaceDebris(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    else:
+        obj = Satellite(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    return obj
 
 def generate_random_orbit(orbits: List['ElipticOrbit']):
     random_pos = random.randint(0,len(orbits)-1)
@@ -54,7 +57,7 @@ def generate_object_in_orbit(number_objects:int, orbit: 'ElipticOrbit')-> None:
         vel =  random.random() *2
         type = random.randint(1,2)
         next_point = next_point_moving_in_elipse(point,  a, b, angle)
-        junk = SpaceDebris(next_point[0], next_point[1], 'satellite' if type == 1 else 'rock', a, b, point, vel if vel > 0 else 0.1)
+        junk = SpaceDebris(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
         objs.append(junk)
     return objs
 
