@@ -7,11 +7,10 @@ import numpy as np
 @dataclass
 class Event:
     name: str
-    ocurrence_time : int
+    ocurrence_time : float
 
     
-# evento de Poisson homogéneos para simular  la ocurrencia de eventos discretos en la 
-# ocurrencia del movimiento de las basuras
+# evento de Poisson homogéneos para simular  la ocurrencia de eventos discretos
 def poisson_process_homogeneous(T, plambda = 0.0025):
     t = 0
     l:List[Event] = []
@@ -19,11 +18,12 @@ def poisson_process_homogeneous(T, plambda = 0.0025):
         rand1 = random.random()
         t = t - (1/plambda)*math.log(rand1)
         # rand2 = random.random()
-        new_event = Event(f'evento{len(l)+1}',t);
+        new_event = Event(f'evento{len(l)+1}',t)
         print(new_event)
         l.append(new_event)
     
     return l
+
 
 def poisson_process_nothomogeneous(T):
     t = 0
@@ -45,4 +45,4 @@ def poisson_process_nothomogeneous(T):
 def intensity_function(t):
     return 1 / 100*(math.sin(t*math.pi)) +1 
 
-poisson_process_nothomogeneous(100)
+# poisson_process_homogeneous(1000, 0.01)

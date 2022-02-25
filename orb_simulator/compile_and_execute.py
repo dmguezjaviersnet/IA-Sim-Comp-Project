@@ -29,8 +29,8 @@ def orbsim_compile_and_execute(text: str):
     exe.execute(ast, Scope())
     
     
-orbsim_compile_and_execute('''
-let Float a = randfloat(1,2);
-''')
+# orbsim_compile_and_execute('''
+# let Float a = randfloat(1,2);
+# ''')
 
 

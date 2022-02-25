@@ -63,7 +63,7 @@ def draw_quadtree_line(color, point1, point2):
 
 
 class QTNode:
-	def __init__(self, parent: 'QTNode', bounding_box: Tuple[Point, Point], depth):
+	def __init__(self, parent: 'QTNode', bounding_box: Tuple[Point, Point], depth, qnode_lines):
 		self.parent = parent
 		self.bounding_box_tl = (bounding_box[0].x, bounding_box[0].y)
 		self.bounding_box_br = (bounding_box[1].x, bounding_box[1].y)
@@ -72,6 +72,7 @@ class QTNode:
 		self.objects: List[SpaceDebris] = []
 		self.center_x = ((bounding_box[0].x + bounding_box[1].x) / 2)
 		self.center_y = ((bounding_box[0].y + bounding_box[1].y) / 2)
+		self.qnode_lines = qnode_lines
 	
 	def __is_empty(self):
 		return not self.objects
@@ -84,13 +85,14 @@ class QTNode:
 		# if (self.__is_empty()):
 		# 	return
 
-		q1 = QTNode(self, (Point(self.bounding_box_tl[0], self.bounding_box_tl[1]), Point(self.center_x, self.center_y)), self.depth + 1)
-		q2 = QTNode(self, (Point(self.center_x, self.bounding_box_tl[1]), Point(self.bounding_box_br[0], self.center_y)), self.depth + 1)
-		q3 = QTNode(self, (Point(self.bounding_box_tl[0], self.center_y), Point(self.center_x, self.bounding_box_br[1])), self.depth + 1)
-		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box_br[0], self.bounding_box_br[1])), self.depth + 1)
-
-		draw_quadtree_line(RED_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
-		draw_quadtree_line(RED_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
+		q1 = QTNode(self, (Point(self.bounding_box_tl[0], self.bounding_box_tl[1]), Point(self.center_x, self.center_y)), self.depth + 1, self.qnode_lines)
+		q2 = QTNode(self, (Point(self.center_x, self.bounding_box_tl[1]), Point(self.bounding_box_br[0], self.center_y)), self.depth + 1,self.qnode_lines)
+		q3 = QTNode(self, (Point(self.bounding_box_tl[0], self.center_y), Point(self.center_x, self.bounding_box_br[1])), self.depth + 1, self.qnode_lines)
+		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box_br[0], self.bounding_box_br[1])), self.depth + 1, self.qnode_lines)
+		
+		if self.qnode_lines:
+			draw_quadtree_line(RED_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
+			draw_quadtree_line(RED_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
 
 		# assert len(self.objects) > MAX_LIMIT
 		for object in self.objects:
@@ -408,8 +410,8 @@ class QTNode:
 
 # Quad Tree data structure
 class QuadTree:
-	def __init__(self, screen, bounding_box: Tuple[Point, Point]):
-		self.root = QTNode(None, bounding_box, 0)
+	def __init__(self, screen, bounding_box: Tuple[Point, Point], qnode_lines):
+		self.root = QTNode(None, bounding_box, 0, qnode_lines)
 		self.collisions = 0
 		global quadtree_pygame_window
 		quadtree_pygame_window = screen
