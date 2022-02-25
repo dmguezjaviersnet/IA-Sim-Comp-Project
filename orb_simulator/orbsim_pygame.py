@@ -53,10 +53,8 @@ class PygameHandler(threading.Thread):
                 self.junks_group.add(obj)
 
     def start_pygame(self):
-        # gc.collect()
         self.running = True
         t1 = threading.Thread(target=self.draw, args=())
-        # self.draw()
         t1.start()
         
     def draw(self):
@@ -67,8 +65,9 @@ class PygameHandler(threading.Thread):
        
         
         sys.stdout = sys.__stdout__
-        new_object_event = poisson_process_homogeneous(1000,0.01)
+        new_object_event = poisson_process_homogeneous(1000,0.1)
         start = time.time()
+        draw_qtree = False
         while self.running:
            
             print(len(self.objects))
@@ -82,6 +81,8 @@ class PygameHandler(threading.Thread):
                         self.earth.animate()
                     elif event.key == pygame.K_p:
                         self.pause = not self.pause
+                    elif event.key == pygame.K_q:
+                        draw_qtree = not draw_qtree
                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.junks_group.sprites():
@@ -104,7 +105,7 @@ class PygameHandler(threading.Thread):
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
-                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
+                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), draw_qtree)
 
                 for object in self.objects:
                     object.is_colliding = False

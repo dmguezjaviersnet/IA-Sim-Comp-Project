@@ -367,8 +367,8 @@ class Executor:
         # self.handler.start()
 
         self.handler.start_pygame()
-        self.handler.generate_orbits(random.randint(1,3))
-        self.handler.generate_objects_in_orbits(random.randint(1,2))
+        self.handler.generate_orbits(random.randint(1,10))
+        self.handler.generate_objects_in_orbits(random.randint(1,5))
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
         # t1.start()
         # t1.join()

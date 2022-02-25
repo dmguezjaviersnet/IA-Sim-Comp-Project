@@ -30,6 +30,7 @@ def randfloat(inf: 'Instance', sup: 'Instance'):
     randvalue = random.random() + randvalue
     return Instance(IntType(), randvalue)
 
+
 builtins_methods={
     ('String','concat'): concat,
     ('String','len'): orb_len,
