@@ -63,13 +63,11 @@ class PygameHandler(threading.Thread):
         counter_time = 0
         self.screen.blit(self.background, (0,0))
        
-        
         sys.stdout = sys.__stdout__
-        new_object_event = poisson_process_homogeneous(1000,0.1)
+        new_object_event = poisson_process_homogeneous(1000, 0.1)
         start = time.time()
         draw_qtree = False
         while self.running:
-           
             print(len(self.objects))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -87,6 +85,7 @@ class PygameHandler(threading.Thread):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.junks_group.sprites():
                         o.change_selected()
+
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
                 if new_object_event:
