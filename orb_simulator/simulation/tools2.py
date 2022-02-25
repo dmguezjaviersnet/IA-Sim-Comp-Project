@@ -92,11 +92,9 @@ def a_star(start, h, goal, open):
 
         for neighbor in get_neighbors(node):
             tentative_g_score = g_value[node] + 1
-
             
             if neighbor in closed_set:
                 continue
-
 
             if neighbor not in open_set or tentative_g_score < g_value[neighbor]:
                 parent[neighbor] = node
@@ -110,11 +108,10 @@ def a_star(start, h, goal, open):
                             f_value[i] = (actual_f_value, neighbor)
                             break
                     heapq.heapify(f_value)
+
                 else:
                     open_set.add(neighbor)
                     heapq.heappush(f_value, (actual_f_value, neighbor))
-
-
 
 
 def plot_obj(obj:'Obj', ax):
