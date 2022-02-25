@@ -7,7 +7,7 @@ import numpy as np
 @dataclass
 class Event:
     name: str
-    ocurrence_time : int
+    ocurrence_time : float
 
     
 # evento de Poisson homogéneos para simular  la ocurrencia de eventos discretos
@@ -23,6 +23,7 @@ def poisson_process_homogeneous(T, plambda = 0.0025):
         l.append(new_event)
     
     return l
+
 
 def poisson_process_nothomogeneous(T):
     t = 0
@@ -44,4 +45,4 @@ def poisson_process_nothomogeneous(T):
 def intensity_function(t):
     return 1 / 100*(math.sin(t*math.pi)) +1 
 
-poisson_process_nothomogeneous(100)
+# poisson_process_homogeneous(1000, 0.01)

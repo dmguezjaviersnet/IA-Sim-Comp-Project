@@ -8,10 +8,12 @@ from sprites_and_graph_ent.space_debris import SpaceDebris
 from sprites_and_graph_ent.earth import Sphere
 from tools import*
 from tools import next_point_moving_in_elipse
+from simulation.events import *
 from simulation.generate_objects import *
 import threading
 import sys
 import time
+
 class PygameHandler(threading.Thread):
 
     def __init__(self):
@@ -26,7 +28,7 @@ class PygameHandler(threading.Thread):
         self.screen_center = (self.screen.get_rect().centerx, self.screen.get_rect().centery)
         self.main_region_rect = pygame.Rect(self.screen.get_rect().centerx -510, self.screen.get_rect().centery - 510, 1024, 1024)
         pygame.display.set_icon(self.orbsim_icon)
-
+        pygame.display.set_caption('OrbSimulator')
         self.clock = pygame.time.Clock()
         # pygame.mouse.set_visible(False)
         self.orbits: List['ElipticOrbit'] = []
@@ -62,10 +64,14 @@ class PygameHandler(threading.Thread):
         max_time = 0
         counter_time = 0
         self.screen.blit(self.background, (0,0))
+       
+        
         sys.stdout = sys.__stdout__
+        new_object_event = poisson_process_homogeneous(1000,0.01)
+        start = time.time()
         while self.running:
            
-       
+            print(len(self.objects))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -82,11 +88,21 @@ class PygameHandler(threading.Thread):
                         o.change_selected()
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
-
+                if new_object_event:
+                    end = time.time()
+                    comm = end - start
+                    current_event = new_object_event[0]
+                    # print(current_event.ocurrence_time)
+                    # print(comm)
+                    if int(current_event.ocurrence_time) == int(comm):
+                        new_obj = generate_new_object_in_random_orbit(self.orbits)
+                        self.objects.append(new_obj)
+                        self.junks_group.add(new_obj)
+                        new_object_event.pop(0)
                 for orb in self.orbits:
                     orb.draw_elipse(self.screen, (255,0,0))
 
-                start = time.time()
+                # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])))
 
@@ -100,11 +116,11 @@ class PygameHandler(threading.Thread):
                 for leaf in leaves:
                     leaf.check_collisions()
                 # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
-                end = time.time()
-                if end - start > max_time: 
-                    max_time = end - start
+                # end = time.time()
+                # if end - start > max_time: 
+                #     max_time = end - start
     
-                print(max_time)
+                # print(max_time)
                 for orb in self.orbits:
                     orb.draw_elipse(self.screen, PLUM_COLOR)
                 self.junks_group.draw(self.screen)
@@ -120,6 +136,8 @@ class PygameHandler(threading.Thread):
 
                 self.junks_group.update()
                 self.earth_group.update()
+               
                 self.clock.tick(60)
+                counter_time +=1
                 pygame.display.flip()
         pygame.quit()

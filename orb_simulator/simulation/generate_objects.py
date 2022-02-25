@@ -1,3 +1,6 @@
+from typing import List
+
+from urllib3 import Retry
 from sprites_and_graph_ent import ElipticOrbit
 from sprites_and_graph_ent import SpaceDebris
 import random
@@ -32,6 +35,14 @@ def generate_new_object_in_orbit(orbit: 'ElipticOrbit'):
     next_point = next_point_moving_in_elipse(point,  a, b, angle)
     junk = SpaceDebris(next_point[0], next_point[1], 'satellite' if type == 1 else 'rock', a, b, point, vel if vel > 0 else 0.1)
     return junk
+
+def generate_random_orbit(orbits: List['ElipticOrbit']):
+    random_pos = random.randint(0,len(orbits)-1)
+    return orbits[random_pos]
+
+def generate_new_object_in_random_orbit(orbits: List['ElipticOrbit']):
+    random_orbit = generate_random_orbit(orbits)
+    return generate_new_object_in_orbit(random_orbit)
 
 def generate_object_in_orbit(number_objects:int, orbit: 'ElipticOrbit')-> None:
     point = orbit.center
