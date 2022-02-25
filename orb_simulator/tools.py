@@ -14,6 +14,7 @@ RED_COLOR= (255, 0, 0)
 SOLID_BLUE_COLOR = (0, 0, 255)
 PLUM_COLOR = (221,160,221)
 WINE_COLOR = (88, 24, 31)
+LIGHT_GRAY = (211, 211, 211)
 
 def make_pickle_file(file_name, data):
     with open(f"{file_name}.pickle", "wb") as outfile:
