@@ -1,6 +1,7 @@
 from typing import List
-
+import math
 from urllib3 import Retry
+from sprites_and_graph_ent.rocket import Rocket
 from sprites_and_graph_ent import ElipticOrbit
 from sprites_and_graph_ent import SpaceDebris, Satellite
 import random
@@ -61,4 +62,34 @@ def generate_object_in_orbit(number_objects:int, orbit: 'ElipticOrbit')-> None:
         objs.append(junk)
     return objs
 
+def generate_satellite_in_orbit(orbit: 'ElipticOrbit'):
+    point = orbit.center
+    angle =  random.randint(0,360)
+    a = orbit.semi_major_axis if orbit.over_axis == 'x' else orbit.semi_minor_axis
+    b = orbit.semi_minor_axis if orbit.over_axis == 'x' else orbit.semi_major_axis
+    vel =  random.random() *2
+    type = random.randint(1,2)
+    next_point = next_point_moving_in_elipse(point,  a, b, angle)
+    if random.randint(0,1):
+         obj = SpaceDebris(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    else:
+        obj = Satellite(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    return obj
 
+def generate_waiting_time():
+    lambd = 0.04
+    ran_var_uni =  random.random()
+    return - (1/lambd)*math.log(ran_var_uni)
+
+def generate_new_rocket(orbits):
+    orbit = random.randint(0, len(orbits))
+    point = orbit.center
+    angle =  random.randint(0,360)
+    a = orbit.semi_major_axis if orbit.over_axis == 'x' else orbit.semi_minor_axis
+    b = orbit.semi_minor_axis if orbit.over_axis == 'x' else orbit.semi_major_axis
+    vel =  random.random() *2
+    type = random.randint(1,2)
+    next_point = next_point_moving_in_elipse(point,  a, b, angle)
+    satellite = Satellite(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    rocket = Rocket(satellite)
+    return rocket

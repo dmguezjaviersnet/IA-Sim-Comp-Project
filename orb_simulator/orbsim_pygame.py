@@ -1,13 +1,12 @@
 from typing import List
 import pygame
-import gc
+from orb_simulator.sprites_and_graph_ent import satellite
 from simulation.orbsim_simulation_entities import Point
 from simulation.orbsim_simulation_structs import QuadTree, leaves
-from sprites_and_graph_ent.eliptic_orbit import ElipticOrbit
-from sprites_and_graph_ent.space_debris import SpaceDebris
+from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad
 from sprites_and_graph_ent.earth import Sphere
 from tools import*
-from tools import next_point_moving_in_elipse
+from tools import next_point_moving_in_elipse, round_off_wi_exceed
 from simulation.events import *
 from simulation.generate_objects import *
 import threading
@@ -38,6 +37,9 @@ class PygameHandler(threading.Thread):
         self.junks_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
        
+    def add_new_satellite(self, satellite: 'Satellite'):
+        self.objects.append(satellite)
+        self.junks_group.add(satellite)
 
     def generate_orbits(self, number_of_orbits):
         orbits = generate_orbits(self.screen_center, number_of_orbits)
@@ -60,17 +62,17 @@ class PygameHandler(threading.Thread):
     def draw(self):
         pygame.init()
         max_time = 0
-        counter_time = 0
+        counter_time = 0.00
         self.screen.blit(self.background, (0,0))
-       
         
+        launchpad =  Launchpad(1000)
         sys.stdout = sys.__stdout__
         new_object_event = poisson_process_homogeneous(1000,0.1)
         start = time.time()
         draw_qtree = False
         while self.running:
            
-            print(len(self.objects))
+            # print(len(self.objects))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -89,17 +91,39 @@ class PygameHandler(threading.Thread):
                         o.change_selected()
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
+
+                if launchpad.time_of_occurrence < counter_time:
+                    
+                    if round_off_wi_exceed(launchpad.next_arrival_time) == round_off_wi_exceed(counter_time):
+                        new_rocket = generate_new_rocket(self.orbits)
+                        if not launchpad.lauch_that_is_running:
+                        launchpad.lauch_that_is_running = new_rocket
+                    if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
+                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket_id}')
+                        satellite = launchpad.lauch_that_is_running.satellite
+                        self.add_new_satellite(satellite)
+                        launchpad.lauch_that_is_running = None
+                        if launchpad.rocket_in_queue:
+                            next_launch = launchpad.rocket_in_queue.pop(0)
+                            launchpad.lauch_that_is_running = next_launch
+                            launchpad.generate_next_departure(counter_time)
+                            
+                        
+
                 if new_object_event:
                     end = time.time()
                     comm = end - start
                     current_event = new_object_event[0]
                     # print(current_event.ocurrence_time)
                     # print(comm)
-                    if int(current_event.ocurrence_time) == int(comm):
+                    print(round_off_wi_exceed(counter_time))
+                    if round_off_wi_exceed(current_event.ocurrence_time) == round_off_wi_exceed(counter_time):
+                        print(current_event.ocurrence_time)
                         new_obj = generate_new_object_in_random_orbit(self.orbits)
                         self.objects.append(new_obj)
                         self.junks_group.add(new_obj)
                         new_object_event.pop(0)
+                        print(len(self.objects))
                 for orb in self.orbits:
                     orb.draw_elipse(self.screen, (255,0,0))
 
@@ -137,8 +161,8 @@ class PygameHandler(threading.Thread):
 
                 self.junks_group.update()
                 self.earth_group.update()
-               
+                counter_time += 0.01
                 self.clock.tick(60)
-                counter_time +=1
+                
                 pygame.display.flip()
         pygame.quit()

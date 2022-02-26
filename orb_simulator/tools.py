@@ -58,3 +58,6 @@ def next_point_moving_in_elipse(point: Tuple[float, float], a, b, degree):
     new_x = point[0] + (a*math.cos(degree * 2 * math.pi / 360))
     new_y = point[1] + (b*math.sin(degree * 2 * math.pi / 360))
     return (new_x, new_y)
+
+def round_off_wi_exceed(number):
+    return math.floor(number*100)/100
