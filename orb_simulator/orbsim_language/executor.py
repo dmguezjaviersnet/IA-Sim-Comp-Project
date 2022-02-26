@@ -50,6 +50,9 @@ from orbsim_language.builtins import *
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 from orbsim_language.orbsim_ast.start_sim_node import StartSimNode
 from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
+from orbsim_language.orbsim_ast.pause_sim_node import PauseSimNode
+from orbsim_language.orbsim_ast.drawquadtree_node import DrawquadtreeNode
+
 from orbsim_pygame import PygameHandler
 import orbsim_pygame
 import threading
@@ -57,10 +60,10 @@ from errors import OrbisimExecutionError
 class Executor:
 
     
-    def __init__(self, context: 'Context'):
+    def __init__(self, context: 'Context', handler):
         self.context: 'Context' = context
         self.log: List[str] = []
-        self.handler = PygameHandler()
+        self.handler: 'PygameHandler' = handler
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
 
@@ -372,5 +375,20 @@ class Executor:
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
         # t1.start()
         # t1.join()
+    
+    @visitor.when(StopSimNode)
+    def execute(self, node: 'StopSimNode', scope: 'Scope'):
+        
+        # self.handler.start()
+
+        self.handler.stop_pygame()
+    
+    @visitor.when(PauseSimNode)
+    def execute(self, node: 'PauseSimNode', scope: 'Scope'):
+        self.handler.pause_pygame()
+    
+    @visitor.when(DrawquadtreeNode)
+    def execute(self, node: 'DrawquadtreeNode', scope: 'Scope'):
+        self.handler.draw_quadtree()
         
         

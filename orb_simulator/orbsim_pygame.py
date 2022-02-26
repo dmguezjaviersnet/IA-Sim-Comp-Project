@@ -1,6 +1,6 @@
 from typing import List
 import pygame
-from orb_simulator.sprites_and_graph_ent import satellite
+from sprites_and_graph_ent import satellite
 from simulation.orbsim_simulation_entities import Point
 from simulation.orbsim_simulation_structs import QuadTree, leaves
 from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad
@@ -19,6 +19,7 @@ class PygameHandler(threading.Thread):
         threading.Thread.__init__(self)
         self.running = False
         self.pause = False
+        self.draw_qtree = False
         self.screen_width = 1024
         self.screen_height = 1024
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -58,7 +59,17 @@ class PygameHandler(threading.Thread):
         self.running = True
         t1 = threading.Thread(target=self.draw, args=())
         t1.start()
+    
+    def stop_pygame(self):
+        self.running = False
+        pygame.quit()
+    
+    def pause_pygame(self):
+        self.pause = not self.pause
         
+    def draw_quadtree(self):
+        self.draw_qtree = not self.draw_qtree
+
     def draw(self):
         pygame.init()
         max_time = 0
@@ -84,20 +95,28 @@ class PygameHandler(threading.Thread):
                     elif event.key == pygame.K_p:
                         self.pause = not self.pause
                     elif event.key == pygame.K_q:
-                        draw_qtree = not draw_qtree
+                       self.draw_quadtree()
                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.junks_group.sprites():
                         o.change_selected()
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
-
-                if launchpad.time_of_occurrence < counter_time:
-                    
+                print(launchpad.closing_time)
+                if launchpad.closing_time > round_off_wi_exceed(counter_time):
+                    print(f'Arrival: {round_off_wi_exceed(launchpad.next_arrival_time)} vs {round_off_wi_exceed(counter_time)}')
+                    if launchpad.next_departure_time:
+                        print(f'Departure: {round_off_wi_exceed(launchpad.next_departure_time)} vs {round_off_wi_exceed(counter_time)}')
                     if round_off_wi_exceed(launchpad.next_arrival_time) == round_off_wi_exceed(counter_time):
+                        print('\o/')
                         new_rocket = generate_new_rocket(self.orbits)
                         if not launchpad.lauch_that_is_running:
-                        launchpad.lauch_that_is_running = new_rocket
+                            launchpad.lauch_that_is_running = new_rocket
+                            launchpad.generate_next_departure(counter_time)
+                        else:
+                            launchpad.rocket_in_queue.append(new_rocket)
+                        launchpad.generate_next_arrival(counter_time)
+                        
                     if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
                         print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket_id}')
                         satellite = launchpad.lauch_that_is_running.satellite
@@ -116,9 +135,9 @@ class PygameHandler(threading.Thread):
                     current_event = new_object_event[0]
                     # print(current_event.ocurrence_time)
                     # print(comm)
-                    print(round_off_wi_exceed(counter_time))
+                    # print(round_off_wi_exceed(counter_time))
                     if round_off_wi_exceed(current_event.ocurrence_time) == round_off_wi_exceed(counter_time):
-                        print(current_event.ocurrence_time)
+                        # print(f'Evento{current_event.name} ocurrido {current_event.ocurrence_time}')
                         new_obj = generate_new_object_in_random_orbit(self.orbits)
                         self.objects.append(new_obj)
                         self.junks_group.add(new_obj)
@@ -129,7 +148,7 @@ class PygameHandler(threading.Thread):
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
-                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), draw_qtree)
+                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
 
                 for object in self.objects:
                     object.is_colliding = False
@@ -152,9 +171,9 @@ class PygameHandler(threading.Thread):
                 self.earth_group.draw(self.screen)
 
                 for obj in self.objects:
-                    obj.update_color()
+                    obj.draw_collision(self.screen)
                     # pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
-                    obj.draw_points(self.screen)
+                    # obj.draw_points(self.screen)
                     obj.draw_selection(self.screen)
 
                 leaves.clear()

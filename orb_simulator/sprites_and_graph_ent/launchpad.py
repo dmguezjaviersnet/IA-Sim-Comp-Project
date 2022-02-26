@@ -3,10 +3,10 @@ from simulation.generate_objects import generate_waiting_time
 
 class Launchpad:
 
-    def __init__(self, time_of_occurrence):
+    def __init__(self, closing_time):
         self.lauch_that_is_running = None
         self.rocket_in_queue = []
-        self.time_of_occurrence = time_of_occurrence
+        self.closing_time = closing_time
         self.next_arrival_time = generate_waiting_time()
         self.next_departure_time = None
 

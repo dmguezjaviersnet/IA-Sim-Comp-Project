@@ -17,7 +17,7 @@ from orbsim_language.type_builder import TypeBuilder
 from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
 from orbsim_ui import OrbisimUI
-
+from orbsim_pygame import PygameHandler
 # def test1():
 #     regexengine = Regex_Engine('(a|b|c)?')
 #     automaton = regexengine.automaton
@@ -56,7 +56,9 @@ def main():
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
-    ui = OrbisimUI()
+    pygame_handler = PygameHandler()
+    ui = OrbisimUI(pygame_handler)
+    
     # handler = Handler()
     # handler.start()
     # print(ui.code_text)

@@ -34,10 +34,9 @@ def generate_new_object_in_orbit(orbit: 'ElipticOrbit'):
     vel =  random.random() *2
     type = random.randint(1,2)
     next_point = next_point_moving_in_elipse(point,  a, b, angle)
-    if random.randint(0,1):
-         obj = SpaceDebris(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
-    else:
-        obj = Satellite(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    
+    obj = SpaceDebris(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    
     return obj
 
 def generate_random_orbit(orbits: List['ElipticOrbit']):
@@ -70,10 +69,9 @@ def generate_satellite_in_orbit(orbit: 'ElipticOrbit'):
     vel =  random.random() *2
     type = random.randint(1,2)
     next_point = next_point_moving_in_elipse(point,  a, b, angle)
-    if random.randint(0,1):
-         obj = SpaceDebris(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
-    else:
-        obj = Satellite(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+    
+    obj = SpaceDebris(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
+   
     return obj
 
 def generate_waiting_time():
@@ -82,7 +80,7 @@ def generate_waiting_time():
     return - (1/lambd)*math.log(ran_var_uni)
 
 def generate_new_rocket(orbits):
-    orbit = random.randint(0, len(orbits))
+    orbit = orbits[random.randint(0, len(orbits)-1)]
     point = orbit.center
     angle =  random.randint(0,360)
     a = orbit.semi_major_axis if orbit.over_axis == 'x' else orbit.semi_minor_axis

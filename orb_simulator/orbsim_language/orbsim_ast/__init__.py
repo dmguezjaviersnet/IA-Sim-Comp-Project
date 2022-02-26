@@ -53,3 +53,5 @@ from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
+from orbsim_language.orbsim_ast.pause_sim_node import PauseSimNode
+from orbsim_language.orbsim_ast.drawquadtree_node import DrawquadtreeNode
