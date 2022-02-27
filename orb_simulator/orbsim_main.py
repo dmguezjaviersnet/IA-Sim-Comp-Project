@@ -1,3 +1,4 @@
+from cgitb import handler
 from lexer.regex_grammar import regex_grammar
 from parser.lr0_item import Lr0_item
 from parser.lr1_item import Lr1_item
@@ -18,6 +19,7 @@ from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
 from orbsim_ui import OrbisimUI
 from orbsim_pygame import PygameHandler
+from compile_and_execute import orbsim_compile_and_execute
 # def test1():
 #     regexengine = Regex_Engine('(a|b|c)?')
 #     automaton = regexengine.automaton
@@ -56,7 +58,14 @@ def main():
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
+   
     pygame_handler = PygameHandler()
+    # orbsim_compile_and_execute(
+    # '''
+    #     let SpaceDebris sat1 = spacedebris;
+    #     sat1.add_to_simulation();
+    
+    # ''', pygame_handler)
     ui = OrbisimUI(pygame_handler)
     
     # handler = Handler()

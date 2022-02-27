@@ -30,7 +30,8 @@ def orbsim_compile_and_execute(text: str, handler):
     
     
 # orbsim_compile_and_execute('''
-# let Float a = randfloat(1,2);
+# let Orbit orbit = orbit;
+# orbit.add_to_simulation();
 # ''')
 
 

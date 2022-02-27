@@ -1,3 +1,4 @@
+from asyncio import subprocess
 from typing import List
 import pygame
 from sprites_and_graph_ent import satellite
@@ -10,14 +11,16 @@ from tools import next_point_moving_in_elipse, round_off_wi_exceed
 from simulation.events import *
 from simulation.generate_objects import *
 import threading
+import multiprocessing
 import sys
 import time
-
+from orbsim_threading import ThreadWithTrace
 class PygameHandler(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
         self.running = False
+        self.show_orbits = False
         self.pause = False
         self.draw_qtree = False
         self.screen_width = 1024
@@ -35,34 +38,67 @@ class PygameHandler(threading.Thread):
         self.objects: List['SpaceDebris'] = []
         self.earth = Sphere(self.screen.get_rect().centerx, self.screen.get_rect().centery)
         self.earth_group = pygame.sprite.Group()
-        self.junks_group = pygame.sprite.Group()
+        self.space_debris_group = pygame.sprite.Group()
+        self.satellite_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
+        self.subprocess = ThreadWithTrace(target=self.draw, args=())
        
     def add_new_satellite(self, satellite: 'Satellite'):
         self.objects.append(satellite)
-        self.junks_group.add(satellite)
+        self.satellite_group.add(satellite)
+    
+    def add_new_orbit(self, orbit: 'ElipticOrbit'):
+        self.orbits.append(orbit)
 
+    def add_new_space_debris(self, space_debris: 'SpaceDebris'):
+        self.objects.append(space_debris)
+        self.space_debris_group.add(space_debris)
+        
     def generate_orbits(self, number_of_orbits):
         orbits = generate_orbits(self.screen_center, number_of_orbits)
-        self.orbits = orbits
+        for i in orbits:
+            self.orbits.append(i)
     
     def generate_objects_in_orbits(self, number_of_objects):
-        self.junks_group.empty()
+        self.space_debris_group.empty()
         self.objects.clear()
         for orb in self.orbits:
             orb_objs = generate_object_in_orbit(number_of_objects, orb)
             for obj in orb_objs:
                 self.objects.append(obj)
-                self.junks_group.add(obj)
+                self.space_debris_group.add(obj)
+    
+    def generate_new_random_space_debris(self):
+        space_debris = generate_new_random_space_debris(self.orbits)
+        self.space_debris_group.add(space_debris)
+        self.objects.append(space_debris)
+
+    def generate_new_random_satellite(self):
+        satellite =  generate_new_random_satellite(self.orbits)
+        self.satellite_group.add(satellite)
+        self.objects.append(satellite)
 
     def start_pygame(self):
+        pygame.init()
         self.running = True
-        t1 = threading.Thread(target=self.draw, args=())
-        t1.start()
+        
+        self.subprocess.start()
+        # subprocess = multiprocessing.Process(target=self.draw, args=())
+        # subprocess.start()
     
     def stop_pygame(self):
-        self.running = False
-        pygame.quit()
+        if self.is_alive():
+            self.subprocess.kill()
+            self.subprocess.join()
+       
+        if not self.is_alive():
+            print('thread killed')
+        if self.running :
+            self.running = False
+            pygame.quit()
+        # subprocess.raise_exception()
+        # self.subprocess.terminate()
+        
     
     def pause_pygame(self):
         self.pause = not self.pause
@@ -74,7 +110,7 @@ class PygameHandler(threading.Thread):
         self.earth.animate()
 
     def draw(self):
-        pygame.init()
+        
         max_time = 0
         counter_time = 0.00
         self.screen.blit(self.background, (0,0))
@@ -99,9 +135,11 @@ class PygameHandler(threading.Thread):
                         self.pause = not self.pause
                     elif event.key == pygame.K_q:
                        self.draw_quadtree()
+                    elif event.key == pygame.K_o:
+                        self.show_orbits = not self.show_orbits
                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    for o in self.junks_group.sprites():
+                    for o in self.space_debris_group.sprites():
                         o.change_selected()
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
@@ -143,11 +181,10 @@ class PygameHandler(threading.Thread):
                         # print(f'Evento{current_event.name} ocurrido {current_event.ocurrence_time}')
                         new_obj = generate_new_object_in_random_orbit(self.orbits)
                         self.objects.append(new_obj)
-                        self.junks_group.add(new_obj)
+                        self.space_debris_group.add(new_obj)
                         new_object_event.pop(0)
                         print(len(self.objects))
-                for orb in self.orbits:
-                    orb.draw_elipse(self.screen, (255,0,0))
+                
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
@@ -168,9 +205,11 @@ class PygameHandler(threading.Thread):
                 #     max_time = end - start
     
                 # print(max_time)
-                for orb in self.orbits:
-                    orb.draw_elipse(self.screen, PLUM_COLOR)
-                self.junks_group.draw(self.screen)
+                if self.show_orbits:
+                    for orb in self.orbits:
+                        orb.draw_elipse(self.screen, PLUM_COLOR)
+                self.space_debris_group.draw(self.screen)
+                self.satellite_group.draw(self.screen)
                 self.earth_group.draw(self.screen)
 
                 for obj in self.objects:
@@ -181,8 +220,9 @@ class PygameHandler(threading.Thread):
 
                 leaves.clear()
 
-                self.junks_group.update()
+                self.space_debris_group.update()
                 self.earth_group.update()
+                self.satellite_group.update()
                 counter_time += 0.01
                 self.clock.tick(60)
                 
