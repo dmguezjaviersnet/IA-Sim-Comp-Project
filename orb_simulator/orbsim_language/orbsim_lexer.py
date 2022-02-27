@@ -16,6 +16,7 @@ orbsim_lexer = Lexer([
     ('pause', Token_Type.pause_orbsim),
     ('stop', Token_Type.stop_orbsim),
     ('drawquadtree', Token_Type.drawquadtree),
+    ('animate_earth', Token_Type.animate_earth),
     ('continue', Token_Type.continue_orbsim),
     ('break', Token_Type.break_orbsim),
     ('true|false', Token_Type.boolean),

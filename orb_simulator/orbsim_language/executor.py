@@ -52,6 +52,7 @@ from orbsim_language.orbsim_ast.start_sim_node import StartSimNode
 from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
 from orbsim_language.orbsim_ast.pause_sim_node import PauseSimNode
 from orbsim_language.orbsim_ast.drawquadtree_node import DrawquadtreeNode
+from orbsim_language.orbsim_ast.animate_earth_node import AnimateEarthNode
 
 from orbsim_pygame import PygameHandler
 import orbsim_pygame
@@ -390,5 +391,8 @@ class Executor:
     @visitor.when(DrawquadtreeNode)
     def execute(self, node: 'DrawquadtreeNode', scope: 'Scope'):
         self.handler.draw_quadtree()
-        
+    
+    @visitor.when(AnimateEarthNode)
+    def execute(self, node: 'AnimateEarthNode', scope: 'Scope'):
+        self.handler.earth_animate()
         

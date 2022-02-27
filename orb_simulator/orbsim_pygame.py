@@ -70,6 +70,9 @@ class PygameHandler(threading.Thread):
     def draw_quadtree(self):
         self.draw_qtree = not self.draw_qtree
 
+    def earth_animate(self):
+        self.earth.animate()
+
     def draw(self):
         pygame.init()
         max_time = 0
@@ -80,7 +83,7 @@ class PygameHandler(threading.Thread):
         sys.stdout = sys.__stdout__
         new_object_event = poisson_process_homogeneous(1000,0.1)
         start = time.time()
-        draw_qtree = False
+        
         while self.running:
            
             # print(len(self.objects))
@@ -91,7 +94,7 @@ class PygameHandler(threading.Thread):
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        self.earth.animate()
+                        self.earth_animate()
                     elif event.key == pygame.K_p:
                         self.pause = not self.pause
                     elif event.key == pygame.K_q:
@@ -126,7 +129,7 @@ class PygameHandler(threading.Thread):
                             next_launch = launchpad.rocket_in_queue.pop(0)
                             launchpad.lauch_that_is_running = next_launch
                             launchpad.generate_next_departure(counter_time)
-                            
+                           
                         
 
                 if new_object_event:

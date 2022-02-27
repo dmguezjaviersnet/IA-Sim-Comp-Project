@@ -81,6 +81,7 @@ class Token_Type(Enum):
     stop_orbsim = 55
     pause_orbsim = 56
     drawquadtree = 57
+    animate_earth = 58
     
     eof = 100
     space = 101
