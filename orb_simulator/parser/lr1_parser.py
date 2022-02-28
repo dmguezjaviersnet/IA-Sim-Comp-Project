@@ -19,7 +19,8 @@ lr1_states_hash_table = None
 
 __is_atom = lambda token : (token.token_type == Token_Type.int or token.token_type == Token_Type.float or
     token.token_type == Token_Type.string or token.token_type == Token_Type.boolean or 
-    token.token_type == Token_Type.id_orbsim or token.token_type == Token_Type.type_id_orbsim)
+    token.token_type == Token_Type.id_orbsim or token.token_type == Token_Type.type_id_orbsim
+    or token.token_type == Token_Type.orbit or token.token_type == Token_Type.satellite or token.token_type == Token_Type.space_debris)
 
 def __build_lr0_items(G: Grammar) -> List[Lr0_item]:
     lr0_items: List[Lr0_item] = []

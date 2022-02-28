@@ -53,3 +53,9 @@ from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
+from orbsim_language.orbsim_ast.pause_sim_node import PauseSimNode
+from orbsim_language.orbsim_ast.drawquadtree_node import DrawquadtreeNode
+from orbsim_language.orbsim_ast.animate_earth_node import AnimateEarthNode
+from orbsim_language.orbsim_ast.orbit_node import OrbitNode
+from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode
+from orbsim_language.orbsim_ast.satellite_node import SatelliteNode

@@ -66,6 +66,7 @@ class Token_Type(Enum):
     break_orbsim = 43
     print_orbsim = 44
 
+
     assign = 26
 
     # agrupamiento
@@ -78,6 +79,13 @@ class Token_Type(Enum):
 
     start_orbsim = 54
     stop_orbsim = 55
+    pause_orbsim = 56
+    drawquadtree = 57
+    animate_earth = 58
+    space_debris = 59
+    satellite = 60
+    orbit = 61
+    
     
     eof = 100
     space = 101

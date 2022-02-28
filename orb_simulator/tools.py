@@ -62,3 +62,6 @@ def next_point_moving_in_elipse(point: Tuple[float, float], a, b, degree):
 
 def eucl_dist_qtnode(qt1: QTNode, qt2: QTNode):
     return math.dist((qt1.center_x, qt1.center_y), (qt2.center_x, qt2.center_y))
+    
+def round_off_wi_exceed(number):
+    return math.floor(number*100)/100

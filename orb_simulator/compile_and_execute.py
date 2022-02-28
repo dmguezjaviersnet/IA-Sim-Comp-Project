@@ -9,7 +9,7 @@ from orbsim_language.type_checker import TypeChecker
 from orbsim_language.executor import Executor
 from orbsim_language.context import Scope
 
-def orbsim_compile_and_execute(text: str):
+def orbsim_compile_and_execute(text: str, handler):
 
     tokens, errs = orbsim_lexer(text)
     if errs:
@@ -25,12 +25,13 @@ def orbsim_compile_and_execute(text: str):
     checker.check(ast, Scope())
     if checker.log:
         return checker.log
-    exe =  Executor(checker.context)
+    exe =  Executor(checker.context, handler)
     exe.execute(ast, Scope())
     
     
 # orbsim_compile_and_execute('''
-# let Float a = randfloat(1,2);
+# let Orbit orbit = orbit;
+# orbit.add_to_simulation();
 # ''')
 
 

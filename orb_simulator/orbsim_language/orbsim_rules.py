@@ -1,4 +1,5 @@
 from typing import List
+
 from parser.own_symbol import Symbol
 from orbsim_language.orbsim_ast import ProgramNode, VariableDeclrNode, FuncDeclrNode, MethodDeclrNode
 from orbsim_language.orbsim_ast import ConditionalNode, LoopNode, OrNode, AndNode, ContinueNode, BreakNode
@@ -6,9 +7,12 @@ from orbsim_language.orbsim_ast import GreaterEqualNode, LessEqualNode, GreaterT
 from orbsim_language.orbsim_ast import LessThanNode, EqualNode, NotEqualNode, RetNode
 from orbsim_language.orbsim_ast import AssingNode, AttributeDeclrNode, NotNode, PlusNode, NegNumberNode
 from orbsim_language.orbsim_ast import MinusNode, FloatNode, IntegerNode, ProductNode, StringNode, BooleanNode
-from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode, ListCreationNode, StopSimNode, StartSimNode
+from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode, ListCreationNode, StopSimNode, StartSimNode, PauseSimNode
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
 from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode, MethodCallNode, AttributeCallNode
+from orbsim_language.orbsim_ast import DrawquadtreeNode
+from orbsim_language.orbsim_ast import AnimateEarthNode
+from orbsim_language.orbsim_ast import SpaceDebrisNode, SatelliteNode, OrbitNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ProgramNode(tail[0].ast)
@@ -110,6 +114,15 @@ def start_stmt_rule(head: Symbol, tail: List[Symbol]):
 
 def stop_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = StopSimNode()
+
+def pause_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = PauseSimNode()
+
+def drawquadtree_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = DrawquadtreeNode()
+
+def animate_earth_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = AnimateEarthNode()
 
 def print_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = PrintNode(tail[1].ast)
@@ -243,6 +256,15 @@ def atom_rule5(head: Symbol, tail: List[Symbol]):
 
 def atom_rule6(head: Symbol, tail: List[Symbol]):
     head.ast = tail[0].ast
+
+def atom_rule7(head: Symbol, tail: List[Symbol]):
+    head.ast = OrbitNode(tail[0].val)
+
+def atom_rule8(head: Symbol, tail: List[Symbol]):
+    head.ast = SpaceDebrisNode(tail[0].val)
+
+def atom_rule9(head: Symbol, tail: List[Symbol]):
+    head.ast = SatelliteNode(tail[0].val)
 
 def list_creation_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ListCreationNode(tail[1].ast)

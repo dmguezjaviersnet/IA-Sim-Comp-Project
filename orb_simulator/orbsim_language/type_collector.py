@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any, List
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
-from orbsim_language.orbsim_type import AnyType, ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType, SimType
+from orbsim_language.orbsim_type import AnyType, ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType, OrbitType, SatelliteType, SpaceDebrisType
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
 
@@ -41,6 +41,16 @@ class TypeCollector:
         list_type.define_method('remove', ListType(), ['elem'], [AnyType()])
         self.context.types['Void'] = VoidType()
         self.context.types['Any'] = AnyType()
+        orbit_type = OrbitType() 
+        self.context.types['Orbit'] =  orbit_type
+        orbit_type.define_method('add_to_simulation', VoidType(), [], [])
+        satellite_type =  SatelliteType()
+        self.context.types['Satellite'] = satellite_type
+        satellite_type.define_method('add_to_simulation', VoidType(), [], [])
+        space_debris_type = SpaceDebrisType()
+        self.context.types['SpaceDebris'] = space_debris_type
+        space_debris_type.define_method('add_to_simulation', VoidType(), [], [])
+
         
         
         for st in node.statements:

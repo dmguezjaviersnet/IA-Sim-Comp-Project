@@ -82,6 +82,18 @@ class BoolType(OrbsimType):
     def __init__(self):
         OrbsimType.__init__(self, 'Bool')
 
+class OrbitType(OrbsimType):
+    def __init__(self):
+        super().__init__('Orbit')
+
+class SatelliteType(OrbsimType):
+    def __init__(self):
+        super().__init__('Satellite')
+
+class SpaceDebrisType(OrbsimType):
+    def __init__(self):
+        super().__init__('SpaceDebris')
+
 class ListType(OrbsimType):
     def __init__(self):
         super().__init__('List')

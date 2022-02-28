@@ -45,6 +45,9 @@ from orbsim_language.orbsim_ast.list_creation_node import ListCreationNode
 from orbsim_language.orbsim_ast.break_node import BreakNode
 from orbsim_language.orbsim_ast.continue_node import ContinueNode
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
+from orbsim_language.orbsim_ast.orbit_node import OrbitNode
+from orbsim_language.orbsim_ast.satellite_node import SatelliteNode
+from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode        
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -491,6 +494,19 @@ class TypeChecker:
     def check(self, node: BooleanNode, scope: 'Scope'):
         node.comp_type = BoolType()
     
+    @visitor.when(OrbitNode)
+    def check(self, node: OrbitNode, scope: 'Scope'):
+        node.comp_type = OrbitType()
+    
+    @visitor.when(SatelliteNode)
+    def check(self, node: SatelliteNode, scope: 'Scope'):
+        node.comp_type = SatelliteType()
+    
+    @visitor.when(SpaceDebrisNode)
+    def check(self, node: SpaceDebrisNode, scope: 'Scope'):
+        node.comp_type = SpaceDebrisType()
+    
+        
     @visitor.when(ListCreationNode)
     def check(self, node: ListCreationNode, scope: 'Scope'):
         list_type = []

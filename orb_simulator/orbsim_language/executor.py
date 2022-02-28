@@ -50,6 +50,13 @@ from orbsim_language.builtins import *
 from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 from orbsim_language.orbsim_ast.start_sim_node import StartSimNode
 from orbsim_language.orbsim_ast.stop_sim_node import StopSimNode
+from orbsim_language.orbsim_ast.pause_sim_node import PauseSimNode
+from orbsim_language.orbsim_ast.drawquadtree_node import DrawquadtreeNode
+from orbsim_language.orbsim_ast.animate_earth_node import AnimateEarthNode
+from orbsim_language.orbsim_ast.orbit_node import OrbitNode
+from orbsim_language.orbsim_ast.satellite_node import SatelliteNode
+from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode
+from simulation.generate_objects import *
 from orbsim_pygame import PygameHandler
 import orbsim_pygame
 import threading
@@ -57,10 +64,10 @@ from errors import OrbisimExecutionError
 class Executor:
 
     
-    def __init__(self, context: 'Context'):
+    def __init__(self, context: 'Context', handler):
         self.context: 'Context' = context
         self.log: List[str] = []
-        self.handler = PygameHandler()
+        self.handler: 'PygameHandler' = handler
         self.break_unchained = False
         # self.scope: 'Scope' = Scope()
 
@@ -334,6 +341,8 @@ class Executor:
         new_scope = Scope()
         if (var.type.name, node.identifier) in builtins_methods:
             args = (var.instance ,) + tuple(self.execute(expr, scope) for expr in node.args)
+            if for_simulation(node.identifier):
+                args = args + (self.handler,)
             return builtins_methods[(var.type.name, node.identifier)](*args)
         
         method: 'Method' = var_instance.get_method(node.identifier, len(node.args))
@@ -367,10 +376,47 @@ class Executor:
         # self.handler.start()
 
         self.handler.start_pygame()
-        self.handler.generate_orbits(random.randint(1,10))
-        self.handler.generate_objects_in_orbits(random.randint(1,5))
+        self.handler.generate_orbits(random.randint(1,2))
+        # self.handler.generate_objects_in_orbits(random.randint(1,5))
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())
         # t1.start()
         # t1.join()
-        
-        
+    
+    @visitor.when(StopSimNode)
+    def execute(self, node: 'StopSimNode', scope: 'Scope'):
+
+
+        self.handler.stop_pygame()
+    
+    @visitor.when(PauseSimNode)
+    def execute(self, node: 'PauseSimNode', scope: 'Scope'):
+        self.handler.pause_pygame()
+    
+    @visitor.when(DrawquadtreeNode)
+    def execute(self, node: 'DrawquadtreeNode', scope: 'Scope'):
+        self.handler.draw_quadtree()
+    
+    @visitor.when(AnimateEarthNode)
+    def execute(self, node: 'AnimateEarthNode', scope: 'Scope'):
+        self.handler.earth_animate()
+    
+    @visitor.when(OrbitNode)
+    def execute(self, node: 'OrbitNode', scope: 'Scope'):
+        orbit  = generate_new_random_orbit(self.handler.screen_center)
+        return Instance(OrbitType(), orbit)
+
+    @visitor.when(SatelliteNode)
+    def execute(self, node: 'SatelliteNode', scope: 'Scope'):
+        if not self.handler.orbits:
+            self.log.append(f'No existe ninguna órbita para ubicar el satélite')
+        else:
+            satellite = generate_new_random_satellite(self.handler.orbits)
+            return Instance(SatelliteType(), satellite)
+
+    @visitor.when(SpaceDebrisNode)
+    def execute(self, node: 'SpaceDebrisNode', scope: 'Scope'):
+        if not self.handler.orbits:
+            self.log.append(f'No existe ninguna órbita para ubicar el satélite')
+        else:
+            space_debris = generate_new_random_space_debris(self.handler.orbits)
+            return Instance(SpaceDebrisType(), space_debris)

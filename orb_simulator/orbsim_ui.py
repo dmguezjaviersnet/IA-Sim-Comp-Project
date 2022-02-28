@@ -5,9 +5,10 @@ from io import StringIO
 import sys
 class OrbisimUI:
 
-    def __init__(self):
+    def __init__(self, handler):
         # self.code_text = st_ace(keybinding="vscode", theme="monokai", height=500)
         self.title = st.title("OrbiSimulator")
+        self.handler = handler
         
         # editor = st.text_area('')
         # button = st.button('Compile ans Run')
@@ -21,7 +22,7 @@ class OrbisimUI:
             if code :
                 capture_io_file = StringIO()
                 sys.stdout = capture_io_file
-                errs = orbsim_compile_and_execute(code)
+                errs = orbsim_compile_and_execute(code, handler)
                 if errs:
                     st.error('❌Errors found❌')
                     for err in errs:
