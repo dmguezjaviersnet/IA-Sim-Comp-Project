@@ -3,15 +3,11 @@ import math
 from random import randint
 from math import dist
 from typing import Dict, List, Tuple
-from simulation.orbsim_simulation_structs.agent_behaviour import AgentBehaviour
-from simulation.orbsim_simulation_structs.agent_states import AgentState
 from simulation.orbsim_simulation_structs.quadtree import QTNode
 from sprites_and_graph_ent.space_agent import SpaceAgent
-from sprites_and_graph_ent.space_debris import SpaceDebris
-from sprites_and_graph_ent.space_obj import SpaceObj
 from simulation.orbsim_simulation_structs.agent_action_data import AgentActionData
-from simulation.a_star import a_star
-from tools import eucl_dist_qtnode
+from simulation.a_star import a_star, eucl_dist_qtnode
+
 
 class SpaceDebrisCollector(SpaceAgent):
 
@@ -68,19 +64,19 @@ class SpaceDebrisCollector(SpaceAgent):
 
 	def pursue_goal(self):
 		if self.intentions.action == 'move randomly':
-			self.__update_on_move()
+			self.update()
 		
 		elif self.intentions.action == 'move towards debris':
 			self.path_to_debris = a_star(self.beliefs, eucl_dist_qtnode, self.intentions.qt_node)
 			self.intentions.qt_node = self.path_to_debris.pop(0)
-			self.__update_on_move()
+			self.update()
 			
 		elif self.intentions.action == 'collect debris':
 			self.capacity -= self.intentions.object.area
 			self.fuel -= self.intentions.object.area/2
 			return self.intentions.object
 	
-	def __update_on_move(self):
+	def update(self):
 		self.vel_x = self.pos_x - self.intentions.qt_node.center_x
 		self.vel_y = self.pos_y - self.intentions.qt_node.center_y
 		norm = dist((self.pos_x, self.pos_y), (self.intentions.qt_node.center_x, self.intentions.qt_node.center_y))
@@ -93,8 +89,8 @@ class SpaceDebrisCollector(SpaceAgent):
 
 		dist_traveled = dist((new_pos_x, new_pos_y), (self.pos_x, self.intentions.qt_node.center_y))
 		self.fuel -= dist_traveled/5
-		self.pos_x = new_pos_x
-		self.pos_y = new_pos_y
+		self.rect.center = [new_pos_x, new_pos_y]
+		
 
 
 		

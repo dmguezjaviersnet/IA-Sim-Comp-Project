@@ -1,5 +1,10 @@
 import heapq
 from simulation.orbsim_simulation_structs.quadtree import QTNode
+import math
+
+def eucl_dist_qtnode(qt1: QTNode, qt2: QTNode):
+    return math.dist((qt1.center_x, qt1.center_y), (qt2.center_x, qt2.center_y))
+    
 
 def reconstruct_path(node: QTNode, parent: QTNode):
     path = [node]

@@ -25,6 +25,15 @@ class SpaceDebris(OrbitObj):
     @property
     def pos(self):
         return self.rect.center
+    
+    @property
+    def pos_x(self):
+        return self.rect.center[0]
+    
+    @property
+    def pos_y(self):
+        return self.rect.center[1]
+    
     def __str__(self):
         return f'SpaceDebris {self.id} Size: {self.size} Position: {self.pos}'
 

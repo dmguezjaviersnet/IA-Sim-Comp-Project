@@ -1,7 +1,6 @@
 from  sprites_and_graph_ent.space_obj import SpaceObj
 import pygame
 import random
-from tools import SOLID_BLUE_COLOR,GREEN_COLOR, SELECT_BLUE_COLOR, next_point_moving_in_elipse
 import math
 
 class OrbitObj(SpaceObj):

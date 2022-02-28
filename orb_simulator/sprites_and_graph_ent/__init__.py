@@ -5,3 +5,4 @@ from sprites_and_graph_ent.orbit_obj import OrbitObj
 from sprites_and_graph_ent.space_obj import SpaceObj
 from sprites_and_graph_ent.satellite import Satellite
 from sprites_and_graph_ent.launchpad import Launchpad
+from sprites_and_graph_ent.space_debris_collector import SpaceDebrisCollector

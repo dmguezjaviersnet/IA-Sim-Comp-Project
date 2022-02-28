@@ -1,4 +1,4 @@
-from simulation.orbsim_simulation_structs.quadtree import QTNode
+from simulation.orbsim_simulation_structs import QTNode
 from sprites_and_graph_ent.space_debris import SpaceDebris
 
 class AgentActionData:

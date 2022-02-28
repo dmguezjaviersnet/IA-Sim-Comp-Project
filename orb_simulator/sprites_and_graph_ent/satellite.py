@@ -23,6 +23,14 @@ class Satellite(OrbitObj):
         return self.rect.center
 
     @property
+    def pos_x(self):
+        return self.rect.center[0]
+    
+    @property
+    def pos_y(self):
+        return self.rect.center[1]
+
+    @property
     def area(self):
         return self.rect.width * self.rect.height
 

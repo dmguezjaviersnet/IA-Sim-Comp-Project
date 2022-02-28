@@ -101,3 +101,12 @@ def generate_new_rocket(orbits):
     satellite = generate_satellite_in_orbit(orbit)
     rocket = Rocket(satellite)
     return rocket
+
+# def generate_space_debris_collector():
+#     pos_x = random.randint(1,800)
+#     pos_y = random.randint(1,800)
+#     span = 500
+#     capacity = 500
+#     fuel = 500
+#     collector = SpaceDebrisCollector(pos_x, pos_y, span, capacity, fuel)
+#     return collector

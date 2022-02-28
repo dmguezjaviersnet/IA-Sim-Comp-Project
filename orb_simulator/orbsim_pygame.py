@@ -39,6 +39,7 @@ class PygameHandler():
         self.earth_group = pygame.sprite.Group()
         self.space_debris_group = pygame.sprite.Group()
         self.satellite_group = pygame.sprite.Group()
+        self.space_debris_collector_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
         # self.subprocess = ThreadWithTrace(target=self.draw, args=())
 
@@ -85,6 +86,10 @@ class PygameHandler():
         self.space_debris_group.add(space_debris)
         self.objects.append(space_debris)
 
+    def generate_random_collector(self):
+        ...
+        # collector = generate_space_debris_collector()
+        # self.space_debris_collector_group.add(collector)
     def generate_new_random_satellite(self):
         satellite =  generate_new_random_satellite(self.orbits)
         self.satellite_group.add(satellite)
@@ -158,37 +163,40 @@ class PygameHandler():
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
                 # print(launchpad.closing_time)
-                if launchpad.closing_time > round_off_wi_exceed(counter_time):
-                    print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
-                    launchpad.update(counter_time, self.orbits)
+                # if launchpad.closing_time > round_off_wi_exceed(counter_time):
+                #     print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
+                #     launchpad.update(counter_time, self.orbits)
                         
-                    if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
-                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
-                        satellite = launchpad.lauch_that_is_running.rocket.satellite
-                        self.add_new_satellite(satellite)
-                        launchpad.update_departure(counter_time)
+                #     if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
+                #         print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
+                #         satellite = launchpad.lauch_that_is_running.rocket.satellite
+                #         self.add_new_satellite(satellite)
+                #         launchpad.update_departure(counter_time)
                             
                            
                         
 
-                if new_object_event:
-                    end = time.time()
-                    comm = end - start
-                    current_event = new_object_event[0]
-                    # print(current_event.ocurrence_time)
-                    # print(comm)
-                    # print(round_off_wi_exceed(counter_time))
-                    if round_off_wi_exceed(current_event.ocurrence_time) == round_off_wi_exceed(counter_time):
-                        # print(f'Evento{current_event.name} ocurrido {current_event.ocurrence_time}')
-                        new_obj = generate_new_object_in_random_orbit(self.orbits)
-                        self.objects.append(new_obj)
-                        self.space_debris_group.add(new_obj)
-                        new_object_event.pop(0)
-                        print(len(self.objects))
+                # if new_object_event:
+                #     end = time.time()
+                #     comm = end - start
+                #     current_event = new_object_event[0]
+                #     # print(current_event.ocurrence_time)
+                #     # print(comm)
+                #     # print(round_off_wi_exceed(counter_time))
+                #     if round_off_wi_exceed(current_event.ocurrence_time) == round_off_wi_exceed(counter_time):
+                #         # print(f'Evento{current_event.name} ocurrido {current_event.ocurrence_time}')
+                #         new_obj = generate_new_object_in_random_orbit(self.orbits)
+                #         self.objects.append(new_obj)
+                #         self.space_debris_group.add(new_obj)
+                #         new_object_event.pop(0)
+                #         print(len(self.objects))
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
+
+                for i in self.space_debris_collector_group.sprites():
+                    i.scan(qTree)
 
                 for object in self.objects:
                     object.is_colliding = False
@@ -211,6 +219,7 @@ class PygameHandler():
                 self.space_debris_group.draw(self.screen)
                 self.satellite_group.draw(self.screen)
                 self.earth_group.draw(self.screen)
+                self.space_debris_collector_group.draw(self.screen)
 
                 for obj in self.objects:
                     obj.draw_collision(self.screen)
@@ -220,9 +229,10 @@ class PygameHandler():
 
                 leaves.clear()
 
-                self.space_debris_group.update()
+                # self.space_debris_group.update()
                 self.earth_group.update()
-                self.satellite_group.update()
+                # self.satellite_group.update()
+                self.space_debris_collector_group.update()
                 counter_time += 0.01
                 self.clock.tick(60)
                 

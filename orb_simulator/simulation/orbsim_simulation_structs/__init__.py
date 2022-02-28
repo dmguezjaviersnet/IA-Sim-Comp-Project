@@ -1,1 +1,1 @@
-from simulation.orbsim_simulation_structs.quadtree import QuadTree, leaves
+from simulation.orbsim_simulation_structs.quadtree import QTNode, QuadTree, leaves
