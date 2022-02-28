@@ -24,5 +24,5 @@ class SpaceAgent(SpaceObj):
 		...
 
 	@abstractmethod
-	def filter(self):
+	def pursue_goal(self):
 		...
