@@ -11,7 +11,7 @@ from automaton.state import State
 from parser.lr1_parser import lr1_parse
 from orbsim_language.orbsim_lexer import orbsim_lexer
 from orbsim_language.orbsim_grammar import orbsim_grammar, orbsim_token_string
-
+import random
 from orbsim_language.type_collector import TypeCollector
 from orbsim_language.type_builder import TypeBuilder
 from orbsim_language.type_checker import TypeChecker
@@ -52,6 +52,12 @@ def test_lexer():
     print(':)')
     
 
+def debugging(handler: 'PygameHandler'):
+    handler.generate_orbits(random.randint(1,2))
+    handler.generate_objects_in_orbits(random.randint(1,2))
+    handler.generate_random_collector()
+    handler.start_pygame()
+
 def main():
     
     ########### #################### Gramática de Regex #################################
@@ -59,7 +65,7 @@ def main():
     # test_lexer()
    
     pygame_handler = PygameHandler()
-    pygame_handler.start_pygame()
+    debugging(pygame_handler)
     # orbsim_compile_and_execute(
     # '''
     #     let SpaceDebris sat1 = spacedebris;

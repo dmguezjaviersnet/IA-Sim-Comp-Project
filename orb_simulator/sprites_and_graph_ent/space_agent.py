@@ -22,7 +22,7 @@ class SpaceAgent(SpaceObj):
 	def __init__(self, pos_x: int, pos_y: int, perception_range: int):
 		super().__init__()
 		self.beliefs = None
-		self.desires: heapq[AgentActionData] = None
+		self.desires: List = []
 		self.intentions: AgentActionData = None
 		self.size = (35,35)
 		self.image = pygame.Surface([self.size[0], self.size[1]])

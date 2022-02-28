@@ -10,7 +10,7 @@ from simulation.a_star import a_star, eucl_dist_qtnode
 class SpaceDebrisCollector(SpaceAgent):
 
 	def __init__(self, pos_x: int, pos_y: int, life_span: int, capacity: int, fuel: int, vel_x = 1, vel_y = 1):
-		super().__init__(pos_x, pos_y)
+		super().__init__(pos_x, pos_y, 5)
 		self.path_to_debris: List = None
 		self.life_span = life_span
 		self.capacity = capacity
@@ -19,7 +19,8 @@ class SpaceDebrisCollector(SpaceAgent):
 		self.vel_y = vel_y
 
 	def options(self):
-		self.desires.clear()
+		if self.desires:
+			self.desires.clear()
 		visited: Dict[int: bool] = {}
 		perceived_env = [(self.beliefs, 0)]
 		self.desires = []

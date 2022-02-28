@@ -87,9 +87,8 @@ class PygameHandler():
         self.objects.append(space_debris)
 
     def generate_random_collector(self):
-        ...
-        # collector = generate_space_debris_collector()
-        # self.space_debris_collector_group.add(collector)
+        collector = generate_space_debris_collector()
+        self.space_debris_collector_group.add(collector)
     def generate_new_random_satellite(self):
         satellite =  generate_new_random_satellite(self.orbits)
         self.satellite_group.add(satellite)
@@ -195,8 +194,10 @@ class PygameHandler():
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
 
-                for i in self.space_debris_collector_group.sprites():
-                    i.scan(qTree)
+                for agent in self.space_debris_collector_group.sprites():
+                    agent.scan(qTree)
+                    agent.options()
+                    agent.pursue_goal()
 
                 for object in self.objects:
                     object.is_colliding = False
@@ -229,9 +230,9 @@ class PygameHandler():
 
                 leaves.clear()
 
-                # self.space_debris_group.update()
+                self.space_debris_group.update()
                 self.earth_group.update()
-                # self.satellite_group.update()
+                self.satellite_group.update()
                 self.space_debris_collector_group.update()
                 counter_time += 0.01
                 self.clock.tick(60)
