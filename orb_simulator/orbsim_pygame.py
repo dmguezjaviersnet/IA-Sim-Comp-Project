@@ -15,10 +15,9 @@ import multiprocessing
 import sys
 import time
 from orbsim_threading import ThreadWithTrace
-class PygameHandler(threading.Thread):
+class PygameHandler():
 
     def __init__(self):
-        threading.Thread.__init__(self)
         self.running = False
         self.show_orbits = False
         self.pause = False
@@ -41,8 +40,21 @@ class PygameHandler(threading.Thread):
         self.space_debris_group = pygame.sprite.Group()
         self.satellite_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
-        self.subprocess = ThreadWithTrace(target=self.draw, args=())
-       
+        # self.subprocess = ThreadWithTrace(target=self.draw, args=())
+
+    @property
+    def number_of_satellites(self):
+        return len(self.satellite_group.sprites())
+    @property
+    def number_of_space_debris(self):
+        return len(self.space_debris_group.sprites())
+    @property
+    def number_of_objects(self):
+        return len(self.objects)
+    @property
+    def number_of_orbits(self):
+        return len(self.orbits)
+    
     def add_new_satellite(self, satellite: 'Satellite'):
         self.objects.append(satellite)
         self.satellite_group.add(satellite)
@@ -81,20 +93,20 @@ class PygameHandler(threading.Thread):
     def start_pygame(self):
         pygame.init()
         self.running = True
-        
-        self.subprocess.start()
+        self.draw()
+        # self.subprocess.start()
         # subprocess = multiprocessing.Process(target=self.draw, args=())
         # subprocess.start()
     
     def stop_pygame(self):
-        if self.is_alive():
-            self.subprocess.kill()
-            self.subprocess.join()
+        # if self.is_alive():
+        #     self.subprocess.kill()
+        #     self.subprocess.join()
        
-        if not self.is_alive():
-            print('thread killed')
-        if self.running :
-            self.running = False
+        # if not self.is_alive():
+        #     print('thread killed')
+        # if self.running :
+        #     self.running = False
             pygame.quit()
         # subprocess.raise_exception()
         # self.subprocess.terminate()
@@ -137,36 +149,24 @@ class PygameHandler(threading.Thread):
                        self.draw_quadtree()
                     elif event.key == pygame.K_o:
                         self.show_orbits = not self.show_orbits
-                   
+                    elif event.key == pygame.K_r:
+                       self.running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.space_debris_group.sprites():
                         o.change_selected()
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
-                print(launchpad.closing_time)
+                # print(launchpad.closing_time)
                 if launchpad.closing_time > round_off_wi_exceed(counter_time):
-                    print(f'Arrival: {round_off_wi_exceed(launchpad.next_arrival_time)} vs {round_off_wi_exceed(counter_time)}')
-                    if launchpad.next_departure_time:
-                        print(f'Departure: {round_off_wi_exceed(launchpad.next_departure_time)} vs {round_off_wi_exceed(counter_time)}')
-                    if round_off_wi_exceed(launchpad.next_arrival_time) == round_off_wi_exceed(counter_time):
-                        print('\o/')
-                        new_rocket = generate_new_rocket(self.orbits)
-                        if not launchpad.lauch_that_is_running:
-                            launchpad.lauch_that_is_running = new_rocket
-                            launchpad.generate_next_departure(counter_time)
-                        else:
-                            launchpad.rocket_in_queue.append(new_rocket)
-                        launchpad.generate_next_arrival(counter_time)
+                    print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
+                    launchpad.update(counter_time, self.orbits)
                         
                     if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
-                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket_id}')
-                        satellite = launchpad.lauch_that_is_running.satellite
+                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
+                        satellite = launchpad.lauch_that_is_running.rocket.satellite
                         self.add_new_satellite(satellite)
-                        launchpad.lauch_that_is_running = None
-                        if launchpad.rocket_in_queue:
-                            next_launch = launchpad.rocket_in_queue.pop(0)
-                            launchpad.lauch_that_is_running = next_launch
-                            launchpad.generate_next_departure(counter_time)
+                        launchpad.update_departure(counter_time)
+                            
                            
                         
 

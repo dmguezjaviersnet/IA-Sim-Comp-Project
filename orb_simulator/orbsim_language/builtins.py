@@ -31,6 +31,18 @@ def randfloat(inf: 'Instance', sup: 'Instance'):
     randvalue = random.random() + randvalue
     return Instance(IntType(), randvalue)
 
+def number_of_satellites(handler: 'PygameHandler'):
+    return Instance(IntType(), handler.number_of_satellites)
+
+def number_of_space_debris(handler: 'PygameHandler'):
+    return Instance(IntType(), handler.number_of_space_debris)
+
+def number_of_objects(handler: 'PygameHandler'):
+    return Instance(IntType(), handler.number_of_objects)
+
+def number_of_orbits(handler: 'PygameHandler'):
+    return Instance(IntType(), handler.number_of_orbits)
+
 def orbit_add_to_simulation(o1: 'Instance', handler: 'PygameHandler'):
     handler.add_new_orbit(o1.value)
 
@@ -40,8 +52,11 @@ def satellite_add_to_simulation(o1: 'Instance', handler: 'PygameHandler'):
 def space_debris_add_to_simulation(o1: 'Instance', handler: 'PygameHandler'):
     handler.add_new_space_debris(o1.value)
 
+simulation_names = ['add_to_simulation', 'number_objects', 'number_orbits', 
+'number_space_debris', 'number_satellites']
+
 def for_simulation(method_name: str):
-    return method_name == 'add_to_simulation'
+    return method_name in simulation_names
 
 builtins_methods={
     ('String','concat'): concat,
@@ -59,5 +74,11 @@ builtins_methods={
 
 builtins_functions = {
     'randint': randint,
-    'randfloat': randfloat
+    'randfloat': randfloat,
+    'number_objects': number_of_objects,
+    'number_orbits': number_of_orbits,
+    'number_space_debris': number_of_space_debris,
+    'number_satellites': number_of_satellites,
+    
+    
 }

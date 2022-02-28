@@ -8,12 +8,21 @@ class Satellite(OrbitObj):
         super().__init__(a, b, orbit_center, vel)
         self.image = pygame.image.load('./images/satellite1.png').convert_alpha()
         self.rect = self.image.get_rect()
+        self.size = (self.rect.width, self.rect.height)
         self.rect.center = [pos_x, pos_y]
         self.image.set_colorkey((255, 0, 255))
         self.r = math.dist(self.rect.center, self.orbit_center)
         self.circular_speed = math.sqrt(self.G*self.earth_mass/self.r)
         self.circular_speed = 1 - 1/self.circular_speed
-    
+        self.id = id(self)
+
+    @property
+    def pos(self):
+        return self.rect.center
+
+    def __str__(self):
+        return f'Satellite {self.id} Size: {self.size} Position: {self.pos}'
+        
     def draw_selection(self, surface):
         
         if self.selected:

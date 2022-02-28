@@ -56,6 +56,7 @@ from orbsim_language.orbsim_ast.animate_earth_node import AnimateEarthNode
 from orbsim_language.orbsim_ast.orbit_node import OrbitNode
 from orbsim_language.orbsim_ast.satellite_node import SatelliteNode
 from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode
+from orbsim_language.orbsim_ast.show_orbits_node import ShowOrbitsNode
 from simulation.generate_objects import *
 from orbsim_pygame import PygameHandler
 import orbsim_pygame
@@ -102,6 +103,8 @@ class Executor:
         new_scope = Scope()
         if (node.identifier) in builtins_functions:
             args = tuple(self.execute(expr, scope) for expr in node.args)
+            if for_simulation(node.identifier):
+                args =  args + (self.handler,)
             return builtins_functions[(node.identifier)](*args)
         
         for i in range(len(node.args)):
@@ -420,3 +423,7 @@ class Executor:
         else:
             space_debris = generate_new_random_space_debris(self.handler.orbits)
             return Instance(SpaceDebrisType(), space_debris)
+    
+    @visitor.when(ShowOrbitsNode)
+    def execute(self, node: 'ShowOrbitsNode', scope: 'Scope'):
+        self.handler.show_orbits = not self.handler.show_orbits

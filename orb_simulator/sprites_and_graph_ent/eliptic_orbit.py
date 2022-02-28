@@ -21,9 +21,12 @@ class ElipticOrbit:
             self.covertex1 = (self.center[0] - self.semi_minor_axis, self.center[1])
             self.covertex2 = (self.center[0] + self.semi_minor_axis, self.center[1])
         self.rect = pygame.Rect(self.center[0]- width/2, self.center[1] - height/2, width, height)
-        
+        self.id  = id(self)
     def __eq__(self, other: 'ElipticOrbit'):
         return self.semi_major_axis == other.semi_major_axis and self.semi_minor_axis == other.semi_minor_axis
+
+    def __str__(self):
+        return f'Orbit {self.id} Sobre el eje: {self.over_axis} Semi_eje_mayor:{self.semi_major_axis} Semi_eje_menor:{self.semi_minor_axis}'
 
     def draw_elipse(self, screen, color = (255,255,255)):
         pygame.draw.ellipse(screen, color,self.rect, 2)

@@ -20,6 +20,7 @@ orbsim_lexer = Lexer([
     ('spacedebris', Token_Type.space_debris),
     ('satellite', Token_Type.satellite),
     ('orbit', Token_Type.orbit),
+    ('show_orbits', Token_Type.show_orbits),
     ('continue', Token_Type.continue_orbsim),
     ('break', Token_Type.break_orbsim),
     ('true|false', Token_Type.boolean),
