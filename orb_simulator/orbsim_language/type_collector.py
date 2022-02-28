@@ -24,6 +24,11 @@ class TypeCollector:
         self.context: Context =  Context()
         self.context.define_fun('randint', IntType(), ['init_range', 'fin_range'], [IntType(), IntType()])
         self.context.define_fun('randfloat', FloatType(), ['init_range', 'fin_range'], [IntType(), IntType()])
+        self.context.define_fun('number_orbits', IntType(), [], [])
+        self.context.define_fun('number_space_debris', IntType(), [], [])
+        self.context.define_fun('number_satellites', IntType(), [], [])
+        self.context.define_fun('number_objects', IntType(), [], [])
+        
         string_type =  StringType()
         self.context.types['String']  = string_type
         string_type.define_method('concat', string_type, ['s1'], [string_type])

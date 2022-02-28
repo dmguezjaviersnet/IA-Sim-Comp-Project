@@ -85,7 +85,7 @@ class Token_Type(Enum):
     space_debris = 59
     satellite = 60
     orbit = 61
-    
+    show_orbits = 62
     
     eof = 100
     space = 101

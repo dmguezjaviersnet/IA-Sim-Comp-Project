@@ -11,7 +11,7 @@ from orbsim_language.orbsim_ast import DivNode, PrintNode, FunCallNode, ModNode,
 from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXorNode, BitwiseShiftRightNode, BitwiseShiftLeftNode
 from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode, MethodCallNode, AttributeCallNode
 from orbsim_language.orbsim_ast import DrawquadtreeNode
-from orbsim_language.orbsim_ast import AnimateEarthNode
+from orbsim_language.orbsim_ast import AnimateEarthNode, ShowOrbitsNode
 from orbsim_language.orbsim_ast import SpaceDebrisNode, SatelliteNode, OrbitNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
@@ -123,6 +123,9 @@ def drawquadtree_stmt_rule(head: Symbol, tail: List[Symbol]):
 
 def animate_earth_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = AnimateEarthNode()
+
+def show_orbits_stmt_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = ShowOrbitsNode()
 
 def print_stmt_rule(head: Symbol, tail: List[Symbol]):
     head.ast = PrintNode(tail[1].ast)

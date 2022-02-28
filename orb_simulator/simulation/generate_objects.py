@@ -92,7 +92,7 @@ def generate_satellite_in_orbit(orbit: 'ElipticOrbit'):
     return satellite
 
 def generate_waiting_time():
-    lambd = 0.1
+    lambd = 0.4
     ran_var_uni =  random.random()
     return - (1/lambd)*math.log(ran_var_uni)
 

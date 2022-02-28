@@ -4,9 +4,17 @@ from compile_and_execute import orbsim_compile_and_execute
 from io import StringIO  
 import sys
 class OrbisimUI:
-
+    
     def __init__(self, handler):
         # self.code_text = st_ace(keybinding="vscode", theme="monokai", height=500)
+        
+        # st.write('Console Output:')
+        # exe_cu =orbsim_compile_and_execute(code)
+        # st.write(exe_cu)
+        self.editor(handler)
+
+    
+    def editor(self, handler):
         self.title = st.title("OrbiSimulator")
         self.handler = handler
         
@@ -33,9 +41,6 @@ class OrbisimUI:
                     for i in all_output:
                         if i:
                             st.write(i)
-        # st.write('Console Output:')
-        # exe_cu =orbsim_compile_and_execute(code)
-        # st.write(exe_cu)
 
     
 # # code = st_ace()
