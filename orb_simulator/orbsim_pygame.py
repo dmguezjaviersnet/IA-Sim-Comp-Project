@@ -1,10 +1,10 @@
 from asyncio import subprocess
 from typing import List
 import pygame
-from sprites_and_graph_ent import satellite
+from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector
 from simulation.orbsim_simulation_entities import Point
 from simulation.orbsim_simulation_structs import QuadTree, leaves
-from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad
+
 from sprites_and_graph_ent.earth import Sphere
 from tools import*
 from tools import next_point_moving_in_elipse, round_off_wi_exceed

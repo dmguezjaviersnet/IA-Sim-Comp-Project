@@ -82,9 +82,9 @@ class QTNode:
 		self.bounding_box_tl = (bounding_box[0].x, bounding_box[0].y)
 		self.bounding_box_br = (bounding_box[1].x, bounding_box[1].y)
 		self.depth = depth
-		self.children: List[QTNode] = None
-		self.objects: List[SpaceObj] = None
-		self.neighbors: List[QTNode] = None
+		self.children: List[QTNode] = []
+		self.objects: List[SpaceObj] = []
+		self.neighbors: List[QTNode] = []
 		self.center_x = ((bounding_box[0].x + bounding_box[1].x) / 2)
 		self.center_y = ((bounding_box[0].y + bounding_box[1].y) / 2)
 		self.qnode_lines = qnode_lines

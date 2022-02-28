@@ -2,7 +2,7 @@ from typing import List
 import math
 from sprites_and_graph_ent.rocket import Rocket
 from sprites_and_graph_ent import ElipticOrbit
-from sprites_and_graph_ent import SpaceDebris, Satellite
+from sprites_and_graph_ent import SpaceDebris, Satellite, SpaceDebrisCollector
 import random
 from tools import next_point_moving_in_elipse
 
@@ -102,11 +102,11 @@ def generate_new_rocket(orbits):
     rocket = Rocket(satellite)
     return rocket
 
-# def generate_space_debris_collector():
-#     pos_x = random.randint(1,800)
-#     pos_y = random.randint(1,800)
-#     span = 500
-#     capacity = 500
-#     fuel = 500
-#     collector = SpaceDebrisCollector(pos_x, pos_y, span, capacity, fuel)
-#     return collector
+def generate_space_debris_collector():
+    pos_x = random.randint(1,800)
+    pos_y = random.randint(1,800)
+    span = 500
+    capacity = 500
+    fuel = 500
+    collector = SpaceDebrisCollector(pos_x, pos_y, span, capacity, fuel)
+    return collector

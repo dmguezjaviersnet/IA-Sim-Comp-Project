@@ -1,15 +1,27 @@
 from abc import abstractmethod
 import heapq
 from typing import Any, List
-from simulation.orbsim_simulation_structs.agent_action_data import AgentActionData
-from simulation.orbsim_simulation_structs.quadtree import QTNode, QuadTree
+from sprites_and_graph_ent.space_debris import SpaceDebris
 from sprites_and_graph_ent.space_obj import SpaceObj
 import pygame
+
+class AgentActionData:
+
+    def __init__(self, area: int, distance: int, qt_node, object: SpaceDebris, action: str) -> None:
+        self.area = area
+        self.distance = distance
+        self.qt_node = qt_node
+        self.object = object
+        self.action = action
+
+    def __lt__(self, other: 'AgentActionData'):
+        return True if self.area < other.area else self.distance < other.distance if self.area == other.area else False
+
 class SpaceAgent(SpaceObj):
 	
 	def __init__(self, pos_x: int, pos_y: int, perception_range: int):
 		super().__init__()
-		self.beliefs: QTNode = None
+		self.beliefs = None
 		self.desires: heapq[AgentActionData] = None
 		self.intentions: AgentActionData = None
 		self.size = (35,35)
@@ -33,7 +45,7 @@ class SpaceAgent(SpaceObj):
 	def pos_y(self):
 		return self.rect.center[1]
 	
-	def scan(self, environment: QuadTree):
+	def scan(self, environment):
 		environment.insert(self)
     
 	@abstractmethod

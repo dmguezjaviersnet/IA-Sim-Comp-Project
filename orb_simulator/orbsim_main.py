@@ -1,4 +1,3 @@
-from cgitb import handler
 from lexer.regex_grammar import regex_grammar
 from parser.lr0_item import Lr0_item
 from parser.lr1_item import Lr1_item
@@ -54,19 +53,20 @@ def test_lexer():
     
 
 def main():
-    pass
+    
     ########### #################### Gramática de Regex #################################
     # re = Regex_Engine('(a|b)*')
     # test_lexer()
    
     pygame_handler = PygameHandler()
+    pygame_handler.start_pygame()
     # orbsim_compile_and_execute(
     # '''
     #     let SpaceDebris sat1 = spacedebris;
     #     sat1.add_to_simulation();
     
     # ''', pygame_handler)
-    ui = OrbisimUI(pygame_handler)
+    # ui = OrbisimUI(pygame_handler)
     
     # handler = Handler()
     # handler.start()

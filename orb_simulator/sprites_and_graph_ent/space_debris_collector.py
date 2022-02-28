@@ -3,9 +3,7 @@ import math
 from random import randint
 from math import dist
 from typing import Dict, List, Tuple
-from simulation.orbsim_simulation_structs.quadtree import QTNode
-from sprites_and_graph_ent.space_agent import SpaceAgent
-from simulation.orbsim_simulation_structs.agent_action_data import AgentActionData
+from sprites_and_graph_ent.space_agent import SpaceAgent, AgentActionData
 from simulation.a_star import a_star, eucl_dist_qtnode
 
 
@@ -13,7 +11,7 @@ class SpaceDebrisCollector(SpaceAgent):
 
 	def __init__(self, pos_x: int, pos_y: int, life_span: int, capacity: int, fuel: int, vel_x = 1, vel_y = 1):
 		super().__init__(pos_x, pos_y)
-		self.path_to_debris: List[QTNode] = None
+		self.path_to_debris: List = None
 		self.life_span = life_span
 		self.capacity = capacity
 		self.fuel = fuel
