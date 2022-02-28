@@ -1,9 +1,11 @@
 from enum import Enum, IntEnum
 from typing import Tuple, List
-from xml.etree.ElementTree import QName
-from simulation.orbsim_simulation_entities import OrbsimObj, Point
+from simulation.orbsim_simulation_entities import Point
+from sprites_and_graph_ent.orbit_obj import OrbitObj
+from sprites_and_graph_ent.space_agent import SpaceAgent
 from sprites_and_graph_ent.space_debris import SpaceDebris
 import pygame.draw
+from sprites_and_graph_ent.space_obj import SpaceObj
 from tools import RED_COLOR
 
 
@@ -61,6 +63,18 @@ def draw_quadtree_line(color, point1, point2):
 	global quadtree_pygame_window
 	pygame.draw.line(quadtree_pygame_window, color, point1, point2)
 
+class QuadTree:
+	def __init__(self, screen, bounding_box: Tuple[Point, Point], qnode_lines):
+		self.root = QTNode(None, bounding_box, 0, qnode_lines)
+		self.collisions = 0
+		global quadtree_pygame_window
+		quadtree_pygame_window = screen
+	
+	def insert(self, obj: OrbitObj):
+		self.root.insert(obj)
+
+	def find_collisions(self):
+		self.find_collisions()
 
 class QTNode:
 	def __init__(self, parent: 'QTNode', bounding_box: Tuple[Point, Point], depth, qnode_lines):
@@ -68,23 +82,24 @@ class QTNode:
 		self.bounding_box_tl = (bounding_box[0].x, bounding_box[0].y)
 		self.bounding_box_br = (bounding_box[1].x, bounding_box[1].y)
 		self.depth = depth
-		self.children: List[QTNode] = []
-		self.objects: List[SpaceDebris] = []
+		self.children: List[QTNode] = None
+		self.objects: List[SpaceObj] = None
+		self.neighbors: List[QTNode] = None
 		self.center_x = ((bounding_box[0].x + bounding_box[1].x) / 2)
 		self.center_y = ((bounding_box[0].y + bounding_box[1].y) / 2)
 		self.qnode_lines = qnode_lines
+		self.id = id(self)
 	
 	def __is_empty(self):
 		return not self.objects
 
-	# returns true if a node is a leaf in the quadtree
 	def __is_leaf(self):
 		return not self.children
 
+	def __hash__(self):
+		return self.id
+		
 	def split(self):
-		# if (self.__is_empty()):
-		# 	return
-
 		q1 = QTNode(self, (Point(self.bounding_box_tl[0], self.bounding_box_tl[1]), Point(self.center_x, self.center_y)), self.depth + 1, self.qnode_lines)
 		q2 = QTNode(self, (Point(self.center_x, self.bounding_box_tl[1]), Point(self.bounding_box_br[0], self.center_y)), self.depth + 1,self.qnode_lines)
 		q3 = QTNode(self, (Point(self.bounding_box_tl[0], self.center_y), Point(self.center_x, self.bounding_box_br[1])), self.depth + 1, self.qnode_lines)
@@ -94,7 +109,6 @@ class QTNode:
 			draw_quadtree_line(RED_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
 			draw_quadtree_line(RED_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
 
-		# assert len(self.objects) > MAX_LIMIT
 		for object in self.objects:
 			if detect_overlap(object.rect.topleft, object.rect.bottomright, q1.bounding_box_tl, q1.bounding_box_br):
 				q1.insert(object)
@@ -123,24 +137,21 @@ class QTNode:
 				
 		return overlapping_leaves
 	
-	# inserts a point into the quadtree
 	def insert(self, object: SpaceDebris):
-		# if (not detect_overlap((object.top_left, object.bottom_right), self.boundingBox)):
-		# 	return
-
 		for q_node in self.find(object):
 			if (q_node.__is_leaf()):
 				q_node.objects.append(object)
 				if not detect_full_overlap(object.rect.topleft, object.rect.bottomright, q_node.bounding_box_tl, q_node.bounding_box_br):
-					if  q_node.depth < MAX_DEPTH:
+					if q_node.depth < MAX_DEPTH:
 						q_node.split()
 
-					else: leaves.append(q_node)
+					else:
+						if isinstance(object, SpaceAgent) and object.beliefs == None:
+							object.beliefs = q_node
 
-	# splits current quad tree into 4 smaller quad trees
-	# Method to detect collisions for the quadtree built for the frame
+						leaves.append(q_node)
+
 	def check_collisions(self):
-		# a leaf can contain maximum maxLimit # of objects. So, an n^2 approach here is ok
 		for i, _ in enumerate(self.objects):
 			j = i + 1
 			while j < len(self.objects):
@@ -157,27 +168,26 @@ class QTNode:
 		if direction == Direction.N:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.SW] == self: # Is 'self' SW child?
+			if self.parent.children[Child.SW] == self:
 				return self.parent.children[Child.NW]
-			if self.parent.children[Child.SE] == self: # Is 'self' SE child?
+			if self.parent.children[Child.SE] == self:
 				return self.parent.children[Child.NE]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
 			if node is None or node.__is_leaf():
 				return node
 
-            # 'self' is guaranteed to be a north child
 			return (node.children[Child.SW]
-                    if self.parent.children[Child.NW] == self # Is 'self' NW child?
+                    if self.parent.children[Child.NW] == self
                     else node.children[Child.SE])
 
         # Dirección Sur
 		elif direction == Direction.S:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.NW] == self: # Is 'self' NW child?
+			if self.parent.children[Child.NW] == self:
 				return self.parent.children[Child.SW]
-			if self.parent.children[Child.NE] == self: # Is 'self' NE child?
+			if self.parent.children[Child.NE] == self:
 				return self.parent.children[Child.SE]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
@@ -186,16 +196,16 @@ class QTNode:
 
             # 'self' is guaranteed to be a south child
 			return (node.children[Child.NW]
-                    if self.parent.children[Child.SW] == self # Is 'self' SW child?
+                    if self.parent.children[Child.SW] == self
                     else node.children[Child.NE])
 
         # Dirección Oeste
 		elif direction == Direction.W:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.NE] == self: # Is 'self' NE child?
+			if self.parent.children[Child.NE] == self:
 				return self.parent.children[Child.NW]
-			if self.parent.children[Child.SE] == self: # Is 'self' SE child?
+			if self.parent.children[Child.SE] == self:
 				return self.parent.children[Child.SW]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
@@ -204,16 +214,16 @@ class QTNode:
 
             # 'self' is guaranteed to be a west child
 			return (node.children[Child.NE]
-                    if self.parent.children[Child.NW] == self # Is 'self' SW child?
+                    if self.parent.children[Child.NW] == self
                     else node.children[Child.SE])
 
         # Dirección Este
 		elif direction == Direction.E:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.NW] == self: # Is 'self' NW child?
+			if self.parent.children[Child.NW] == self:
 				return self.parent.children[Child.NE]
-			if self.parent.children[Child.SW] == self: # Is 'self' SW child?
+			if self.parent.children[Child.SW] == self:
 				return self.parent.children[Child.SE]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
@@ -222,14 +232,14 @@ class QTNode:
 
             # 'self' is guaranteed to be an east child
 			return (node.children[Child.NW]
-                    if self.parent.children[Child.NE] == self # Is 'self' SW child?
+                    if self.parent.children[Child.NE] == self
                     else node.children[Child.SW])
 
         # Dirección Noreste
 		elif direction == Direction.NE:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.SW] == self: # Is 'self' SW child?
+			if self.parent.children[Child.SW] == self:
 				return self.parent.children[Child.NE]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
@@ -237,7 +247,7 @@ class QTNode:
 				return node
 
 			return (node.children[Child.SE]
-                    if self.parent.children[Child.NW] == self # Is 'self' SW child?
+                    if self.parent.children[Child.NW] == self
                     else node.children[Child.SW] if self.parent.children[Child.NE] == self
                     else node.children[Child.NW])
 
@@ -245,7 +255,7 @@ class QTNode:
 		elif direction == Direction.NW:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.SE] == self: # Is 'self' SE child?
+			if self.parent.children[Child.SE] == self:
 				return self.parent.children[Child.NW]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
@@ -253,7 +263,7 @@ class QTNode:
 				return node
 
 			return (node.children[Child.SW]
-                    if self.parent.children[Child.NE] == self # Is 'self' SW child?
+                    if self.parent.children[Child.NE] == self
                     else node.children[Child.SE] if self.parent.children[Child.NW] == self
                     else node.children[Child.NE])
 
@@ -261,7 +271,7 @@ class QTNode:
 		elif direction == Direction.SE:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.NW] == self: # Is 'self' NW child?
+			if self.parent.children[Child.NW] == self:
 				return self.parent.children[Child.SE]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
@@ -269,7 +279,7 @@ class QTNode:
 				return node
 
 			return (node.children[Child.SW]
-                    if self.parent.children[Child.NE] == self # Is 'self' SW child?
+                    if self.parent.children[Child.NE] == self
                     else node.children[Child.NW] if self.parent.children[Child.SE] == self
                     else node.children[Child.NE])
 
@@ -277,7 +287,7 @@ class QTNode:
 		elif direction == Direction.SW:
 			if self.parent is None:
 				return None
-			if self.parent.children[Child.NE] == self: # Is 'self' NE child?
+			if self.parent.children[Child.NE] == self:
 				return self.parent.children[Child.SW]
                 
 			node = self.parent.find_ge_size_neighbor(direction)
@@ -285,7 +295,7 @@ class QTNode:
 				return node
 
 			return (node.children[Child.NW]
-                    if self.parent.children[Child.SE] == self # Is 'self' SW child?
+                    if self.parent.children[Child.SE] == self
                     else node.children[Child.NE] if self.parent.children[Child.SW] == self
                     else node.children[Child.SE])
 
@@ -396,9 +406,6 @@ class QTNode:
 				candidates.remove(candidates[0])
 
 			return neighbors
-
-            # TODO: implement other directions symmetric to NORTH case
-			assert False
             
 	def find_neighbors(self) -> List['QTNode']:
 		all_neighbors = []
@@ -407,17 +414,3 @@ class QTNode:
 			all_neighbors += self.find_smaller_size_neighbors(neighbor, direction)
 
 		self.neighbors = all_neighbors
-
-# Quad Tree data structure
-class QuadTree:
-	def __init__(self, screen, bounding_box: Tuple[Point, Point], qnode_lines):
-		self.root = QTNode(None, bounding_box, 0, qnode_lines)
-		self.collisions = 0
-		global quadtree_pygame_window
-		quadtree_pygame_window = screen
-	
-	def insert(self, obj):
-		self.root.insert(obj)
-
-	def find_collisions(self):
-		self.find_collisions()

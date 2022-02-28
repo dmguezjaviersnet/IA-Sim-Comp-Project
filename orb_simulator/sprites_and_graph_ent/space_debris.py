@@ -8,6 +8,7 @@ class SpaceDebris(OrbitObj):
     
     def __init__(self, pos_x, pos_y, a, b, orbit_center, vel: int = 0.5):
         super().__init__(a, b, orbit_center, vel)
+        self.mass = None # pending
         self.size = (random.randint(2,30),random.randint(2,30))
         self.image = pygame.Surface([self.size[0], self.size[1]])
         self.default_color = SOLID_BLUE_COLOR
@@ -19,6 +20,7 @@ class SpaceDebris(OrbitObj):
         self.circular_speed = math.sqrt(self.G*self.earth_mass/self.r)
         self.circular_speed = 1 - 1/self.circular_speed
         self.id = id(self)
+        self.image.fill(self.default_color)
     
     @property
     def pos(self):
@@ -26,7 +28,9 @@ class SpaceDebris(OrbitObj):
     def __str__(self):
         return f'SpaceDebris {self.id} Size: {self.size} Position: {self.pos}'
 
-
+    @property
+    def area(self):
+        return self.rect.width * self.rect.height
     
     def update(self) -> None:
         nex_pos = next_point_moving_in_elipse(self.orbit_center,self.a, self.b, int(self.orbit_angle))

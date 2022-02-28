@@ -129,7 +129,7 @@ class PygameHandler():
         
         launchpad =  Launchpad(1000)
         sys.stdout = sys.__stdout__
-        new_object_event = poisson_process_homogeneous(1000,0.1)
+        new_object_event = poisson_process_homogeneous(1000, 0.1)
         start = time.time()
         
         while self.running:
@@ -154,6 +154,7 @@ class PygameHandler():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.space_debris_group.sprites():
                         o.change_selected()
+
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
                 # print(launchpad.closing_time)
@@ -184,7 +185,6 @@ class PygameHandler():
                         self.space_debris_group.add(new_obj)
                         new_object_event.pop(0)
                         print(len(self.objects))
-                
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
@@ -228,3 +228,9 @@ class PygameHandler():
                 
                 pygame.display.flip()
         pygame.quit()
+
+if __name__ == '__main__':
+    h = PygameHandler()
+    h.generate_orbits(4)
+    h.generate_objects_in_orbits(3)
+    h.draw()

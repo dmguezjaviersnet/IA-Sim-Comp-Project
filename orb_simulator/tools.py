@@ -5,6 +5,9 @@ from typing import Any, Tuple
 from PIL import Image
 import math
 
+from simulation.orbsim_simulation_structs.quadtree import QTNode
+from sprites_and_graph_ent.space_debris import SpaceDebris
+
 # COLORS
 SELECT_BLUE_COLOR = (44, 176, 218)
 WHITE_COLOR = (255, 255, 255)
@@ -52,12 +55,13 @@ def generate_images_to_rotation(ori_path, des_path):
         new_img = im.rotate(angle)
         new_img.save(des_path)
 
-
-
 def next_point_moving_in_elipse(point: Tuple[float, float], a, b, degree):
     new_x = point[0] + (a*math.cos(degree * 2 * math.pi / 360))
     new_y = point[1] + (b*math.sin(degree * 2 * math.pi / 360))
     return (new_x, new_y)
 
+def eucl_dist_qtnode(qt1: QTNode, qt2: QTNode):
+    return math.dist((qt1.center_x, qt1.center_y), (qt2.center_x, qt2.center_y))
+    
 def round_off_wi_exceed(number):
     return math.floor(number*100)/100

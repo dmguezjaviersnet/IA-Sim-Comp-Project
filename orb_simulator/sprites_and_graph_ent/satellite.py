@@ -15,10 +15,16 @@ class Satellite(OrbitObj):
         self.circular_speed = math.sqrt(self.G*self.earth_mass/self.r)
         self.circular_speed = 1 - 1/self.circular_speed
         self.id = id(self)
+        self.life_time = None
+        self.mass = None
 
     @property
     def pos(self):
         return self.rect.center
+
+    @property
+    def area(self):
+        return self.rect.width * self.rect.height
 
     def __str__(self):
         return f'Satellite {self.id} Size: {self.size} Position: {self.pos}'

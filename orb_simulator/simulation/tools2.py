@@ -9,8 +9,11 @@ import numpy as np
 import heapq
 import pandas as pd
 from collections import OrderedDict
+from scipy import rand, randn
 
 from sklearn import neighbors
+
+from simulation.orbsim_simulation_structs.quadtree import QTNode
 
 @dataclass
 class Obj:
@@ -57,64 +60,41 @@ def generate_point():
         size = random.randint(20,100) * random.random()
         yield Obj(x,y,z,size)
 
-def reconstruct_path(node, parent):
-    path = [node]
 
-    while node in parent:
-        node = parent[node]
-        path.insert(0, node)
-
-    return path
 
 def get_neighbors(node):
     ...
-def a_star(start, h, goal, open):
-    closed_set = set()
-    open_set = set()
-    g_value = {}
-    f_value = []
-    parent = {}
 
-    # inicialización
-    f_start = h(start)
-    g_value[start] = 0
-    open_set.add(start)
-    heapq.heappush(f_value, (f_start, start))
-
-    while open_set:
-        _, node = heapq.heappop(f_value)
-
-        if goal == node:
-            return reconstruct_path(node, parent)
-
-        closed_set.add(node)
-        open_set.remove(node)
-
-        for neighbor in get_neighbors(node):
-            tentative_g_score = g_value[node] + 1
-
-            
-            if neighbor in closed_set:
-                continue
-
-
-            if neighbor not in open_set or tentative_g_score < g_value[neighbor]:
-                parent[neighbor] = node
-                g_value[neighbor] = tentative_g_score
-                actual_f_value = tentative_g_score + h(neighbor)
-
-                if neighbor in open_set:
-                    
-                    for i, (p, x) in f_value:
-                        if x == neighbor:
-                            f_value[i] = (actual_f_value, neighbor)
-                            break
-                    heapq.heapify(f_value)
-                else:
-                    open_set.add(neighbor)
-                    heapq.heappush(f_value, (actual_f_value, neighbor))
-
-
+def simulated_annealing(objective, bounds, n_iterations, step_size, temp):
+	# generate an initial point
+	best = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
+	# evaluate the initial point
+	best_eval = objective(best)
+	# current working solution
+	curr, curr_eval = best, best_eval
+	# run the algorithm
+	for i in range(n_iterations):
+		# take a step
+		candidate = curr + randn(len(bounds)) * step_size
+		# evaluate candidate point
+		candidate_eval = objective(candidate)
+		# check for new best solution
+		if candidate_eval < best_eval:
+			# store new best point
+			best, best_eval = candidate, candidate_eval
+			# report progress
+			print('>%d f(%s) = %.5f' % (i, best, best_eval))
+		# difference between candidate and current point evaluation
+		diff = candidate_eval - curr_eval
+		# calculate temperature for current epoch
+		t = temp / float(i + 1)
+		# calculate metropolis acceptance criterion
+		metropolis = math.exp(-diff / t)
+		# check if we should keep the new point
+		if diff < 0 or rand() < metropolis:
+			# store the new current point
+			curr, curr_eval = candidate, candidate_eval
+	return [best, best_eval]
 
 
 def plot_obj(obj:'Obj', ax):
