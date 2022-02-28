@@ -141,3 +141,9 @@ class PygameHandler(threading.Thread):
                 counter_time +=1
                 pygame.display.flip()
         pygame.quit()
+
+if __name__ == '__main__':
+    h = PygameHandler()
+    h.generate_orbits(4)
+    h.generate_objects_in_orbits(3)
+    h.draw()
