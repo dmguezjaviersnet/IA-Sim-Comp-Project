@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any, List
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
-from orbsim_language.orbsim_type import AnyType, ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType, OrbitType, SatelliteType, SpaceDebrisType
+from orbsim_language.orbsim_type import AnyType, ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType, OrbitType, SatelliteType, SpaceDebrisType, TupleType
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
 
@@ -28,7 +28,7 @@ class TypeCollector:
         self.context.define_fun('number_space_debris', IntType(), [], [])
         self.context.define_fun('number_satellites', IntType(), [], [])
         self.context.define_fun('number_objects', IntType(), [], [])
-        
+        self.context.define_fun('custom_space_debris', SpaceDebrisType(), ['size', 'color'], [TupleType(), TupleType()])
         string_type =  StringType()
         self.context.types['String']  = string_type
         string_type.define_method('concat', string_type, ['s1'], [string_type])
@@ -44,6 +44,8 @@ class TypeCollector:
         list_type.define_method('len', IntType(), [], [])
         list_type.define_method('add', ListType(), ['elem'], [AnyType()])
         list_type.define_method('remove', ListType(), ['elem'], [AnyType()])
+        tuple_type =  TupleType()
+        self.context.types['Tuple'] = tuple_type
         self.context.types['Void'] = VoidType()
         self.context.types['Any'] = AnyType()
         orbit_type = OrbitType() 
@@ -55,6 +57,7 @@ class TypeCollector:
         space_debris_type = SpaceDebrisType()
         self.context.types['SpaceDebris'] = space_debris_type
         space_debris_type.define_method('add_to_simulation', VoidType(), [], [])
+        space_debris_type.define_method('move_to_orbit', VoidType(), ['orbit'], [OrbitType()])
 
         
         

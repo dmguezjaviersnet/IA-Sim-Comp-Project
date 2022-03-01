@@ -57,6 +57,7 @@ from orbsim_language.orbsim_ast.orbit_node import OrbitNode
 from orbsim_language.orbsim_ast.satellite_node import SatelliteNode
 from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode
 from orbsim_language.orbsim_ast.show_orbits_node import ShowOrbitsNode
+from orbsim_language.orbsim_ast.tuple_creation_node import TupleCreationNode
 from simulation.generate_objects import *
 from orbsim_pygame import PygameHandler
 import orbsim_pygame
@@ -366,6 +367,15 @@ class Executor:
             list_val.append(elem_instance.value)
         
         return Instance(ListType(), list_val) 
+    
+    @visitor.when(TupleCreationNode)
+    def execute(self, node: TupleCreationNode, scope: 'Scope'):
+        tuple_val = ()
+        for elem in node.elems:
+            elem_instance = self.execute(elem, scope)
+            tuple_val += (elem_instance.value,)
+        
+        return Instance(TupleType(), tuple_val) 
 
     @visitor.when(NegNumberNode)
     def execute(self, node: NegNumberNode, scope: 'Scope'):
@@ -377,9 +387,9 @@ class Executor:
     def execute(self, node: StartSimNode, scope: 'Scope'):
         
         # self.handler.start()
-        self.handler.generate_orbits(random.randint(1,2))
-        self.handler.generate_objects_in_orbits(random.randint(1,2))
-        self.handler.generate_random_collector()
+        # self.handler.generate_orbits(random.randint(1,2))
+        # self.handler.generate_objects_in_orbits(random.randint(1,2))
+        # self.handler.generate_random_collector()
         self.handler.start_pygame()
         
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())

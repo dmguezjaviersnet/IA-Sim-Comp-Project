@@ -13,6 +13,7 @@ from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, C
 from orbsim_language.orbsim_ast import DrawquadtreeNode
 from orbsim_language.orbsim_ast import AnimateEarthNode, ShowOrbitsNode
 from orbsim_language.orbsim_ast import SpaceDebrisNode, SatelliteNode, OrbitNode
+from orbsim_language.orbsim_ast import TupleCreationNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ProgramNode(tail[0].ast)
@@ -242,6 +243,9 @@ def factor_rule2(head: Symbol, tail: List[Symbol]):
 def factor_rule3(head: Symbol, tail: List[Symbol]):
     head.ast = NegNumberNode(tail[1].ast)
 
+def factor_rule4(head: Symbol, tail: List[Symbol]):
+    head.ast = TupleCreationNode(tail[1].ast)
+
 def atom_rule1(head: Symbol, tail: List[Symbol]):
     head.ast = IntegerNode(tail[0].val)
 
@@ -271,6 +275,9 @@ def atom_rule9(head: Symbol, tail: List[Symbol]):
 
 def list_creation_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ListCreationNode(tail[1].ast)
+
+def tuple_creation_rule(head: Symbol, tail: List[Symbol]):
+    head.ast = TupleCreationNode(tail[2].ast)
 
 def func_call_rule(head: Symbol, tail: List[Symbol]):
     head.ast = FunCallNode(tail[0].val, tail[2].ast)

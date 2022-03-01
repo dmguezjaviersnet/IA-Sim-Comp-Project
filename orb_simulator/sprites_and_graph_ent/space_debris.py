@@ -81,4 +81,10 @@ class SpaceDebris(OrbitObj):
     def draw_collision(self, screen):
         self.image.fill(self.collision_color if self.is_colliding else self.default_color)
     
+    def move_to_orbit(self, new_x, new_y, a, b, center):
+        self.a =  a
+        self.b =  b
+        self.orbit_center = center
+        self.rect.center =[new_x, new_y]
+
     

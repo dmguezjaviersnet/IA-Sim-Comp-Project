@@ -4,7 +4,7 @@ from parser.terminal import Epsilon, Terminal, Eof
 from parser.non_terminal import Non_terminal
 from parser.grammar import Grammar
 from parser.own_token import Token_Type
-from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, flow_stmt_rule2, class_body_stmt_list_rule1, class_body_stmt_list_rule1
+from orbsim_language.orbsim_rules import arg_list_rule3, assign_stmt_rule, attr_call_rule, flow_stmt_rule2, class_body_stmt_list_rule1, class_body_stmt_list_rule1, tuple_creation_rule
 from orbsim_language.orbsim_rules import class_body_stmt_rule, attr_stmt_rule, def_func_stmt_rule, func_body_stmt_list_rule1, flow_stmt_rule1,start_stmt_rule, stop_stmt_rule
 from orbsim_language.orbsim_rules import func_body_stmt_list_rule2, print_stmt_rule, class_body_stmt_list_rule2, expr_list_rule3, make_rule, method_call_rule
 from orbsim_language.orbsim_rules import and_expr_rule1, and_expr_rule2, arg_list_rule1, arg_list_rule2, arth_expr_rule1, def_method_stmt_rule
@@ -23,7 +23,8 @@ from orbsim_language.orbsim_rules import stmt_list_rule1, stmt_list_rule2, stmt_
 from orbsim_language.orbsim_rules import term_rule3, term_rule4, list_creation_rule, pause_stmt_rule
 from orbsim_language.orbsim_rules import drawquadtree_stmt_rule, animate_earth_stmt_rule
 from orbsim_language.orbsim_rules import atom_rule7, atom_rule8, atom_rule9
-from orbsim_language.orbsim_rules import show_orbits_stmt_rule
+from orbsim_language.orbsim_rules import show_orbits_stmt_rule, tuple_creation_rule
+
 # Gramática del DSL
 '''
 ############### Grammar 1 ###################
@@ -181,6 +182,8 @@ substraction = Terminal('-')
 product = Terminal('*')
 division = Terminal('/')
 module = Terminal('%')
+tuple_terminal = Terminal('tuple')
+
 eof = Eof()
 
 int = Terminal('int_val', 'val')
@@ -192,6 +195,7 @@ satellite = Terminal('satellite', 'val')
 orbit = Terminal('orbit', 'val')
 id_orbsim = Terminal('id_orbsim', 'val')
 type_id = Terminal('type_id', 'val')
+
 epsilon = Epsilon()
 
 terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword, then_keyword, else_keyword, print_keyword,
@@ -199,8 +203,8 @@ terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword,
             open_curly_braces, closed_curly_braces, open_parenthesis, closed_parenthesis, neg, logic_or, logic_and,
             not_equals, equals, greater_or_equal, less_equal, greater, less, addition, substraction, product, division,
             module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and, start_keyword, stop_keyword,
-            pause_keyword, drawquadtree_keyword, animate_earth_keyword, space_debris, satellite, orbit, show_orbits_keyword,
-            bitwise_shift_left, bitwise_shift_right, class_member_access_operator, open_sqr_brckt, closed_sqr_brckt, epsilon]
+            pause_keyword, drawquadtree_keyword, animate_earth_keyword, space_debris, satellite, orbit, show_orbits_keyword,tuple_terminal,
+            bitwise_shift_left, bitwise_shift_right, class_member_access_operator, open_sqr_brckt, closed_sqr_brckt,  epsilon]
 
 # No terminales
 
@@ -248,6 +252,7 @@ term = Non_terminal('term', 'ast')
 factor = Non_terminal('factor', 'ast')
 atom = Non_terminal('atom', 'ast')
 list_creation = Non_terminal('list_creation', 'ast')
+tuple_creation = Non_terminal('tuple_creation', 'ast')
 func_call = Non_terminal('func_call', 'ast')
 make_instance = Non_terminal('make_instance', 'ast')
 method_call = Non_terminal('method_call', 'ast')
@@ -258,8 +263,9 @@ non_terminals = [program, stmt_list, statement, class_body_stmt_list, class_body
                 def_method_stmt, func_body_stmt_list, func_body_stmt, let_stmt, assign_stmt, loop_stmt, conditional_stmt,
                 print_stmt, ret_stmt, loop_body_stmt_list, loop_body_stmt, flow_stmt, conditional_body_stmt_list, conditional_body_stmt,
                 arg_list, expression, or_expr, and_expr, not_expr, compare_expr, compare_op, bitwise_or_expr, bitwise_xor_expr,
-                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, list_creation, func_call, make_instance, method_call, 
-                attr_call, expr_list, start_stmt, stop_stmt, pause_stmt, drawquadtree_stmt, animate_earth_stmt, show_orbits_stmt]
+                bitwise_and_expr, shift_expr, arth_expr, term, factor, atom, list_creation, tuple_creation, func_call, make_instance, 
+                method_call, attr_call, expr_list, start_stmt, stop_stmt, pause_stmt, drawquadtree_stmt, 
+                animate_earth_stmt, show_orbits_stmt]
 
 # Producciones
 
@@ -510,18 +516,25 @@ p35 = Production(factor,
 
 p36 = Production(atom,
                 [[int], [float], [boolean], [string], [id_orbsim], [orbit], [space_debris], [satellite], [func_call], 
-                [make_instance], [method_call], [attr_call], [list_creation]],
+                [make_instance], [method_call], [attr_call], [list_creation], [tuple_creation]],
                 [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)],
                  [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule7, True)],
                  [(atom_rule8, True)],[(atom_rule9, True)],[(atom_rule6, True)],
                  [(atom_rule6, True)], [(atom_rule6, True)], [(atom_rule6, True)],
-                 [(atom_rule6, True)]]
+                 [(atom_rule6, True)], [(atom_rule6, True)]]
                 )
 
 p37 = Production(list_creation,
                 [[open_sqr_brckt, expr_list, closed_sqr_brckt]],
                 [[(list_creation_rule, True)]]
                 )
+
+p49 = Production(tuple_creation,
+                [[tuple_terminal,open_parenthesis, expr_list, closed_parenthesis]],
+                [[(tuple_creation_rule, True)]]
+                )
+
+
 
 p38 = Production(func_call,
                 [[id_orbsim, open_parenthesis, expr_list, closed_parenthesis]],
@@ -550,7 +563,7 @@ p42 = Production(expr_list,
 
 productions = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20,
                 p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, 
-                p39, p40, p41, p42, p43, p44, p45, p46, p47, p48]
+                p39, p40, p41, p42, p43, p44, p45, p46, p47, p48, p49]
 
 orbsim_grammar = Grammar(terminals, non_terminals, program, productions)
 
@@ -582,6 +595,7 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.orbit : 'orbit',
     Token_Type.space_debris: 'spacedebris',
     Token_Type.satellite: 'satellite',
+    Token_Type.tuple: 'tuple',
     Token_Type.plus : '+',
     Token_Type.minus : '-',
     Token_Type.mul : '*',
