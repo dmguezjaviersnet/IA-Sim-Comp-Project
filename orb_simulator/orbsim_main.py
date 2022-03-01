@@ -53,8 +53,8 @@ def test_lexer():
     
 
 def debugging(handler: 'PygameHandler'):
-    handler.generate_orbits(random.randint(1,2))
-    handler.generate_objects_in_orbits(random.randint(1,2))
+    handler.generate_orbits(random.randint(1,4))
+    handler.generate_objects_in_orbits(random.randint(1,5))
     handler.generate_random_collector()
     handler.start_pygame()
 

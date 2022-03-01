@@ -41,6 +41,7 @@ class PygameHandler():
         self.satellite_group = pygame.sprite.Group()
         self.space_debris_collector_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
+        self.agents: List['SpaceDebrisCollector'] = []
         # self.subprocess = ThreadWithTrace(target=self.draw, args=())
 
     @property
@@ -89,6 +90,7 @@ class PygameHandler():
     def generate_random_collector(self):
         collector = generate_space_debris_collector()
         self.space_debris_collector_group.add(collector)
+        self.agents.append(collector)
     def generate_new_random_satellite(self):
         satellite =  generate_new_random_satellite(self.orbits)
         self.satellite_group.add(satellite)
@@ -193,21 +195,28 @@ class PygameHandler():
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
-
-                for agent in self.space_debris_collector_group.sprites():
-                    agent.scan(qTree)
-                    agent.options()
-                    agent.pursue_goal()
-
+                
                 for object in self.objects:
                     object.is_colliding = False
                     qTree.insert(object)
-
-                qTree.insert(self.earth)
-
+                
+                for agent in self.agents:
+                    qTree.insert(agent)
+                
                 global leaves
                 for leaf in leaves:
                     leaf.check_collisions()
+                    leaf.find_neighbors()
+
+                for agent in self.agents:
+                    agent.options()
+                    agent.pursue_goal()
+
+               
+
+                qTree.insert(self.earth)
+
+                
                 # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
                 # end = time.time()
                 # if end - start > max_time: 
@@ -230,7 +239,7 @@ class PygameHandler():
 
                 leaves.clear()
 
-                self.space_debris_group.update()
+                # self.space_debris_group.update()
                 self.earth_group.update()
                 self.satellite_group.update()
                 self.space_debris_collector_group.update()

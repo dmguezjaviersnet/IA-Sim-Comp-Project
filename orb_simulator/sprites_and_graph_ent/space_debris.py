@@ -6,12 +6,19 @@ import pygame
 import random
 class SpaceDebris(OrbitObj):
     
-    def __init__(self, pos_x, pos_y, a, b, orbit_center, vel: int = 0.5):
+    def __init__(self, pos_x, pos_y, a, b, orbit_center, size, color, vel: int = 0.5):
         super().__init__(a, b, orbit_center, vel)
         self.mass = None # pending
-        self.size = (random.randint(2,30),random.randint(2,30))
+        if not size:
+            self.size = (random.randint(2,30),random.randint(2,30))
+        else:
+            self.size = size
+        if not color:
+            self.default_color = SOLID_BLUE_COLOR
+        else:
+            self.default_color = color
         self.image = pygame.Surface([self.size[0], self.size[1]])
-        self.default_color = SOLID_BLUE_COLOR
+        
         self.collision_color = GREEN_COLOR
         self.rect = self.image.get_rect()
         self.rect.center = [pos_x, pos_y]

@@ -3,6 +3,7 @@ import math
 from random import randint
 from math import dist
 from typing import Dict, List, Tuple
+from simulation.orbsim_simulation_structs.quadtree import QTNode
 from sprites_and_graph_ent.space_agent import SpaceAgent, AgentActionData
 from simulation.a_star import a_star, eucl_dist_qtnode
 
@@ -21,7 +22,7 @@ class SpaceDebrisCollector(SpaceAgent):
 	def options(self):
 		if self.desires:
 			self.desires.clear()
-		visited: Dict[int: bool] = {}
+		visited: List[QTNode] = {}
 		perceived_env = [(self.beliefs, 0)]
 		self.desires = []
 
@@ -30,7 +31,7 @@ class SpaceDebrisCollector(SpaceAgent):
 				curr_env, at_range = perceived_env.pop()
 				curr_heur_val = 0
 				for qt_node in curr_env.neighbors:
-					if not visited[qt_node]:
+					if qt_node not in visited:
 						if qt_node.objects:
 							for object in qt_node.objects:
 								if object != self:
@@ -46,10 +47,10 @@ class SpaceDebrisCollector(SpaceAgent):
 										perceived_env.append((qt_node, 0))
 										visited[qt_node] = True
 
-				if at_range < self.perception_range:
-					if not qt_node in visited:
-						perceived_env.append(qt_node, at_range)
-						visited[qt_node] = True
+				# if at_range < self.perception_range:
+				# 	if not qt_node in visited:
+				# 		perceived_env.append((qt_node, at_range))
+				# 		visited[qt_node] = True
 				
 		if not self.desires:
 			if self.fuel and self.life_span:
@@ -67,7 +68,7 @@ class SpaceDebrisCollector(SpaceAgent):
 		
 		elif self.intentions.action == 'move towards debris':
 			self.path_to_debris = a_star(self.beliefs, eucl_dist_qtnode, self.intentions.qt_node)
-			self.intentions.qt_node = self.path_to_debris.pop(0)
+			self.intentionsrandom_move.qt_node = self.path_to_debris.pop(0)
 			self.update()
 			
 		elif self.intentions.action == 'collect debris':
