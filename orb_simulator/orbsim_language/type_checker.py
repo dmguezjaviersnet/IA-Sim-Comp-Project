@@ -516,6 +516,7 @@ class TypeChecker:
             if list_type:
                 if list_type[::-1][0] != expr.comp_type:
                     self.log.append(f'Todos los elementos de una lista deben ser del mismo tipo')
+                    node.comp_type =  NullType()
                     return
             else:
                 list_type.append(expr.comp_type)
@@ -532,6 +533,7 @@ class TypeChecker:
             if list_type:
                 if list_type[::-1][0] != expr.comp_type:
                     self.log.append(f'Todos los elementos de una tupla deben ser del mismo tipo')
+                    node.comp_type =  NullType()
                     return
             else:
                 list_type.append(expr.comp_type)

@@ -68,7 +68,7 @@ def main():
     # debugging(pygame_handler)
     orbsim_compile_and_execute(
     '''
-        let Tuple a = tuple(1,2,3);
+        let Tuple a = tuple(1,2,3,'hola');
         print(a);
     ''', pygame_handler)
     # ui = OrbisimUI(pygame_handler)

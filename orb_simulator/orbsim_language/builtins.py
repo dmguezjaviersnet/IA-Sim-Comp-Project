@@ -31,7 +31,7 @@ def randfloat(inf: 'Instance', sup: 'Instance'):
     randvalue = random.random() + randvalue
     return Instance(IntType(), randvalue)
 
-def create_personalice_space_debris(width, height):
+def create_personalice_space_debris(width, height, color):
     ...
 
 def number_of_satellites(handler: 'PygameHandler'):
@@ -87,7 +87,5 @@ builtins_functions = {
     'number_objects': number_of_objects,
     'number_orbits': number_of_orbits,
     'number_space_debris': number_of_space_debris,
-    'number_satellites': number_of_satellites,
-    
-    
+    'number_satellites': number_of_satellites    
 }
