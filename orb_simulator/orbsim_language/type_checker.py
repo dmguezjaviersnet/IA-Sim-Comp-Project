@@ -48,6 +48,7 @@ from orbsim_language.orbsim_ast.neg_number_node import NegNumberNode
 from orbsim_language.orbsim_ast.orbit_node import OrbitNode
 from orbsim_language.orbsim_ast.satellite_node import SatelliteNode
 from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode        
+from orbsim_language.orbsim_ast.tuple_creation_node import TupleCreationNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -520,6 +521,22 @@ class TypeChecker:
                 list_type.append(expr.comp_type)
         
         node.comp_type = ListType()
+        if list_type:
+            node.comp_type.elems_type = list_type[0]
+    
+    @visitor.when(TupleCreationNode)
+    def check(self, node: TupleCreationNode, scope: 'Scope'):
+        list_type = []
+        for expr in node.elems:
+            self.check(expr, scope)
+            if list_type:
+                if list_type[::-1][0] != expr.comp_type:
+                    self.log.append(f'Todos los elementos de una tupla deben ser del mismo tipo')
+                    return
+            else:
+                list_type.append(expr.comp_type)
+        
+        node.comp_type = TupleType()
         if list_type:
             node.comp_type.elems_type = list_type[0]
     

@@ -86,6 +86,7 @@ class Token_Type(Enum):
     satellite = 60
     orbit = 61
     show_orbits = 62
+    tuple = 63
     
     eof = 100
     space = 101

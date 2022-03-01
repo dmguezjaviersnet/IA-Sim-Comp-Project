@@ -65,13 +65,12 @@ def main():
     # test_lexer()
    
     pygame_handler = PygameHandler()
-    debugging(pygame_handler)
-    # orbsim_compile_and_execute(
-    # '''
-    #     let SpaceDebris sat1 = spacedebris;
-    #     sat1.add_to_simulation();
-    
-    # ''', pygame_handler)
+    # debugging(pygame_handler)
+    orbsim_compile_and_execute(
+    '''
+        let Tuple a = tuple(1,2,3);
+        print(a);
+    ''', pygame_handler)
     # ui = OrbisimUI(pygame_handler)
     
     # handler = Handler()

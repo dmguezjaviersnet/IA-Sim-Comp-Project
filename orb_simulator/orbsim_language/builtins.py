@@ -31,7 +31,7 @@ def randfloat(inf: 'Instance', sup: 'Instance'):
     randvalue = random.random() + randvalue
     return Instance(IntType(), randvalue)
 
-def create_personalice_space_debris():
+def create_personalice_space_debris(width, height):
     ...
 
 def number_of_satellites(handler: 'PygameHandler'):
@@ -45,6 +45,12 @@ def number_of_objects(handler: 'PygameHandler'):
 
 def number_of_orbits(handler: 'PygameHandler'):
     return Instance(IntType(), handler.number_of_orbits)
+
+def build_tuple(values:List['Instance']):
+    values = ()
+    for i in values:
+        values += (i.value,)
+    return Instance(TupleType(), values)
 
 def orbit_add_to_simulation(o1: 'Instance', handler: 'PygameHandler'):
     handler.add_new_orbit(o1.value)
