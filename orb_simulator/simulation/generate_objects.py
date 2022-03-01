@@ -114,10 +114,9 @@ def generate_satellite_in_orbit(orbit: 'ElipticOrbit'):
     satellite = Satellite(next_point[0], next_point[1], a, b, point, vel if vel > 0 else 0.1)
     return satellite
 
-def generate_waiting_time():
-    lambd = 0.4
+def generate_waiting_time(lambda_value = 0.1):
     ran_var_uni =  random.random()
-    return - (1/lambd)*math.log(ran_var_uni)
+    return - (1/lambda_value)*math.log(ran_var_uni)
 
 def generate_new_rocket(orbits):
     orbit = orbits[random.randint(0, len(orbits)-1)]

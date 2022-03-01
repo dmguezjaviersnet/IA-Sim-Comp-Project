@@ -53,9 +53,12 @@ def test_lexer():
     
 
 def debugging(handler: 'PygameHandler'):
-    handler.generate_orbits(random.randint(1,4))
-    handler.generate_objects_in_orbits(random.randint(1,5))
-    handler.generate_random_collector()
+    handler.generate_orbits(random.randint(1,20))
+
+    for i in range(2):
+        handler.generate_new_random_space_debris()
+    # handler.generate_objects_in_orbits(random.randint(1,1))
+    # handler.generate_random_collector()
     handler.start_pygame()
 
 def main():
@@ -65,7 +68,7 @@ def main():
     # test_lexer()
    
     pygame_handler = PygameHandler()
-    # debugging(pygame_handler)
+    debugging(pygame_handler)
 #     orbsim_compile_and_execute(
 #     '''
 #        let Int counter = 0;
@@ -86,7 +89,7 @@ def main():
 # start;
 
 #     ''', pygame_handler)
-    ui = OrbisimUI(pygame_handler)
+    # ui = OrbisimUI(pygame_handler)
     
     # handler = Handler()
     # handler.start()

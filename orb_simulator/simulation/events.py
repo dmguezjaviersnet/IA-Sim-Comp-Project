@@ -5,44 +5,36 @@ import math
 from typing import List
 import numpy as np
 @dataclass
-class Event:
+class CreateSpaceDebrisEvent:
     name: str
     ocurrence_time : float
 
+
+class HomogeneousPoissonProcess:
+    '''
+        Proceso de Poisson homogéneo para generar nuevos pedazos de basura spacial
+    '''
+    def __init__(self, T, lambda_value):
+        self.closing_time = T
+        self.events_ocurred:List['CreateSpaceDebrisEvent'] = []
+        self.lambda_value = lambda_value
+        self.compute_next_event_time(0)
+        
+
+    @property
+    def number_of_events_ocurred(self):
+        return len(self.events_ocurred)
     
-# evento de Poisson homogéneos para simular  la ocurrencia de eventos discretos
-def poisson_process_homogeneous(T, plambda = 0.0025):
-    t = 0
-    l:List[Event] = []
-    while t <= T:
-        rand1 = random.random()
-        t = t - (1/plambda)*math.log(rand1)
-        # rand2 = random.random()
-        new_event = Event(f'evento{len(l)+1}',t)
-        print(new_event)
-        l.append(new_event)
+    def compute_next_event_time(self, t: float):
+        random_uniform = random.random()
+        next_t = t - (1/self.lambda_value)*math.log(random_uniform)
+        self.next_event_time = next_t
+
     
-    return l
+    def generate_next_event(self):
+        new_event = CreateSpaceDebrisEvent(f'Event{self.number_of_events_ocurred +1}', self.next_event_time)
+        print(f'Event{self.number_of_events_ocurred +1} {self.next_event_time}')
+        self.events_ocurred.append(new_event)
+        self.compute_next_event_time(self.next_event_time)
 
 
-def poisson_process_nothomogeneous(T):
-    t = 0
-    l:List[Event] = []
-    values = np.arange((T * 0.9) * 5, dtype=float) / 5
-    plambda = max([intensity_function(t) for t in values])
-    print(plambda)
-    while t <= T:
-        rand1 = random.random()
-        t = t - (1/plambda)*math.log(rand1)
-        rand2 = random.random()
-        if rand2 <=intensity_function(t)/plambda:
-            new_event = Event(f'evento{len(l)+1}',t);
-            print(new_event)
-            l.append(new_event)
-    
-    return l
-
-def intensity_function(t):
-    return 1 / 100*(math.sin(t*math.pi)) +1 
-
-# poisson_process_homogeneous(1000, 0.01)
