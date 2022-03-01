@@ -66,12 +66,27 @@ def main():
    
     pygame_handler = PygameHandler()
     # debugging(pygame_handler)
-    orbsim_compile_and_execute(
-    '''
-        let Tuple a = tuple(1,2,3,'hola');
-        print(a);
-    ''', pygame_handler)
-    # ui = OrbisimUI(pygame_handler)
+#     orbsim_compile_and_execute(
+#     '''
+#        let Int counter = 0;
+# loop (counter < randint(2, 30) ){
+#     counter = counter + 1;
+#     let Orbit o1 = orbit;
+#     o1.add_to_simulation();
+# };
+
+# let Tuple size1 = tuple(10,10);
+# let Tuple size2 = tuple(20,20);
+# let Tuple rgb1 = tuple(randint(0,255), randint(0,255), randint(0,255));
+# let Tuple rgb2 = tuple(randint(0,255), randint(0,255), randint(0,255));
+# let SpaceDebris sp1 =  custom_space_debris(size1, rgb1);
+# let SpaceDebris sp2 =  custom_space_debris(size2, rgb2);
+# sp1.add_to_simulation();
+# sp2.add_to_simulation();
+# start;
+
+#     ''', pygame_handler)
+    ui = OrbisimUI(pygame_handler)
     
     # handler = Handler()
     # handler.start()

@@ -15,7 +15,7 @@ class OrbisimUI:
 
     
     def editor(self, handler):
-        self.title = st.title("OrbiSimulator")
+        self.title = st.title("OrbiSimulatorCode")
         self.handler = handler
         
         # editor = st.text_area('')

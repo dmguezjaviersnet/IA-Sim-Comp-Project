@@ -55,6 +55,27 @@ def generate_new_random_space_debris(orbits: List['ElipticOrbit']):
     space_debris =  generate_space_debris_in_orbit(random_orbit)
     return space_debris
 
+def generate_custom_space_debris(orbits: List['ElipticOrbit'], size, color):
+    random_orbit = orbits[random.randint(0, len(orbits)-1)]
+    point = random_orbit.center
+    angle =  random.randint(0,360)
+    a = random_orbit.semi_major_axis if random_orbit.over_axis == 'x' else random_orbit.semi_minor_axis
+    b = random_orbit.semi_minor_axis if random_orbit.over_axis == 'x' else random_orbit.semi_major_axis
+    vel =  random.random() *2
+    type = random.randint(1,2)
+    next_point = next_point_moving_in_elipse(point,  a, b, angle)
+    
+    space_debris = SpaceDebris(next_point[0], next_point[1], a, b, point, size, color, vel if vel > 0 else 0.1)
+   
+    return space_debris
+
+def move_to_sp_other_orbit(orbit: 'ElipticOrbit', space_debris: 'SpaceDebris'):
+    angle =  space_debris.orbit_angle
+    a = orbit.semi_major_axis if orbit.over_axis == 'x' else orbit.semi_minor_axis
+    b = orbit.semi_minor_axis if orbit.over_axis == 'x' else orbit.semi_major_axis
+    next_point = next_point_moving_in_elipse(orbit.center,  a, b, angle)
+    space_debris.move_to_orbit(next_point[0], next_point[1], a, b, orbit.center)
+
 def generate_new_random_satellite(orbits: List['ElipticOrbit']):
     random_orbit = orbits[random.randint(0, len(orbits)-1)]
     satellite =  generate_satellite_in_orbit(random_orbit)

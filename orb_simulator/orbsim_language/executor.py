@@ -387,9 +387,9 @@ class Executor:
     def execute(self, node: StartSimNode, scope: 'Scope'):
         
         # self.handler.start()
-        self.handler.generate_orbits(random.randint(1,2))
-        self.handler.generate_objects_in_orbits(random.randint(1,2))
-        self.handler.generate_random_collector()
+        # self.handler.generate_orbits(random.randint(1,2))
+        # self.handler.generate_objects_in_orbits(random.randint(1,2))
+        # self.handler.generate_random_collector()
         self.handler.start_pygame()
         
         # t1 = threading.Thread(target=orbsim_pygame.start_simulation, args=())

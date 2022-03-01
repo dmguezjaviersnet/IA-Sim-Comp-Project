@@ -67,7 +67,7 @@ class PygameHandler():
     def add_new_space_debris(self, space_debris: 'SpaceDebris'):
         self.objects.append(space_debris)
         self.space_debris_group.add(space_debris)
-        
+    
     def generate_orbits(self, number_of_orbits):
         orbits = generate_orbits(self.screen_center, number_of_orbits)
         for i in orbits:
@@ -86,6 +86,9 @@ class PygameHandler():
         space_debris = generate_new_random_space_debris(self.orbits)
         self.space_debris_group.add(space_debris)
         self.objects.append(space_debris)
+    
+    def create_custom_space_debris(self, size, color):
+        return generate_custom_space_debris(self.orbits, size, color)
 
     def generate_random_collector(self):
         collector = generate_space_debris_collector()
@@ -95,6 +98,10 @@ class PygameHandler():
         satellite =  generate_new_random_satellite(self.orbits)
         self.satellite_group.add(satellite)
         self.objects.append(satellite)
+
+    def move_space_debris_to_orbit(self, orbit, space_debris):
+        move_to_sp_other_orbit(orbit, space_debris)
+
 
     def start_pygame(self):
         pygame.init()
@@ -200,17 +207,17 @@ class PygameHandler():
                     object.is_colliding = False
                     qTree.insert(object)
                 
-                for agent in self.agents:
-                    qTree.insert(agent)
+                # for agent in self.agents:
+                #     qTree.insert(agent)
                 
-                global leaves
-                for leaf in leaves:
-                    leaf.check_collisions()
-                    leaf.find_neighbors()
+                # global leaves
+                # for leaf in leaves:
+                #     leaf.check_collisions()
+                #     leaf.find_neighbors()
 
-                for agent in self.agents:
-                    agent.options()
-                    agent.pursue_goal()
+                # for agent in self.agents:
+                #     agent.options()
+                #     agent.pursue_goal()
 
                
 
@@ -239,7 +246,7 @@ class PygameHandler():
 
                 leaves.clear()
 
-                # self.space_debris_group.update()
+                self.space_debris_group.update()
                 self.earth_group.update()
                 self.satellite_group.update()
                 self.space_debris_collector_group.update()
