@@ -22,16 +22,20 @@ class SpaceDebrisCollector(SpaceAgent):
 	def options(self):
 		if self.desires:
 			self.desires.clear()
-		visited: List[QTNode] = {}
+		visited: List[QTNode] = []
+		possible_random_moves = []
+
 		perceived_env = [(self.beliefs, 0)]
 		self.desires = []
 
 		if self.life_span:
 			while(perceived_env):
-				curr_env, at_range = perceived_env.pop()
+				curr_env, at_range = perceived_env.pop(0)
 				curr_heur_val = 0
 				for qt_node in curr_env.neighbors:
 					if qt_node not in visited:
+						visited.append(qt_node)
+						self_object = False
 						if qt_node.objects:
 							for object in qt_node.objects:
 								if object != self:
@@ -43,9 +47,13 @@ class SpaceDebrisCollector(SpaceAgent):
 															'collect debris' if at_range == 0 else 'move towards debris'))
 
 								else:
-									if not qt_node in visited:
-										perceived_env.append((qt_node, 0))
-										visited[qt_node] = True
+									self_object = True 
+									perceived_env.append((qt_node, 0))
+						
+						else: possible_random_moves.append(qt_node)
+
+						if not self_object:
+							perceived_env.append((qt_node, at_range + 1))
 
 				# if at_range < self.perception_range:
 				# 	if not qt_node in visited:
@@ -54,8 +62,9 @@ class SpaceDebrisCollector(SpaceAgent):
 				
 		if not self.desires:
 			if self.fuel and self.life_span:
-				random_move = randint(0, len(self.beliefs.neighbors) - 1)
-				heapq.heappush(self.desires, AgentActionData(0, 0, self.beliefs.neighbors[random_move], None, 'move randomly'))
+				random_move = randint(0, len(possible_random_moves) - 1)
+				print(f'random_move to {random_move}')
+				heapq.heappush(self.desires, AgentActionData(0, 0, possible_random_moves[random_move], None, 'move randomly'))
 			
 			else:
 				heapq.heappush(self.desires, AgentActionData(0, 0, self.beliefs.neighbors[random_move], None, 'become debris'))

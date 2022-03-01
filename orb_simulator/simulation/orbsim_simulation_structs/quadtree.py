@@ -1,12 +1,13 @@
 from enum import Enum, IntEnum
 from typing import Tuple, List
+
 from simulation.orbsim_simulation_entities import Point
 from sprites_and_graph_ent.orbit_obj import OrbitObj
 from sprites_and_graph_ent.space_agent import SpaceAgent
 from sprites_and_graph_ent.space_debris import SpaceDebris
 import pygame.draw
 from sprites_and_graph_ent.space_obj import SpaceObj
-from tools import RED_COLOR
+from tools import RED_COLOR, WHITE_COLOR, WINE_COLOR
 
 
 MAX_DEPTH = 8
@@ -106,8 +107,8 @@ class QTNode:
 		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box_br[0], self.bounding_box_br[1])), self.depth + 1, self.qnode_lines)
 		
 		if self.qnode_lines:
-			draw_quadtree_line(RED_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
-			draw_quadtree_line(RED_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
+			draw_quadtree_line(WHITE_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
+			draw_quadtree_line(WHITE_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
 
 		for object in self.objects:
 			if detect_overlap(object.rect.topleft, object.rect.bottomright, q1.bounding_box_tl, q1.bounding_box_br):
@@ -120,7 +121,7 @@ class QTNode:
 				q4.insert(object)
 
 		self.children = [q1 ,q2 ,q3 ,q4]
-		self.objects = None
+		self.objects.clear()
 
 	def find(self, object: SpaceDebris) -> List['QTNode']:
 		if (self.__is_leaf()): # invariant: if its a leaf, it has to be present in bounding box
@@ -149,7 +150,7 @@ class QTNode:
 						if isinstance(object, SpaceAgent) and object.beliefs == None:
 							object.beliefs = q_node
 
-						leaves.append(q_node)
+				leaves.append(q_node)
 
 	def check_collisions(self):
 		for i, _ in enumerate(self.objects):
@@ -309,7 +310,7 @@ class QTNode:
     
         # Dirección Norte
 		if direction == Direction.N:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -322,7 +323,7 @@ class QTNode:
 
         # Dirección Norte
 		elif direction == Direction.S:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -335,7 +336,7 @@ class QTNode:
 
         # Dirección Este
 		elif direction == Direction.E:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -348,7 +349,7 @@ class QTNode:
 
         # Dirección Oeste
 		elif direction == Direction.W:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -361,7 +362,7 @@ class QTNode:
 
         # Dirección Noreste
 		elif direction == Direction.NE:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -373,7 +374,7 @@ class QTNode:
 
         # Dirección Noroeste
 		elif direction == Direction.NW:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -385,7 +386,7 @@ class QTNode:
         
         # Dirección Sureste
 		elif direction == Direction.SE:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -397,7 +398,7 @@ class QTNode:
         
         # Dirección Suroreste
 		elif direction == Direction.SW:
-			while len(candidates) > 0:
+			while candidates:
 				if candidates[0].__is_leaf():
 					neighbors.append(candidates[0])
 				else:
@@ -407,10 +408,14 @@ class QTNode:
 
 			return neighbors
             
-	def find_neighbors(self) -> List['QTNode']:
+	def find_neighbors(self):
 		all_neighbors = []
 		for direction in Direction:
 			neighbor = self.find_ge_size_neighbor(direction)
 			all_neighbors += self.find_smaller_size_neighbors(neighbor, direction)
 
 		self.neighbors = all_neighbors
+
+		# for neigh in self.neighbors:
+		# 	for obj in neigh.objects:
+		# 		obj.image.fill(WINE_COLOR)

@@ -1,4 +1,5 @@
 from asyncio import subprocess
+from operator import le
 from typing import List
 import pygame
 from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector
@@ -211,23 +212,43 @@ class PygameHandler():
                     object.is_colliding = False
                     qTree.insert(object)
                 
+                qTree.insert(self.earth)
+                
                 # for agent in self.agents:
                 #     qTree.insert(agent)
                 
-                # global leaves
-                # for leaf in leaves:
-                #     leaf.check_collisions()
-                #     leaf.find_neighbors()
+                global leaves
+                for leaf in leaves:
+                    leaf.check_collisions()
+                    leaf.find_neighbors()
+                    # for neigh in leaf.neighbors:
+                    #     print(f'leaf centered at {leaf.center_x} x and {leaf.center_y} y --------> neighbor centered at {neigh.center_x} x {neigh.center_y} y')
+                    
+                    # print(len(leaf.neighbors))
+
+                queue = [leaves[0]]
+                visited = []
+                while queue:
+                    elem = queue.pop(0)
+                    for neigh in elem.neighbors:
+                        if not neigh in visited:
+                            visited.append(neigh)
+                            queue.append(neigh)
+                            pygame.draw.rect(self.screen, (255, 0, 0), 
+                                            [neigh.bounding_box_tl[0], neigh.bounding_box_tl[1], 
+                                            neigh.bounding_box_br[0] - neigh.bounding_box_tl[0], neigh.bounding_box_br[1] - neigh.bounding_box_tl[1]])
+                
+                pygame.draw.circle(self.screen, (0, 255, 0), 
+                                [leaves[50].bounding_box_tl[0], leaves[50].bounding_box_tl[1]], 20)
+
+                print(f'Initial leave is at {leaves[50].bounding_box_br[0]} x and {leaves[50].bounding_box_br[1]} y')
+
+                # print(f'THERE ARE {len(leaves)} leaves')
 
                 # for agent in self.agents:
                 #     agent.options()
                 #     agent.pursue_goal()
 
-               
-
-                qTree.insert(self.earth)
-
-                
                 # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
                 # end = time.time()
                 # if end - start > max_time: 
@@ -240,7 +261,7 @@ class PygameHandler():
                 self.space_debris_group.draw(self.screen)
                 self.satellite_group.draw(self.screen)
                 self.earth_group.draw(self.screen)
-                self.space_debris_collector_group.draw(self.screen)
+                # self.space_debris_collector_group.draw(self.screen)
 
                 for obj in self.objects:
                     obj.draw_collision(self.screen)

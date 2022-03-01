@@ -49,7 +49,6 @@ def generate_new_object_in_random_orbit(orbits: List['ElipticOrbit']):
     random_orbit = generate_random_orbit(orbits)
     return generate_new_object_in_orbit(random_orbit)
 
-
 def generate_new_random_space_debris(orbits: List['ElipticOrbit']):
     random_orbit = orbits[random.randint(0, len(orbits)-1)]
     space_debris =  generate_space_debris_in_orbit(random_orbit)
@@ -93,15 +92,13 @@ def generate_space_debris_in_orbit(orbit: 'ElipticOrbit'):
     angle =  random.randint(0,360)
     a = orbit.semi_major_axis if orbit.over_axis == 'x' else orbit.semi_minor_axis
     b = orbit.semi_minor_axis if orbit.over_axis == 'x' else orbit.semi_major_axis
-    vel =  random.random() *2
-    type = random.randint(1,2)
+    vel =  random.random() * 2
+    type = random.randint(1, 2)
     next_point = next_point_moving_in_elipse(point,  a, b, angle)
     
     space_debris = SpaceDebris(next_point[0], next_point[1], a, b, point, None, None, vel if vel > 0 else 0.1)
    
     return space_debris
-
-
 
 def generate_satellite_in_orbit(orbit: 'ElipticOrbit'):
     point = orbit.center
