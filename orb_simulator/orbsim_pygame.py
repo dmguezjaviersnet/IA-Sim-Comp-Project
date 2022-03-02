@@ -184,37 +184,37 @@ class PygameHandler():
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
                 # print(launchpad.closing_time)
-                print(launchpad.lambda_value)
-                print(launchpad.closing_time)
+                # print(launchpad.lambda_value)
+                # print(launchpad.closing_time)
                 # Modelo de dos servidores en serie para fabricación y despegue de cohetes para la posterior puesta en órbita de los satélites que están en los mismos
-                if launchpad.closing_time > round_off_wi_exceed(counter_time):
-                    print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
-                    launchpad.update(counter_time, self.orbits)
+                # if launchpad.closing_time > round_off_wi_exceed(counter_time):
+                #     print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
+                #     launchpad.update(counter_time, self.orbits)
                         
-                    if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
-                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
-                        satellite = launchpad.lauch_that_is_running.rocket.satellite
-                        self.add_new_satellite(satellite)
-                        launchpad.update_departure(counter_time)
+                #     if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
+                #         print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
+                #         satellite = launchpad.lauch_that_is_running.rocket.satellite
+                #         self.add_new_satellite(satellite)
+                #         launchpad.update_departure(counter_time)
                             
                            
                         
                 # Evente de Poisson para generar nuevos objetos
-                if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
-                    print(f'current_time{counter_time} NextPoissonEvent: {sp_poisson.next_event_time}')
-                    if round_off_wi_exceed(sp_poisson.next_event_time) == round_off_wi_exceed(counter_time):
-                        sp_poisson.generate_next_event()
-                        new_obj = generate_new_object_in_random_orbit(self.orbits)
-                        self.objects.append(new_obj)
-                        self.space_debris_group.add(new_obj)
+                # if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
+                #     print(f'current_time{counter_time} NextPoissonEvent: {sp_poisson.next_event_time}')
+                #     if round_off_wi_exceed(sp_poisson.next_event_time) == round_off_wi_exceed(counter_time):
+                #         sp_poisson.generate_next_event()
+                #         new_obj = generate_new_object_in_random_orbit(self.orbits)
+                #         self.objects.append(new_obj)
+                #         self.space_debris_group.add(new_obj)
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
                 
-                for object in self.objects:
-                    object.is_colliding = False
-                    qTree.insert(object)
+                # for object in self.objects:
+                #     object.is_colliding = False
+                #     qTree.insert(object)
                 
                 # qTree.insert(self.earth)
                 
@@ -275,13 +275,6 @@ class PygameHandler():
                 #     pygame.draw.circle(self.screen, (0, 255, 0),
                 #             [unique_leaf.center_x, unique_leaf.center_y], 5)
                             
-                qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
-                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
-                
-                for object in self.objects:
-                    object.is_colliding = False
-                    qTree.insert(object)
-                
                 # qTree.insert(self.earth)
                     # for neigh in leaf.neighbors:
                     #     print(f'leaf centered at {leaf.center_x} x and {leaf.center_y} y --------> neighbor centered at {neigh.center_x} x {neigh.center_y} y')
@@ -302,13 +295,29 @@ class PygameHandler():
                 
                 
 
-                print(f'Initial leave is at {leaves[0].center_x} x and {leaves[0].center_y} y')
+                # print(f'Initial leave is at {leaves[0].center_x} x and {leaves[0].center_y} y')
 
                 # print(f'THERE ARE {len(leaves)} leaves')
 
                 for agent in self.agents:
-                    agent.options()
-                    agent.pursue_goal()
+                    random_moves = agent.options()
+                    for qt_node in random_moves:
+                        pygame.draw.rect(self.screen, (0, 0, 255), 
+                                            [qt_node.bounding_box_tl[0], qt_node.bounding_box_tl[1], 
+                                            qt_node.bounding_box_br[0] - qt_node.bounding_box_tl[0], qt_node.bounding_box_br[1] - qt_node.bounding_box_tl[1]])
+
+                qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
+                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
+                
+                for agent in self.agents:
+                    qTree.insert(agent)
+                # for object in self.objects:
+                #     object.is_colliding = False
+                #     qTree.insert(object)
+                
+
+
+                    
 
                 # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
                 # end = time.time()
@@ -319,9 +328,9 @@ class PygameHandler():
                 if self.show_orbits:
                     for orb in self.orbits:
                         orb.draw_elipse(self.screen, PLUM_COLOR)
-                self.space_debris_group.draw(self.screen)
-                self.satellite_group.draw(self.screen)
-                self.earth_group.draw(self.screen)
+                # self.space_debris_group.draw(self.screen)
+                # self.satellite_group.draw(self.screen)
+                # self.earth_group.draw(self.screen)
                 self.space_debris_collector_group.draw(self.screen)
 
                 for obj in self.objects:

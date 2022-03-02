@@ -138,7 +138,7 @@ class QTNode:
 				
 		return overlapping_leaves
 	
-	def insert(self, object: SpaceDebris):
+	def insert(self, object: SpaceObj):
 		for q_node in self.find(object):
 			if (q_node.__is_leaf()):
 				q_node.objects.append(object)
@@ -147,7 +147,7 @@ class QTNode:
 						q_node.split()
 
 					else:
-						if isinstance(object, SpaceAgent) and object.beliefs == None:
+						if isinstance(object, SpaceAgent):
 							object.beliefs = q_node
 
 	def check_collisions(self):

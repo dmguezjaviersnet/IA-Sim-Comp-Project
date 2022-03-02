@@ -1,21 +1,57 @@
 from abc import abstractmethod
 import heapq
 from typing import Any, List
+from sprites_and_graph_ent.satellite import Satellite
 from sprites_and_graph_ent.space_debris import SpaceDebris
 from sprites_and_graph_ent.space_obj import SpaceObj
 import pygame
 from tools import LIGHT_GRAY
 class AgentActionData:
 
-    def __init__(self, area: int, distance: int, qt_node, object: SpaceDebris, action: str) -> None:
-        self.area = area
-        self.distance = distance
-        self.qt_node = qt_node
-        self.object = object
-        self.action = action
+	def __init__(self, distance: int, qt_node, object: SpaceDebris, action: str) -> None:
+		self.distance = distance
+		self.qt_node = qt_node
+		self.object = object
+		self.action = action
+		
+	def __lt__(self, other: 'AgentActionData'):
+		if self.action == 'become debris':
+			return True
 
-    def __lt__(self, other: 'AgentActionData'):
-        return True if self.area < other.area else self.distance < other.distance if self.area == other.area else False
+		if self.action == 'collect debris':
+			if other.action == 'collect debris':
+				return (self.distance < other.distance if self.object.area == other.object.area
+						else self.object.area < other.object.area)
+
+			if other.action == 'move towards debris':
+				return self.object.area <= other.object.area
+
+			return True
+		
+		if self.action == 'move towards debris':
+			if other.action == 'collect debris':
+				return self.object.area < other.object.area
+
+			if other.action == 'move towards debris':
+				return (self.distance < other.distance if self.object.area == other.object.area
+						else self.object.area < other.object.area)
+
+			return True
+
+		if self.action == 'move randomly to empty space':
+			if other.action == 'move randomly to empty space':
+				return False
+			
+			if other.action == 'move to satellite':
+				return True
+
+			return False
+		
+		if self.action == 'move to satellite':
+			if other.action == 'move to satellite':
+				return True
+			
+			return False
 
 class SpaceAgent(SpaceObj):
 	

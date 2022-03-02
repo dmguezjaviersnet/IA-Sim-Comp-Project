@@ -72,7 +72,7 @@ def main():
     # test_lexer()
    
     pygame_handler = PygameHandler()
-    # debugging(pygame_handler)
+    debugging(pygame_handler)
 #     orbsim_compile_and_execute(
 #     '''
 #        let Int counter = 0;
