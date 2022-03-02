@@ -29,11 +29,12 @@ class RocketForm:
 
 class Launchpad:
 
-    def __init__(self, closing_time):
+    def __init__(self, closing_time, lambda_value):
         self.lauch_that_is_running = None
         self.rocket_in_queue = []
         self.closing_time = closing_time
-        self.rocket_manufacturing = RocketManufacturing()
+        self.lambda_value = lambda_value
+        self.rocket_manufacturing = RocketManufacturing(lambda_value)
         self.next_departure_time = None
         self.number_of_arrivals = 0
         self.number_of_departure = 0
@@ -59,10 +60,10 @@ class Launchpad:
         return l
     
     def generate_next_arrival(self, current_time: float):
-        self.next_arrival_time = generate_waiting_time() +  current_time
+        self.next_arrival_time = generate_waiting_time(self.lambda_value) +  current_time
     
     def generate_next_departure_launchpad(self, current_time: float):
-        self.next_departure_time = generate_waiting_time() + current_time
+        self.next_departure_time = generate_waiting_time(self.lambda_value) + current_time
 
     def generate_next_departure_manufacturing(self, current_time: float):
         self.rocket_manufacturing.generate_next_departure(current_time)
@@ -105,8 +106,9 @@ class Launchpad:
 
     
 class RocketManufacturing:
-    def __init__(self):
+    def __init__(self, lambda_value):
         self.rocket_being_manufactured = None
+        self.lambda_value = lambda_value
         self.pending_rockets_to_be_manufactured = []
         self.next_arrival_time = generate_waiting_time()
         self.next_departure_time = None
@@ -131,10 +133,10 @@ class RocketManufacturing:
         self.generate_next_arrival(current_time)
 
     def generate_next_arrival(self, current_time: float):
-        self.next_arrival_time = generate_waiting_time() +  current_time
+        self.next_arrival_time = generate_waiting_time(self.lambda_value) +  current_time
     
     def generate_next_departure(self, current_time: float):
-        self.next_departure_time = generate_waiting_time() + current_time
+        self.next_departure_time = generate_waiting_time(self.lambda_value) + current_time
 
     def update_departure(self, time):
         self.rocket_being_manufactured = None

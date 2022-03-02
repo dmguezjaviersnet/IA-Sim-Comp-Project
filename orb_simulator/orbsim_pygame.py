@@ -10,7 +10,7 @@ from simulation.orbsim_simulation_structs import QuadTree
 from sprites_and_graph_ent.earth import Sphere
 from tools import*
 from tools import next_point_moving_in_elipse, round_off_wi_exceed
-from simulation.events import *
+from simulation.events import HomogeneousPoissonProcess
 from simulation.generate_objects import *
 import threading
 import multiprocessing
@@ -44,6 +44,11 @@ class PygameHandler():
         self.space_debris_collector_group = pygame.sprite.Group()
         self.earth_group.add(self.earth)
         self.agents: List['SpaceDebrisCollector'] = []
+        self.launchpad_factory_closing_time = None
+        self.launchpad_factory_lambda = None
+        self.poisson_space_creation_closing_time = None
+        self.poisson_space_creation_lambda = None
+
         # self.subprocess = ThreadWithTrace(target=self.draw, args=())
 
     @property
@@ -141,11 +146,17 @@ class PygameHandler():
         max_time = 0
         counter_time = 0.00
         self.screen.blit(self.background, (0,0))
+        if self.launchpad_factory_closing_time and self.launchpad_factory_lambda:
+            launchpad = Launchpad(self.launchpad_factory_closing_time, self.launchpad_factory_lambda)
+        else:
+            launchpad = Launchpad(1000, 0.1)
         
-        launchpad =  Launchpad(1000)
         sys.stdout = sys.__stdout__
-        new_object_event = poisson_process_homogeneous(1000, 0.1)
-        start = time.time()
+        if self.poisson_space_creation_closing_time and self.poisson_space_creation_lambda:
+            sp_poisson = HomogeneousPoissonProcess(self.poisson_space_creation_closing_time, self.poisson_space_creation_lambda)
+        else:
+            sp_poisson =  HomogeneousPoissonProcess(1000, 0.1)
+
         
         while self.running:
            
@@ -186,20 +197,13 @@ class PygameHandler():
                            
                         
 
-                # if new_object_event:
-                #     end = time.time()
-                #     comm = end - start
-                #     current_event = new_object_event[0]
-                #     # print(current_event.ocurrence_time)
-                #     # print(comm)
-                #     # print(round_off_wi_exceed(counter_time))
-                #     if round_off_wi_exceed(current_event.ocurrence_time) == round_off_wi_exceed(counter_time):
-                #         # print(f'Evento{current_event.name} ocurrido {current_event.ocurrence_time}')
-                #         new_obj = generate_new_object_in_random_orbit(self.orbits)
-                #         self.objects.append(new_obj)
-                #         self.space_debris_group.add(new_obj)
-                #         new_object_event.pop(0)
-                #         print(len(self.objects))
+                if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
+                    print(f'current_time{counter_time} NextPoissonEvent: {sp_poisson.next_event_time}')
+                    if round_off_wi_exceed(sp_poisson.next_event_time) == round_off_wi_exceed(counter_time):
+                        sp_poisson.generate_next_event()
+                        new_obj = generate_new_object_in_random_orbit(self.orbits)
+                        self.objects.append(new_obj)
+                        self.space_debris_group.add(new_obj)
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
@@ -335,8 +339,3 @@ class PygameHandler():
                 pygame.display.flip()
         pygame.quit()
 
-if __name__ == '__main__':
-    h = PygameHandler()
-    h.generate_orbits(4)
-    h.generate_objects_in_orbits(3)
-    h.draw()
