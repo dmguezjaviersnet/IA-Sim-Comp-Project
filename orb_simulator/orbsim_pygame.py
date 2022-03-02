@@ -1,10 +1,11 @@
 from asyncio import subprocess
 from operator import le
+from random import randint
 from typing import List
 import pygame
 from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector
 from simulation.orbsim_simulation_entities import Point
-from simulation.orbsim_simulation_structs import QuadTree, leaves
+from simulation.orbsim_simulation_structs import QuadTree
 
 from sprites_and_graph_ent.earth import Sphere
 from tools import*
@@ -208,42 +209,99 @@ class PygameHandler():
                     object.is_colliding = False
                     qTree.insert(object)
                 
-                qTree.insert(self.earth)
+                # qTree.insert(self.earth)
                 
-                # for agent in self.agents:
-                #     qTree.insert(agent)
+                for agent in self.agents:
+                    qTree.insert(agent)
                 
-                global leaves
+                leaves = []
+                queue = [qTree.root]
+                visited = []
+                while queue:
+                    curr_elem = queue.pop(0)
+                    if not curr_elem.children:
+                        leaves.append(curr_elem)
+                    
+                    else:
+                        for child in curr_elem.children:
+                            if child not in visited:
+                                visited.append(child)
+                                queue.append(child)
+                            
                 for leaf in leaves:
-                    leaf.check_collisions()
                     leaf.find_neighbors()
+                #     pygame.draw.rect(self.screen, (randint(0, 255), randint(0, 255), randint(0, 255)), 
+                #                                 [leaf.bounding_box_tl[0], leaf.bounding_box_tl[1], 
+                #                                 leaf.bounding_box_br[0] - leaf.bounding_box_tl[0], leaf.bounding_box_br[1] - leaf.bounding_box_tl[1]])
+                
+                # queue = [leaves[0]]
+                # visited = []
+                # while queue:
+                #     curr_elem = queue.pop(0)
+                #     for neighbor in curr_elem.neighbors:
+                #         if neighbor not in visited:
+                #             visited.append(neighbor)
+                #             queue.append(neighbor)
+                #             pygame.draw.rect(self.screen, (randint(0, 255), randint(0, 255), randint(0, 255)), 
+                #                                 [neighbor.bounding_box_tl[0], neighbor.bounding_box_tl[1], 
+                #                                 neighbor.bounding_box_br[0] - neighbor.bounding_box_tl[0], neighbor.bounding_box_br[1] - neighbor.bounding_box_tl[1]])
+
+                # for leaf in leaves:
+                #     leaf.check_collisions()
+                # unique_leaves = []
+                # unique_objects = []
+                # for i in leaves:
+                #     if i.objects:
+                #         for obj in i.objects:
+                #             if obj not in unique_objects:
+                #                 unique_objects.append(obj)
+                #                 if i not in unique_leaves:
+                #                     unique_leaves.append(i)
+                
+                # for unique_leaf in unique_leaves:
+                #     unique_leaf.find_neighbors()
+                #     for neigh in unique_leaf.neighbors:
+                #         pygame.draw.rect(self.screen, (255, 0, 0), 
+                #                                 [neigh.bounding_box_tl[0], neigh.bounding_box_tl[1], 
+                #                                 neigh.bounding_box_br[0] - neigh.bounding_box_tl[0], neigh.bounding_box_br[1] - neigh.bounding_box_tl[1]])
+                    
+                #     pygame.draw.circle(self.screen, (0, 255, 0),
+                #             [unique_leaf.center_x, unique_leaf.center_y], 5)
+                            
+                qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
+                        Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
+                
+                for object in self.objects:
+                    object.is_colliding = False
+                    qTree.insert(object)
+                
+                # qTree.insert(self.earth)
                     # for neigh in leaf.neighbors:
                     #     print(f'leaf centered at {leaf.center_x} x and {leaf.center_y} y --------> neighbor centered at {neigh.center_x} x {neigh.center_y} y')
                     
                     # print(len(leaf.neighbors))
 
-                queue = [leaves[0]]
-                visited = []
-                while queue:
-                    elem = queue.pop(0)
-                    for neigh in elem.neighbors:
-                        if not neigh in visited:
-                            visited.append(neigh)
-                            queue.append(neigh)
-                            pygame.draw.rect(self.screen, (255, 0, 0), 
-                                            [neigh.bounding_box_tl[0], neigh.bounding_box_tl[1], 
-                                            neigh.bounding_box_br[0] - neigh.bounding_box_tl[0], neigh.bounding_box_br[1] - neigh.bounding_box_tl[1]])
+                # queue = [leaves[0]]
+                # visited = []
+                # while queue:
+                #     elem = queue.pop(0)
+                #     for neigh in elem.neighbors:
+                #         if not neigh in visited:
+                #             visited.append(neigh)
+                #             queue.append(neigh)
+                #             pygame.draw.rect(self.screen, (255, 0, 0), 
+                #                             [neigh.bounding_box_tl[0], neigh.bounding_box_tl[1], 
+                #                             neigh.bounding_box_br[0] - neigh.bounding_box_tl[0], neigh.bounding_box_br[1] - neigh.bounding_box_tl[1]])
                 
-                pygame.draw.circle(self.screen, (0, 255, 0), 
-                                [leaves[50].bounding_box_tl[0], leaves[50].bounding_box_tl[1]], 20)
+                
 
-                print(f'Initial leave is at {leaves[50].bounding_box_br[0]} x and {leaves[50].bounding_box_br[1]} y')
+                print(f'Initial leave is at {leaves[0].center_x} x and {leaves[0].center_y} y')
 
                 # print(f'THERE ARE {len(leaves)} leaves')
 
-                # for agent in self.agents:
-                #     agent.options()
-                #     agent.pursue_goal()
+                for agent in self.agents:
+                    agent.options()
+                    agent.pursue_goal()
 
                 # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
                 # end = time.time()
@@ -257,7 +315,7 @@ class PygameHandler():
                 self.space_debris_group.draw(self.screen)
                 self.satellite_group.draw(self.screen)
                 self.earth_group.draw(self.screen)
-                # self.space_debris_collector_group.draw(self.screen)
+                self.space_debris_collector_group.draw(self.screen)
 
                 for obj in self.objects:
                     obj.draw_collision(self.screen)
@@ -267,10 +325,10 @@ class PygameHandler():
 
                 leaves.clear()
 
-                self.space_debris_group.update()
+                # self.space_debris_group.update()
                 self.earth_group.update()
-                self.satellite_group.update()
-                # self.space_debris_collector_group.update()
+                # self.satellite_group.update()
+                self.space_debris_collector_group.update()
                 counter_time += 0.01
                 self.clock.tick(60)
                 

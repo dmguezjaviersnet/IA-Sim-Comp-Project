@@ -10,11 +10,11 @@ from sprites_and_graph_ent.space_obj import SpaceObj
 from tools import RED_COLOR, WHITE_COLOR, WINE_COLOR
 
 
-MAX_DEPTH = 8
+MAX_DEPTH = 6
 MAX_LIMIT = 3
 
 quadtree_pygame_window = None
-leaves: List['QTNode'] = []
+low_depth_leave = None
 
 # class LineColor(Enum):
 # 	WHITE = (255, 255, 255)
@@ -150,8 +150,6 @@ class QTNode:
 						if isinstance(object, SpaceAgent) and object.beliefs == None:
 							object.beliefs = q_node
 
-				leaves.append(q_node)
-
 	def check_collisions(self):
 		for i, _ in enumerate(self.objects):
 			j = i + 1
@@ -242,11 +240,15 @@ class QTNode:
 				return None
 			if self.parent.children[Child.SW] == self:
 				return self.parent.children[Child.NE]
-                
+            
+			direction = (direction if self.parent.children[Child.NE] == self
+						else Direction.E if self.parent.children[Child.SE] == self
+						else Direction.N)
+
 			node = self.parent.find_ge_size_neighbor(direction)
 			if node is None or node.__is_leaf():
 				return node
-
+                                    
 			return (node.children[Child.SE]
                     if self.parent.children[Child.NW] == self
                     else node.children[Child.SW] if self.parent.children[Child.NE] == self
@@ -258,7 +260,11 @@ class QTNode:
 				return None
 			if self.parent.children[Child.SE] == self:
 				return self.parent.children[Child.NW]
-                
+            
+			direction = (direction if self.parent.children[Child.NW] == self
+						else Direction.W if self.parent.children[Child.SW] == self
+						else Direction.N)
+
 			node = self.parent.find_ge_size_neighbor(direction)
 			if node is None or node.__is_leaf():
 				return node
@@ -274,7 +280,11 @@ class QTNode:
 				return None
 			if self.parent.children[Child.NW] == self:
 				return self.parent.children[Child.SE]
-                
+            
+			direction = (direction if self.parent.children[Child.SE] == self
+						else Direction.E if self.parent.children[Child.NE] == self
+						else Direction.S)
+
 			node = self.parent.find_ge_size_neighbor(direction)
 			if node is None or node.__is_leaf():
 				return node
@@ -290,7 +300,11 @@ class QTNode:
 				return None
 			if self.parent.children[Child.NE] == self:
 				return self.parent.children[Child.SW]
-                
+            
+			direction = (direction if self.parent.children[Child.SW] == self
+						else Direction.W if self.parent.children[Child.NW] == self
+						else Direction.S)
+
 			node = self.parent.find_ge_size_neighbor(direction)
 			if node is None or node.__is_leaf():
 				return node
@@ -300,10 +314,6 @@ class QTNode:
                     else node.children[Child.NE] if self.parent.children[Child.SW] == self
                     else node.children[Child.SE])
 
-            # TODO: implement other directions symmetric to NORTH case
-			# assert False
-			# return []
-
 	def find_smaller_size_neighbors(self, neighbor: 'QTNode', direction: Direction) -> List['QuadTree']:   
 		candidates = [] if not neighbor else [neighbor]
 		neighbors = []
@@ -311,100 +321,100 @@ class QTNode:
         # Dirección Norte
 		if direction == Direction.N:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
-				else:
-					candidates.append(candidates[0].children[Child.SW])
-					candidates.append(candidates[0].children[Child.SE])
-                    
-				candidates.remove(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
 
+				else:
+					candidates.append(curr_candidate.children[Child.SW])
+					candidates.append(curr_candidate.children[Child.SE])
+                    
 			return neighbors
 
-        # Dirección Norte
+        # Dirección Sur
 		elif direction == Direction.S:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
+
 				else:
-					candidates.append(candidates[0].children[Child.NW])
-					candidates.append(candidates[0].children[Child.NE])
-                    
-				candidates.remove(candidates[0])
+					candidates.append(curr_candidate.children[Child.NW])
+					candidates.append(curr_candidate.children[Child.NE])
 
 			return neighbors
 
         # Dirección Este
 		elif direction == Direction.E:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
+
 				else:
-					candidates.append(candidates[0].children[Child.SW])
-					candidates.append(candidates[0].children[Child.NW])
-                    
-				candidates.remove(candidates[0])
+					candidates.append(curr_candidate.children[Child.SW])
+					candidates.append(curr_candidate.children[Child.NW])
 
 			return neighbors
 
         # Dirección Oeste
 		elif direction == Direction.W:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
+
 				else:
-					candidates.append(candidates[0].children[Child.SE])
-					candidates.append(candidates[0].children[Child.NE])
-                    
-				candidates.remove(candidates[0])
+					candidates.append(curr_candidate.children[Child.SE])
+					candidates.append(curr_candidate.children[Child.NE])
 
 			return neighbors
 
         # Dirección Noreste
 		elif direction == Direction.NE:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
-				else:
-					candidates.append(candidates[0].children[Child.SW])
-                    
-				candidates.remove(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
 
+				else:
+					candidates.append(curr_candidate.children[Child.SW])
+                    
 			return neighbors
 
         # Dirección Noroeste
 		elif direction == Direction.NW:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
+
 				else:
-					candidates.append(candidates[0].children[Child.SE])
-                    
-				candidates.remove(candidates[0])
+					candidates.append(curr_candidate.children[Child.SE])
 
 			return neighbors
         
         # Dirección Sureste
 		elif direction == Direction.SE:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
-				else:
-					candidates.append(candidates[0].children[Child.NW])
-                    
-				candidates.remove(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
 
+				else:
+					candidates.append(curr_candidate.children[Child.NW])
+                    
 			return neighbors
         
         # Dirección Suroreste
 		elif direction == Direction.SW:
 			while candidates:
-				if candidates[0].__is_leaf():
-					neighbors.append(candidates[0])
+				curr_candidate = candidates.pop(0)
+				if curr_candidate.__is_leaf():
+					neighbors.append(curr_candidate)
+
 				else:
-					candidates.append(candidates[0].children[Child.NE])
-                    
-				candidates.remove(candidates[0])
+					candidates.append(curr_candidate.children[Child.NE])
 
 			return neighbors
             

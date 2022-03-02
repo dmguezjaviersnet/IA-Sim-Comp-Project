@@ -77,7 +77,7 @@ class SpaceDebrisCollector(SpaceAgent):
 		
 		elif self.intentions.action == 'move towards debris':
 			self.path_to_debris = a_star(self.beliefs, eucl_dist_qtnode, self.intentions.qt_node)
-			self.intentionsrandom_move.qt_node = self.path_to_debris.pop(0)
+			self.intentions.qt_node = self.path_to_debris.pop(0)
 			self.update()
 			
 		elif self.intentions.action == 'collect debris':
