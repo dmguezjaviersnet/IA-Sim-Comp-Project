@@ -29,6 +29,8 @@ class TypeCollector:
         self.context.define_fun('number_satellites', IntType(), [], [])
         self.context.define_fun('number_objects', IntType(), [], [])
         self.context.define_fun('custom_space_debris', SpaceDebrisType(), ['size', 'color'], [TupleType(), TupleType()])
+        self.context.define_fun('custom_launchpad', VoidType(), ['T', 'lambda'], [IntType(), FloatType()])
+        self.context.define_fun('custom_create_space_debris_event', VoidType(), ['T', 'lambda'], [IntType(), FloatType()])
         string_type =  StringType()
         self.context.types['String']  = string_type
         string_type.define_method('concat', string_type, ['s1'], [string_type])

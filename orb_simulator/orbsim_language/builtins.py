@@ -65,9 +65,17 @@ def space_debris_add_to_simulation(o1: 'Instance', handler: 'PygameHandler'):
 def space_debris_move_to_orbit(sp: 'Instance', orbit: 'Instance', handler: 'PygameHandler'):
     handler.move_space_debris_to_orbit(orbit.value, sp.value)
 
+def custom_launchpad(t:'Instance', lambda_val: 'Instance', handler: 'PygameHandler'):
+    handler.launchpad_factory_closing_time = t.value
+    handler.launchpad_factory_lambda = lambda_val.value
+
+def custom_sp_poisson(t:'Instance', lambda_val: 'Instance', handler: 'PygameHandler'):
+    handler.poisson_space_creation_closing_time = t.value
+    handler.poisson_space_creation_lambda = lambda_val.value
 
 simulation_names = ['add_to_simulation', 'number_objects', 'number_orbits', 
-'number_space_debris', 'number_satellites', 'custom_space_debris', 'move_to_orbit']
+'number_space_debris', 'number_satellites', 'custom_space_debris', 'move_to_orbit', 
+'custom_launchpad', 'custom_create_space_debris_event']
 
 def for_simulation(method_name: str):
     return method_name in simulation_names
@@ -95,5 +103,7 @@ builtins_functions = {
     'number_orbits': number_of_orbits,
     'number_space_debris': number_of_space_debris,
     'number_satellites': number_of_satellites,
-    'custom_space_debris': create_custom_space_debris, 
+    'custom_space_debris': create_custom_space_debris,
+    'custom_launchpad' : custom_launchpad,
+    'custom_create_space_debris_event':  custom_sp_poisson
 }
