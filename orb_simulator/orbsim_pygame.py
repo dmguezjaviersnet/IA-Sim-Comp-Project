@@ -185,6 +185,7 @@ class PygameHandler():
                 # print(launchpad.closing_time)
                 print(launchpad.lambda_value)
                 print(launchpad.closing_time)
+                # Modelo de dos servidores en serie para fabricación y despegue de cohetes para la posterior puesta en órbita de los satélites que están en los mismos
                 if launchpad.closing_time > round_off_wi_exceed(counter_time):
                     print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
                     launchpad.update(counter_time, self.orbits)
