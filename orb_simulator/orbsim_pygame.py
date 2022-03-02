@@ -300,11 +300,19 @@ class PygameHandler():
                 # print(f'THERE ARE {len(leaves)} leaves')
 
                 for agent in self.agents:
-                    random_moves = agent.options()
-                    for qt_node in random_moves:
-                        pygame.draw.rect(self.screen, (0, 0, 255), 
-                                            [qt_node.bounding_box_tl[0], qt_node.bounding_box_tl[1], 
-                                            qt_node.bounding_box_br[0] - qt_node.bounding_box_tl[0], qt_node.bounding_box_br[1] - qt_node.bounding_box_tl[1]])
+                    agent.options()
+                    path = agent.path_to_target
+                    if path:
+                        for qt_node in path:
+                            pygame.draw.rect(self.screen, (0, 0, 255), 
+                                                [qt_node.bounding_box_tl[0], qt_node.bounding_box_tl[1], 
+                                                qt_node.bounding_box_br[0] - qt_node.bounding_box_tl[0], qt_node.bounding_box_br[1] - qt_node.bounding_box_tl[1]])
+                                                
+                            pygame.draw.rect(self.screen, (0, 255, 0), 
+                                                [agent.action_target.qt_node.bounding_box_tl[0], agent.action_target.qt_node.bounding_box_tl[1], 
+                                                agent.action_target.qt_node.bounding_box_br[0] - agent.action_target.qt_node.bounding_box_tl[0], agent.action_target.qt_node.bounding_box_br[1] - agent.action_target.qt_node.bounding_box_tl[1]])
+                        
+                        
 
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
