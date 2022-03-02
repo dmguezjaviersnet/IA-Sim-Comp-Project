@@ -125,7 +125,7 @@ def generate_space_debris_collector():
     pos_x = random.randint(1,800)
     pos_y = random.randint(1,800)
     span = 500
-    capacity = 500
-    fuel = 500
+    capacity = 3000000
+    fuel = 5000000
     collector = SpaceDebrisCollector(pos_x, pos_y, span, capacity, fuel)
     return collector

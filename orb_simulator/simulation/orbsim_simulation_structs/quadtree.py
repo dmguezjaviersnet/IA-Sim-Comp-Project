@@ -10,7 +10,7 @@ from sprites_and_graph_ent.space_obj import SpaceObj
 from tools import RED_COLOR, WHITE_COLOR, WINE_COLOR
 
 
-MAX_DEPTH = 6
+MAX_DEPTH = 8
 MAX_LIMIT = 3
 
 quadtree_pygame_window = None
@@ -107,8 +107,8 @@ class QTNode:
 		q4 = QTNode(self, (Point(self.center_x, self.center_y), Point(self.bounding_box_br[0], self.bounding_box_br[1])), self.depth + 1, self.qnode_lines)
 		
 		if self.qnode_lines:
-			draw_quadtree_line(WHITE_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
-			draw_quadtree_line(WHITE_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
+			draw_quadtree_line(RED_COLOR, (self.center_x, self.bounding_box_tl[1]), (self.center_x, self.bounding_box_br[1]))
+			draw_quadtree_line(RED_COLOR, (self.bounding_box_tl[0], self.center_y), (self.bounding_box_br[0], self.center_y))
 
 		for object in self.objects:
 			if detect_overlap(object.rect.topleft, object.rect.bottomright, q1.bounding_box_tl, q1.bounding_box_br):

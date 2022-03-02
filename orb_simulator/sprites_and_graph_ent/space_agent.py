@@ -6,6 +6,13 @@ from sprites_and_graph_ent.space_debris import SpaceDebris
 from sprites_and_graph_ent.space_obj import SpaceObj
 import pygame
 from tools import LIGHT_GRAY
+
+MOVE_RANDOMLY = 'move randomly to empty space'
+MOVE_TOWARDS_DEBRIS = 'move towards debris'
+BECOME_DEBRIS = 'become debris'
+COLLECT_DEBRIS = 'collect debris'
+MOVE_TO_SATELLITE = 'move to satellite'
+IDLE = 'idle'
 class AgentActionData:
 
 	def __init__(self, distance: int, qt_node, object: SpaceDebris, action: str) -> None:
@@ -52,6 +59,15 @@ class AgentActionData:
 				return True
 			
 			return False
+
+	def best_action_to_change(self, other_action: 'AgentActionData'):
+		if self.action == MOVE_TOWARDS_DEBRIS and other_action.action != MOVE_TOWARDS_DEBRIS and other_action.action != COLLECT_DEBRIS:
+			return True
+
+		if self.action == COLLECT_DEBRIS and other_action.action != COLLECT_DEBRIS :
+			return True
+			
+		return False
 
 class SpaceAgent(SpaceObj):
 	

@@ -21,10 +21,11 @@ IDLE = 'idle'
 class SpaceDebrisCollector(SpaceAgent):
 
 	def __init__(self, pos_x: int, pos_y: int, life_span: int, capacity: int, fuel: int, vel_x = 1, vel_y = 1):
-		super().__init__(pos_x, pos_y, 1)
+		super().__init__(pos_x, pos_y, 8)
 		self.life_span = life_span
 		self.capacity = capacity
 		self.fuel = fuel
+		self.collected_debris = []
 		self.vel_x = vel_x
 		self.vel_y = vel_y
 		self.action_target: AgentActionData = None
@@ -79,13 +80,13 @@ class SpaceDebrisCollector(SpaceAgent):
 			else:
 				heapq.heappush(self.desires, AgentActionData(None, self.beliefs.neighbors[random_move], None, BECOME_DEBRIS))
 		
-		top_priority_target = heapq.heappop(self.desires)
+		top_priority_target: 'AgentActionData' = heapq.heappop(self.desires)
 
 		if not self.action_target:
 			self.action_target = top_priority_target
 			self.pursue_goal()
 
-		elif top_priority_target < self.action_target:
+		elif top_priority_target.best_action_to_change(self.action_target):
 			self.action_target = top_priority_target
 			self.pursue_goal()
 
@@ -97,13 +98,15 @@ class SpaceDebrisCollector(SpaceAgent):
 		elif self.action_target.action == COLLECT_DEBRIS:
 			self.capacity -= self.action_target.object.area
 			self.fuel -= self.action_target.object.area/2
-			return self.action_target.object
+			self.collected_debris.append(self.action_target.object)
+			self.action_target = None
 
 		elif self.action_target.action == BECOME_DEBRIS:
+			self.action_target = None
 			return self
 	
 	def update(self):
-		if (self.action_target.action == MOVE_TOWARDS_DEBRIS or self.action_target.action == MOVE_RANDOMLY):
+		if (self.action_target and (self.action_target.action == MOVE_TOWARDS_DEBRIS or self.action_target.action == MOVE_RANDOMLY)):
 			self.vel_x = self.qt_node_target.center_x - self.pos_x
 			self.vel_y = self.qt_node_target.center_y - self.pos_y
 			norm = dist(((self.pos_x), (self.pos_y)), (self.qt_node_target.center_x, self.qt_node_target.center_y))
@@ -112,8 +115,8 @@ class SpaceDebrisCollector(SpaceAgent):
 				self.vel_x = self.vel_x/round(norm)
 				self.vel_y = self.vel_y/round(norm)
 
-				new_pos_x = self.pos_x + round(self.vel_x * 0.8)
-				new_pos_y = self.pos_y + round(self.vel_y * 0.8)
+				new_pos_x = self.pos_x + round(self.vel_x*1.4)
+				new_pos_y = self.pos_y + round(self.vel_y*1.4)
 
 				dist_traveled = dist((new_pos_x, new_pos_y), (self.pos_x, self.qt_node_target.center_y))
 				self.fuel -= dist_traveled/5
