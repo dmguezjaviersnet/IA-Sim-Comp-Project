@@ -33,7 +33,7 @@ class TypeCollector:
         self.context.define_fun('custom_space_debris', SpaceDebrisType(), ['size', 'color'], [TupleType(), TupleType()])
         self.context.define_fun('custom_launchpad', VoidType(), ['T', 'lambda'], [IntType(), FloatType()])
         self.context.define_fun('custom_create_space_debris_event', VoidType(), ['T', 'lambda'], [IntType(), FloatType()])
-        self.context.define_fun('custom_agent', AgentType(), ['lifetime', 'capacity', 'fuel', 'perception_range', 'vel'],[IntType(), IntType(), IntType(), IntType(), IntType()])
+        self.context.define_fun('custom_create_agent', AgentType(), ['lifetime', 'capacity', 'fuel', 'perception_range', 'vel'],[IntType(), IntType(), IntType(), IntType(), IntType()])
         string_type =  StringType()
         self.context.types['String']  = string_type
         string_type.define_method('concat', string_type, ['s1'], [string_type])

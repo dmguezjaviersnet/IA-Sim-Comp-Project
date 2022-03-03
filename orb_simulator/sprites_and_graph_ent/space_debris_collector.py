@@ -83,8 +83,9 @@ class SpaceDebrisCollector(SpaceAgent):
 								perceived_env.append((qt_node, at_range + 1))
 				
 		if not self.desires:
+			random_move = randint(0, len(possible_random_moves) - 1)
 			if not self.empty_fuel_tank and not self.unusable:
-				random_move = randint(0, len(possible_random_moves) - 1)
+				
 				# print(f'random_move to {random_move}')
 				heapq.heappush(self.desires, AgentActionData(-2, possible_random_moves[random_move], None, MOVE_RANDOMLY))
 			

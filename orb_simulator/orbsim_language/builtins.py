@@ -36,7 +36,7 @@ def create_custom_space_debris(size: 'Instance', color: 'Instance', handler:'Pyg
     return Instance(SpaceDebrisType(), handler.create_custom_space_debris(size.value, color.value))
 
 def create_custom_agent(lifetime: 'Instance', capacity: 'Instance', fuel: 'Instance', perception_range: 'Instance',  velocity: 'Instance', handler:'PygameHandler'):
-    return Instance(AgentType(), handler.create_custom_space_debris_collector(lifetime.value, capacity.value, fuel.value, perception_range.value,velocity))
+    return Instance(AgentType(), handler.create_custom_space_debris_collector(lifetime.value, capacity.value, fuel.value, perception_range.value,velocity.value))
     
 def number_of_satellites(handler: 'PygameHandler'):
     return Instance(IntType(), handler.number_of_satellites)
@@ -81,7 +81,7 @@ def custom_sp_poisson(t:'Instance', lambda_val: 'Instance', handler: 'PygameHand
 
 simulation_names = ['add_to_simulation', 'number_objects', 'number_orbits', 
 'number_space_debris', 'number_satellites', 'custom_space_debris', 'move_to_orbit', 
-'custom_launchpad', 'custom_create_space_debris_event', 'agent_add_to_simulation']
+'custom_launchpad', 'custom_create_space_debris_event', 'custom_create_agent']
 
 def for_simulation(method_name: str):
     return method_name in simulation_names
