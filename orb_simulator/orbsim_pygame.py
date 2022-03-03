@@ -131,6 +131,7 @@ class PygameHandler():
         for garbage1, garbage2 in collisions:
             if (garbage1, garbage2) in visited or (garbage2, garbage1) in visited:
                 continue
+
             if abs(garbage1.area - garbage2.area) > 200:
                 # new_debris = generate_space_debris_subdivide(garbage1, garbage2)
                 # for d in new_debris:
@@ -165,18 +166,20 @@ class PygameHandler():
                 
 
     def draw_path(self, path, agent):
-            
 
         for pos,qt_node in enumerate(path):
-            
             pos_x = qt_node.center_x
             pos_y = qt_node.center_y
+
             if pos == 0:
                 pygame.draw.line(self.screen, SELECT_BLUE_COLOR, (agent.pos_x, agent.pos_y),(pos_x, pos_y), 2)
+
             if pos == len(path)-1:
                 pygame.draw.circle(self.screen, WHITE_COLOR,(pos_x, pos_y), 2, 2)
+
             else:
                 pygame.draw.circle(self.screen, WHITE_COLOR,(pos_x, pos_y), 2, 2)
+
             if pos != len(path)-1:
                 new_pos_x = path[pos+1].center_x 
                 new_pos_y = path[pos+1].center_y
@@ -202,7 +205,6 @@ class PygameHandler():
             pygame.quit()
         # subprocess.raise_exception()
         # self.subprocess.terminate()
-        
     
     def pause_pygame(self):
         self.pause = not self.pause
@@ -214,7 +216,6 @@ class PygameHandler():
         self.earth.animate()
 
     def draw(self):
-        
         max_time = 0
         counter_time = 0.00
         self.screen.blit(self.background, (0,0))
@@ -226,17 +227,15 @@ class PygameHandler():
         sys.stdout = sys.__stdout__
         if self.poisson_space_creation_closing_time and self.poisson_space_creation_lambda:
             sp_poisson = HomogeneousPoissonProcess(self.poisson_space_creation_closing_time, self.poisson_space_creation_lambda)
+
         else:
             sp_poisson =  HomogeneousPoissonProcess(1000, 0.1)
-
         
         while self.running:
-           
             # print(len(self.objects))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                    
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
@@ -249,6 +248,7 @@ class PygameHandler():
                         self.show_orbits = not self.show_orbits
                     elif event.key == pygame.K_r:
                        self.running = False
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for o in self.space_debris_group.sprites():
                         o.change_selected()
@@ -268,8 +268,6 @@ class PygameHandler():
                         satellite = launchpad.lauch_that_is_running.rocket.satellite
                         self.add_new_satellite(satellite)
                         launchpad.update_departure(counter_time)
-                            
-                           
                         
                 # Evente de Poisson para generar nuevos objetos
                 # if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
@@ -283,12 +281,12 @@ class PygameHandler():
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
+
                 qTree.insert(self.earth)
+                
                 for object in self.objects:
                     object.is_colliding = False
                     qTree.insert(object)
-                
-                
                 
                 for agent in self.agents:
                     qTree.insert(agent)
