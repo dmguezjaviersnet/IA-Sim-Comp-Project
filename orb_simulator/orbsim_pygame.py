@@ -8,6 +8,7 @@ from simulation.orbsim_simulation_entities import Point
 from simulation.orbsim_simulation_structs import QuadTree, collisions
 
 from sprites_and_graph_ent.earth import Sphere
+from sprites_and_graph_ent.space_obj import SpaceObj
 from tools import*
 from tools import next_point_moving_in_elipse, round_off_wi_exceed, SELECT_BLUE_COLOR
 from simulation.events import HomogeneousPoissonProcess
@@ -126,43 +127,53 @@ class PygameHandler():
                 self.remove_satellite(satellite)
         
 
-    def on_collisions(self, collisions: List[Tuple['SpaceDebris', 'SpaceDebris']]):
+    def on_collisions(self, collisions: List[Tuple['SpaceObj', 'SpaceObj']]):
         visited = []
-        for garbage1, garbage2 in collisions:
-            if (garbage1, garbage2) in visited or (garbage2, garbage1) in visited:
-                continue
-            if abs(garbage1.area - garbage2.area) > 200:
-                # new_debris = generate_space_debris_subdivide(garbage1, garbage2)
+        for obj1, obj2 in collisions:
+            if isinstance(obj1, SpaceDebris) and isinstance(obj2, SpaceDebris):
+
+                if (obj1, obj2) in visited or (obj2, obj1) in visited:
+                    continue
+                if abs(obj1.area - obj2.area) > 200:
+
+
+
+                # new_debris = generate_space_debris_subdivide(obj1, obj2)
                 # for d in new_debris:
                 #     self.add_new_space_debris(d)
-                if garbage1.area > garbage2.area:
-                    if garbage2 in self.objects:
-                        self.remove_space_debris(garbage2)
+                    if obj1.area > obj2.area:
+                        if obj2 in self.objects:
+                            self.remove_space_debris(obj2)
                     
                 #     subdivide_x = randint(2,4)
                 #     subdivide_y = randint(2,4)
-                #     garbage1.update_surface(garbage1.rect.width/subdivide_x, garbage1.rect.height/subdivide_y)
-                else:
-                    if garbage1 in self.objects:
-                        self.remove_space_debris(garbage1)
+                #     obj1.update_surface(obj1.rect.width/subdivide_x, obj1.rect.height/subdivide_y)
+                    else:
+                        if obj1 in self.objects:
+                            self.remove_space_debris(obj1)
                 #     subdivide_x = randint(2,4)
                 #     subdivide_y = randint(2,4)
-                #     garbage2.update_surface(garbage2.rect.width/subdivide_x, garbage2.rect.height/subdivide_y)
+                #     obj2.update_surface(obj2.rect.width/subdivide_x, obj2.rect.height/subdivide_y)
                 
 
                 
-            else:
-                # new_debris = generate_space_debris_subdivide(garbage1, garbage2)
-                # for d in new_debris:
-                #     self.add_new_space_debris(d)
-                subdivide_x_1 = randint(1,2)
-                subdivide_y_1 = randint(1,2)
-                subdivide_x_2 = randint(1,2)
-                subdivide_y_2 = randint(1,2)
-                rand_ = random.random()
-                garbage1.update_surface(garbage1.rect.width/round(subdivide_x_1+rand_), garbage1.rect.height/round(subdivide_y_1 + rand_))
-                garbage2.update_surface(garbage2.rect.width/round(subdivide_x_2+rand_), garbage2.rect.height/round(subdivide_y_2 + rand_))
-                
+                else:
+                    # new_debris = generate_space_debris_subdivide(obj1, obj2)
+                    # for d in new_debris:
+                    #     self.add_new_space_debris(d)
+                    subdivide_x_1 = randint(1,2)
+                    subdivide_y_1 = randint(1,2)
+                    subdivide_x_2 = randint(1,2)
+                    subdivide_y_2 = randint(1,2)
+                    rand_ = random.random()
+                    obj1.update_surface(abs(obj1.rect.width - obj2.rect.width/random.randint(4,9)), abs(obj1.rect.height - obj2.rect.width/random.randint(4,9)))
+                    obj2.update_surface(abs(obj2.rect.width - obj1.rect.width/random.randint(4,9)), abs(obj2.rect.height - obj1.rect.width/random.randint(4,9)))
+            elif isinstance(obj1, Satellite) and isinstance(obj2, SpaceDebris):
+                obj1.life_time -= obj2.area/6
+            elif isinstance(obj2, Satellite) and isinstance(obj1, SpaceDebris):
+                obj2.life_time -= obj1.area/6
+            
+            
 
     def draw_path(self, path, agent):
             

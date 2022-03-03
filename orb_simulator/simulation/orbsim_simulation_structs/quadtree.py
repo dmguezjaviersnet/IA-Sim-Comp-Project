@@ -5,6 +5,7 @@ from simulation.orbsim_simulation_entities import Point
 from sprites_and_graph_ent.orbit_obj import OrbitObj
 from sprites_and_graph_ent.space_agent import SpaceAgent
 from sprites_and_graph_ent.space_debris import SpaceDebris
+from sprites_and_graph_ent.satellite import Satellite
 import pygame.draw
 from sprites_and_graph_ent.space_obj import SpaceObj
 from tools import RED_COLOR, WHITE_COLOR, WINE_COLOR
@@ -159,7 +160,9 @@ class QTNode:
 				
 					self.objects[i].is_colliding = True
 					self.objects[j].is_colliding = True
-					if isinstance(self.objects[i], SpaceDebris) and isinstance(self.objects[j], SpaceDebris):
+					if (isinstance(self.objects[i], SpaceDebris) and isinstance(self.objects[j], SpaceDebris) 
+						or isinstance(self.objects[i], Satellite)  and isinstance(self.objects[j], SpaceDebris)
+						or isinstance(self.objects[i], SpaceDebris)  and isinstance(self.objects[j], Satellite)):
 						collisions.append((self.objects[i], self.objects[j]))
 
 				j += 1

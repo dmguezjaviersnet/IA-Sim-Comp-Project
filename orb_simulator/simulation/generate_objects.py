@@ -146,6 +146,9 @@ def generate_space_debris_subdivide(space_debris1: 'SpaceDebris', space_debris2:
         debris.append(sp)
     
     return debris
+def generate_custom_space_debris_collector(lifetime, capacity, fuel, vel):
+    pos_x = random.randint(1,800)
+    pos_y = random.randint(1,800)
 
 def generate_space_debris_collector():
     pos_x = random.randint(1,800)

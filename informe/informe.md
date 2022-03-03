@@ -8,6 +8,14 @@
 ```
 streamlit run ./orbsim_main.py
 ```
+
+![main](./orbsim1.png)
+
+
+Uso del modelo de dos servidores en serie para la simulación del proceso de fabricación y 
+despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
+
+
 ## El proceso de compilación
 
 ### Gramáticas
