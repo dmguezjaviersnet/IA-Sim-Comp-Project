@@ -58,7 +58,7 @@ def debugging(handler: 'PygameHandler'):
     # handler.generate_random_collector()
     # handler.generate_orbits(random.randint(1,20))
 
-    for i in range(10):
+    for i in range(20):
         handler.generate_new_random_space_debris()
     # handler.generate_objects_in_orbits(random.randint(1,1))
     # handler.generate_random_collector()
@@ -74,8 +74,12 @@ def main():
     debugging(pygame_handler)
     orbsim_compile_and_execute(
 '''
-    let Agent a1 = custom_create_agent(100, 500, 100, 8, 10);
+    let Agent a1 = custom_create_agent(100, 5000, 500, 8, 50);
     a1.add_to_simulation();
+    let Agent a2 = custom_create_agent(300, 4000, 40500, 8, 15);
+    a2.add_to_simulation();
+    let Agent a3 = custom_create_agent(500, 1000, 1500, 2, 5);
+    a3.add_to_simulation();
     start;
     print(a1);
 '''

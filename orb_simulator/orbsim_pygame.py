@@ -279,23 +279,23 @@ class PygameHandler():
                 # print(launchpad.closing_time)
                 # Modelo de dos servidores en serie para fabricación y despegue de cohetes para la posterior puesta en órbita de los satélites que están en los mismos
                 if launchpad.closing_time > round_off_wi_exceed(counter_time):
-                    # print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
+                    print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
                     launchpad.update(counter_time, self.orbits)
                         
                     if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
-                        # print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
+                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
                         satellite = launchpad.lauch_that_is_running.rocket.satellite
                         self.add_new_satellite(satellite)
                         launchpad.update_departure(counter_time)
                         
                 # Evente de Poisson para generar nuevos objetos
-                # if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
-                #     print(f'current_time{counter_time} NextPoissonEvent: {sp_poisson.next_event_time}')
-                #     if round_off_wi_exceed(sp_poisson.next_event_time) == round_off_wi_exceed(counter_time):
-                #         sp_poisson.generate_next_event()
-                #         new_obj = generate_new_object_in_random_orbit(self.orbits)
-                #         self.objects.append(new_obj)
-                #         self.space_debris_group.add(new_obj)
+                if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
+                    print(f'current_time{counter_time} NextPoissonEvent: {sp_poisson.next_event_time}')
+                    if round_off_wi_exceed(sp_poisson.next_event_time) == round_off_wi_exceed(counter_time):
+                        sp_poisson.generate_next_event()
+                        new_obj = generate_new_object_in_random_orbit(self.orbits)
+                        self.objects.append(new_obj)
+                        self.space_debris_group.add(new_obj)
 
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
