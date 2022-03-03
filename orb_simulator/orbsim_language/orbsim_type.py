@@ -93,6 +93,9 @@ class SatelliteType(OrbsimType):
 class SpaceDebrisType(OrbsimType):
     def __init__(self):
         super().__init__('SpaceDebris')
+class AgentType(OrbsimType):
+    def __init__(self):
+        super().__init__('Agent')
 
 class ListType(OrbsimType):
     def __init__(self):

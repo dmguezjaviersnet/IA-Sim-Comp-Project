@@ -19,8 +19,8 @@ IDLE = 'idle'
 
 class SpaceDebrisCollector(SpaceAgent):
 
-	def __init__(self, pos_x: int, pos_y: int, life_time: float, capacity: int, fuel: float, vel = 40):
-		super().__init__(pos_x, pos_y, 8)
+	def __init__(self, pos_x: int, pos_y: int, life_time: float, capacity: int, fuel: float, perception_range=8, vel = 20):
+		super().__init__(pos_x, pos_y, perception_range)
 		self.life_time = life_time if life_time else random.randint(50, 80) + random.random()
 		self.capacity = capacity if capacity else random.randint(200, 300)
 		self.fuel = fuel if fuel else random.randint(500, 1000) + random.random()
@@ -29,6 +29,11 @@ class SpaceDebrisCollector(SpaceAgent):
 		self.action_target: AgentActionData = AgentActionData(-2, None, None, IDLE)
 		self.path_to_target: List = []
 		self.qt_node_target: QTNode = None
+		self.id = id(self)
+
+
+	def __str__(self):
+		return f'SpaceDebrisCollector{self.id}(Lifetime:{self.life_time}, Capacity:{self.capacity}, Fuel:{self.fuel}, PerceptionRange:{self.perception_range}, Vel:{self.vel}'
 
 	@property
 	def empty_fuel_tank(self):
