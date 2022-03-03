@@ -37,8 +37,7 @@ def a_star(start: QTNode, start_object, h, goal: QTNode):
 
     while open_set:
         curr_data: NeighborData = heapq.heappop(f_value)
-        node =  curr_data.neighbor
-        
+        node = curr_data.neighbor
 
         if goal == node:
             return reconstruct_path(node, parent)
@@ -50,11 +49,10 @@ def a_star(start: QTNode, start_object, h, goal: QTNode):
             # if start_object in neighbor.objects:
             #     continue
 
-            if neighbor.objects  and start_object not in neighbor.objects and len(neighbor.objects) > 1 :
+            if neighbor.objects and start_object not in neighbor.objects and len(neighbor.objects) > 1:
                 continue
         
             tentative_g_score = g_value[node] + 1
-            
             
             if neighbor in closed_set:
                 continue

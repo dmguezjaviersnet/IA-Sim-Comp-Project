@@ -131,6 +131,7 @@ def generate_space_debris_subdivide(space_debris1: 'SpaceDebris', space_debris2:
             angle = space_debris1.orbit_angle
             a = space_debris1.a
             b = space_debris1.b
+            
         else:
             point = space_debris2.orbit_center
             angle = space_debris2.orbit_angle

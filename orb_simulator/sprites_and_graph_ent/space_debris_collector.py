@@ -1,13 +1,12 @@
 import heapq
-import math
 from random import randint
 from math import dist
-from typing import Dict, List, Tuple
+from typing import List
 from simulation.orbsim_simulation_structs.quadtree import QTNode
+from sprites_and_graph_ent.earth import Sphere
 from sprites_and_graph_ent.satellite import Satellite
 from sprites_and_graph_ent.space_agent import SpaceAgent, AgentActionData
 from simulation.a_star import a_star, eucl_dist_qtnode
-from sys import maxsize
 import random
 from sprites_and_graph_ent.space_debris import SpaceDebris
 
@@ -20,27 +19,35 @@ IDLE = 'idle'
 
 class SpaceDebrisCollector(SpaceAgent):
 
-	def __init__(self, pos_x: int, pos_y: int, life_span: int, capacity: int, fuel: int, vel = 10):
+	def __init__(self, pos_x: int, pos_y: int, life_time: float, capacity: int, fuel: float, vel = 20):
 		super().__init__(pos_x, pos_y, 8)
-		self.life_span = life_span
-		self.capacity = capacity
-		self.fuel = fuel
+		self.life_time = life_time if life_time else random.randint(50, 80) + random.random()
+		self.capacity = capacity if capacity else random.randint(200, 300)
+		self.fuel = fuel if fuel else random.randint(500, 1000) + random.random()
 		self.collected_debris = []
 		self.vel = vel
 		self.action_target: AgentActionData = AgentActionData(-1, None, None, IDLE)
 		self.path_to_target: List = []
 		self.qt_node_target: QTNode = None
 
+	@property
+	def empty_fuel_tank(self):
+		return self.fuel <= 0
+
+	@property
+	def unusable(self):
+		return self.life_time <= 0
+
 	def options(self):
 		if self.desires:
 			self.desires.clear()
+
 		visited: List[QTNode] = []
 		possible_random_moves = []
-
 		perceived_env = [(self.beliefs, 0)]
 		self.desires = []
 
-		if self.life_span:
+		if self.life_time:
 			while(perceived_env):
 				curr_env, at_range = perceived_env.pop(0)
 				if at_range < self.perception_range:
@@ -51,9 +58,9 @@ class SpaceDebrisCollector(SpaceAgent):
 							if qt_node.objects:
 								for object in qt_node.objects:
 									if object != self:
+										distance = dist((self.pos_x, self.pos_y), object.rect.center)
 										if isinstance(object, SpaceDebris):
 											if object.area < self.capacity:
-												distance = dist((self.pos_x, self.pos_y), object.rect.center)
 												if self.fuel*5 >= distance:
 													heapq.heappush(self.desires, AgentActionData(distance, qt_node, object, 
 																COLLECT_DEBRIS if at_range == 0 else MOVE_TOWARDS_DEBRIS))
@@ -71,13 +78,13 @@ class SpaceDebrisCollector(SpaceAgent):
 								perceived_env.append((qt_node, at_range + 1))
 				
 		if not self.desires:
-			if self.fuel and self.life_span:
+			if not self.empty_fuel_tank and not self.unusable:
 				random_move = randint(0, len(possible_random_moves) - 1)
 				# print(f'random_move to {random_move}')
-				heapq.heappush(self.desires, AgentActionData(None, possible_random_moves[random_move], None, MOVE_RANDOMLY))
+				heapq.heappush(self.desires, AgentActionData(-2, possible_random_moves[random_move], None, MOVE_RANDOMLY))
 			
 			else:
-				heapq.heappush(self.desires, AgentActionData(None, self.beliefs.neighbors[random_move], None, BECOME_DEBRIS))
+				heapq.heappush(self.desires, AgentActionData(-3, self.beliefs.neighbors[random_move], None, BECOME_DEBRIS))
 		
 		top_priority_target: 'AgentActionData' = heapq.heappop(self.desires)
 
@@ -91,9 +98,10 @@ class SpaceDebrisCollector(SpaceAgent):
 
 	def pursue_goal(self):
 		if self.action_target.action == MOVE_RANDOMLY or self.action_target.action ==  MOVE_TOWARDS_DEBRIS:
-			self.path_to_target = a_star(self.beliefs, self, eucl_dist_qtnode, self.action_target.qt_node)
-			self.qt_node_target = self.path_to_target.pop(0)
-		
+			if not any(isinstance(object, Sphere) for object in self.action_target.qt_node.objects):
+				self.path_to_target = a_star(self.beliefs, self, eucl_dist_qtnode, self.action_target.qt_node)
+				self.qt_node_target = self.path_to_target.pop(0)
+			
 		elif self.action_target.action == COLLECT_DEBRIS:
 			self.capacity -= self.action_target.object.area
 			self.fuel -= self.action_target.object.area/2
@@ -105,6 +113,8 @@ class SpaceDebrisCollector(SpaceAgent):
 			return self
 	
 	def update(self):
+		self.life_time -= 0.01
+
 		if (self.action_target and (self.action_target.action == MOVE_TOWARDS_DEBRIS or self.action_target.action == MOVE_RANDOMLY)):
 			diff_x = self.qt_node_target.center_x - self.pos_x
 			diff_y = self.qt_node_target.center_y - self.pos_y
