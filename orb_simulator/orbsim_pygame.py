@@ -2,6 +2,7 @@ from asyncio import subprocess
 from operator import le
 from random import randint
 from typing import List
+from more_itertools import random_combination
 import pygame
 from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector, space_debris_collector
 from simulation.orbsim_simulation_entities import Point
@@ -92,6 +93,7 @@ class PygameHandler():
     def add_new_space_debris(self, space_debris: 'SpaceDebris'):
         self.objects.append(space_debris)
         self.space_debris_group.add(space_debris)
+
     def remove_space_debris(self, space_debris: 'SpaceDebris'):
         self.objects.remove(space_debris)
         self.space_debris_group.remove(space_debris)
@@ -118,10 +120,11 @@ class PygameHandler():
     def create_custom_space_debris(self, size, color):
         return generate_custom_space_debris(self.orbits, size, color)
 
-    def generate_random_collector(self):
-        collector = generate_space_debris_collector()
-        self.space_debris_collector_group.add(collector)
-        self.agents.append(collector)
+    # def generate_random_collector(self):
+    #     collector = generate_space_debris_collector()
+    #     self.space_debris_collector_group.add(collector)
+    #     self.agents.append(collector)
+
     def generate_new_random_satellite(self):
         satellite =  generate_new_random_satellite(self.orbits)
         self.satellite_group.add(satellite)
@@ -147,13 +150,10 @@ class PygameHandler():
         visited = []
         for obj1, obj2 in collisions:
             if isinstance(obj1, SpaceDebris) and isinstance(obj2, SpaceDebris):
-
                 if (obj1, obj2) in visited or (obj2, obj1) in visited:
                     continue
+                
                 if abs(obj1.area - obj2.area) > 200:
-
-
-
                 # new_debris = generate_space_debris_subdivide(obj1, obj2)
                 # for d in new_debris:
                 #     self.add_new_space_debris(d)
@@ -182,12 +182,12 @@ class PygameHandler():
                     rand_ = random.random()
                     obj1.update_surface(abs(obj1.rect.width - obj2.rect.width/random.randint(4,9)), abs(obj1.rect.height - obj2.rect.width/random.randint(4,9)))
                     obj2.update_surface(abs(obj2.rect.width - obj1.rect.width/random.randint(4,9)), abs(obj2.rect.height - obj1.rect.width/random.randint(4,9)))
+
             elif isinstance(obj1, Satellite) and isinstance(obj2, SpaceDebris):
                 obj1.life_time -= obj2.area/6
+
             elif isinstance(obj2, Satellite) and isinstance(obj1, SpaceDebris):
                 obj2.life_time -= obj1.area/6
-            
-            
 
     def draw_path(self, path, agent):
         for pos, qt_node in enumerate(path):
@@ -239,7 +239,9 @@ class PygameHandler():
         self.earth.animate()
 
     def draw(self):
-        max_time = 0
+        if not self.orbits:
+            self.orbits = self.generate_orbits(random.randint(1, 8))
+
         counter_time = 0.00
         self.screen.blit(self.background, (0,0))
         if self.launchpad_factory_closing_time and self.launchpad_factory_lambda:
