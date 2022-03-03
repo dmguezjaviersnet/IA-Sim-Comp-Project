@@ -9,7 +9,7 @@
 streamlit run ./orbsim_main.py
 ```
 
-![main](./orbsim1.png)
+![main](./images/orbsim1.png)
 
 
 Uso del modelo de dos servidores en serie para la simulación del proceso de fabricación y 
@@ -17,7 +17,7 @@ despegue de cohete para la posterior puesta en órbita de los satélites que con
 El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
 
 
-![main](./orbsim1.png)
+![main](./images/orbsim1.png)
 Ejemplos:
 ```
 custom_launchpad(5000, 0.001);
@@ -26,8 +26,8 @@ donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se 
 generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo 
 o para el tiempo de la próxima partida.
 
-![main](./launchpad1.png)
-![main](./launchpad2.png)
+![main](./images/launchpad1.png)
+![main](./images/launchpad2.png)
 
 
 
