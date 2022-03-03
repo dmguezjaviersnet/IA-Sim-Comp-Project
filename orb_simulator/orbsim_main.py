@@ -73,14 +73,12 @@ def main():
     pygame_handler = PygameHandler()
     debugging(pygame_handler)
     orbsim_compile_and_execute(
-    '''
-       let Int counter = 0;
-loop (counter < randint(2, 30) ){
-    counter = counter + 1;
-    let Orbit o1 = orbit;o
-    o1.add_to_simulation();
-};
 '''
+    let Agent a1 = custom_agent(100, 500, );
+    print(a1)
+    };
+'''
+)
 
 # let Tuple size1 = tuple(10,10);
 # let Tuple size2 = tuple(20,20);
