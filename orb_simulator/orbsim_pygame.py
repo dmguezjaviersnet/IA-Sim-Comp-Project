@@ -182,7 +182,7 @@ class PygameHandler():
             elif isinstance(obj1, Satellite) and isinstance(obj2, SpaceDebris):
                 obj1.life_time -= obj2.area/random.randint(6,20)
             elif isinstance(obj2, Satellite) and isinstance(obj1, SpaceDebris):
-                obj2.life_time -= obj1.area/random.randint()
+                obj2.life_time -= obj1.area/random.randint(6,20)
             
             
 

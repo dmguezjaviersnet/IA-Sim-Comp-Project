@@ -72,12 +72,12 @@ def main():
    
     pygame_handler = PygameHandler()
     debugging(pygame_handler)
-    orbsim_compile_and_execute(
-'''
-    let Agent a1 = agent;
-    print(a1);
-'''
-, pygame_handler)
+#     orbsim_compile_and_execute(
+# '''
+#     let Agent a1 = agent;
+#     print(a1);
+# '''
+# , pygame_handler)
 
 # let Tuple size1 = tuple(10,10);
 # let Tuple size2 = tuple(20,20);
@@ -90,7 +90,7 @@ def main():
 # start;
 
 #     ''', pygame_handler)
-    # ui = OrbisimUI(pygame_handler)
+    ui = OrbisimUI(pygame_handler)
     
     # handler = Handler()
     # handler.start()
