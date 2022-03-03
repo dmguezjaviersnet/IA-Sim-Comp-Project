@@ -90,7 +90,7 @@ class SpaceDebrisCollector(SpaceAgent):
 				heapq.heappush(self.desires, AgentActionData(-2, possible_random_moves[random_move], None, MOVE_RANDOMLY))
 			
 			else:
-				heapq.heappush(self.desires, AgentActionData(-3, self.beliefs.neighbors[random_move], None, BECOME_DEBRIS))
+				heapq.heappush(self.desires, AgentActionData(-3, None, None, BECOME_DEBRIS))
 		
 		top_priority_target: 'AgentActionData' = heapq.heappop(self.desires)
 
