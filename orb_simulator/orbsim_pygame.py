@@ -5,11 +5,11 @@ from typing import List
 import pygame
 from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector
 from simulation.orbsim_simulation_entities import Point
-from simulation.orbsim_simulation_structs import QuadTree
+from simulation.orbsim_simulation_structs import QuadTree, collisions
 
 from sprites_and_graph_ent.earth import Sphere
 from tools import*
-from tools import next_point_moving_in_elipse, round_off_wi_exceed
+from tools import next_point_moving_in_elipse, round_off_wi_exceed, SELECT_BLUE_COLOR
 from simulation.events import HomogeneousPoissonProcess
 from simulation.generate_objects import *
 import threading
@@ -109,6 +109,34 @@ class PygameHandler():
     def move_space_debris_to_orbit(self, orbit, space_debris):
         move_to_sp_other_orbit(orbit, space_debris)
 
+    def on_collisions(self, collisions: List[Tuple['SpaceDebris', 'SpaceDebris']]):
+        for garbage1, garbage2 in collisions:
+            if abs(garbage1.area - garbage2.area) > 30:
+                if garbage1.area > garbage2.area:
+                    self.objects.remove(garbage1)
+                else:
+                    self.objects.remove(garbage2)
+                
+            else:
+                self.objects.remove(garbage2)
+
+    def draw_path(self, path, agent):
+            
+
+        for pos,qt_node in enumerate(path):
+            
+            pos_x = qt_node.center_x
+            pos_y = qt_node.center_y
+            if pos == 0:
+                pygame.draw.line(self.screen, SELECT_BLUE_COLOR, (agent.pos_x, agent.pos_y),(pos_x, pos_y), 2)
+            if pos == len(path)-1:
+                pygame.draw.circle(self.screen, WHITE_COLOR,(pos_x, pos_y), 2, 2)
+            else:
+                pygame.draw.circle(self.screen, WHITE_COLOR,(pos_x, pos_y), 2, 2)
+            if pos != len(path)-1:
+                new_pos_x = path[pos+1].center_x 
+                new_pos_y = path[pos+1].center_y
+                pygame.draw.line(self.screen, SELECT_BLUE_COLOR, (pos_x, pos_y),(new_pos_x, new_pos_y), 2)
 
     def start_pygame(self):
         pygame.init()
@@ -211,12 +239,12 @@ class PygameHandler():
                 # start = time.time()
                 qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
-                
+                qTree.insert(self.earth)
                 for object in self.objects:
                     object.is_colliding = False
                     qTree.insert(object)
                 
-                # qTree.insert(self.earth)
+                
                 
                 for agent in self.agents:
                     qTree.insert(agent)
@@ -234,9 +262,12 @@ class PygameHandler():
                             if child not in visited:
                                 visited.append(child)
                                 queue.append(child)
-                            
+                global  collisions
                 for leaf in leaves:
                     leaf.find_neighbors()
+                    leaf.check_collisions()
+                    if collisions:
+                        print('\o/')
                 #     pygame.draw.rect(self.screen, (randint(0, 255), randint(0, 255), randint(0, 255)), 
                 #                                 [leaf.bounding_box_tl[0], leaf.bounding_box_tl[1], 
                 #                                 leaf.bounding_box_br[0] - leaf.bounding_box_tl[0], leaf.bounding_box_br[1] - leaf.bounding_box_tl[1]])
@@ -301,7 +332,10 @@ class PygameHandler():
 
                 for agent in self.agents:
                     agent.options()
+                    # print(agent.action_target.action)
                     path = agent.path_to_target
+                    self.draw_path(path, agent)
+                    
                     # if path:
                     #     for qt_node in path:
                     #         pygame.draw.rect(self.screen, (0, 0, 255), 
@@ -315,7 +349,6 @@ class PygameHandler():
                 for agent in self.agents:
                     for collected in agent.collected_debris:
                         self.objects.remove(collected)
-                        # collected.kill()
                         
                         self.space_debris_group.remove(collected)
                         print(len(self.space_debris_group.sprites()))
@@ -348,7 +381,7 @@ class PygameHandler():
                         orb.draw_elipse(self.screen, PLUM_COLOR)
                 self.space_debris_group.draw(self.screen)
                 # self.satellite_group.draw(self.screen)
-                # self.earth_group.draw(self.screen)
+                self.earth_group.draw(self.screen)
                 self.space_debris_collector_group.draw(self.screen)
 
                 for obj in self.objects:
@@ -356,9 +389,10 @@ class PygameHandler():
                     # pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
                     # obj.draw_points(self.screen)
                     obj.draw_selection(self.screen)
-
+                
                 leaves.clear()
-
+                
+                collisions.clear()
                 self.space_debris_group.update()
                 self.earth_group.update()
                 # self.satellite_group.update()

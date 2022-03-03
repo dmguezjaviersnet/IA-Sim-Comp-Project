@@ -22,7 +22,7 @@ def reconstruct_path(node: QTNode, parent: QTNode):
 
     return path
 
-def a_star(start: QTNode, h, goal: QTNode, open=None):
+def a_star(start: QTNode, start_object, h, goal: QTNode):
     closed_set = set()
     open_set = set()
     g_value = {}
@@ -38,7 +38,7 @@ def a_star(start: QTNode, h, goal: QTNode, open=None):
     while open_set:
         curr_data: NeighborData = heapq.heappop(f_value)
         node =  curr_data.neighbor
-        node.find_neighbors()
+        
 
         if goal == node:
             return reconstruct_path(node, parent)
@@ -47,7 +47,14 @@ def a_star(start: QTNode, h, goal: QTNode, open=None):
         open_set.remove(node)
 
         for neighbor in node.neighbors:
+            # if start_object in neighbor.objects:
+            #     continue
+
+            if neighbor.objects  and start_object not in neighbor.objects and len(neighbor.objects) > 1 :
+                continue
+        
             tentative_g_score = g_value[node] + 1
+            
             
             if neighbor in closed_set:
                 continue
@@ -59,8 +66,8 @@ def a_star(start: QTNode, h, goal: QTNode, open=None):
 
                 if neighbor in open_set:
                     
-                    for i, (p, x) in f_value:
-                        if x == neighbor:
+                    for i, neighbor_data in enumerate(f_value):
+                        if neighbor_data.neighbor == neighbor:
                             f_value[i] = NeighborData(actual_f_value, neighbor)
                             break
                     heapq.heapify(f_value)

@@ -15,7 +15,7 @@ MAX_LIMIT = 3
 
 quadtree_pygame_window = None
 low_depth_leave = None
-
+collisions = []
 # class LineColor(Enum):
 # 	WHITE = (255, 255, 255)
 # 	GREEN = (0, 255, 0)
@@ -156,9 +156,10 @@ class QTNode:
 			while j < len(self.objects):
 				if detect_collision(self.objects[i].rect.topleft, self.objects[i].rect.bottomright, 
 									self.objects[j].rect.topleft, self.objects[j].rect.bottomright):
-
+				
 					self.objects[i].is_colliding = True
 					self.objects[j].is_colliding = True
+					collisions.append((self.objects[i], self.objects[j]))
 
 				j += 1
 	
