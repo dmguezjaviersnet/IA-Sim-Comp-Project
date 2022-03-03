@@ -167,16 +167,14 @@ class PygameHandler():
                 #     subdivide_y = randint(2,4)
                 #     obj2.update_surface(obj2.rect.width/subdivide_x, obj2.rect.height/subdivide_y)
                 
-
-                
                 else:
                     # new_debris = generate_space_debris_subdivide(obj1, obj2)
                     # for d in new_debris:
                     #     self.add_new_space_debris(d)
-                    subdivide_x_1 = randint(1,2)
-                    subdivide_y_1 = randint(1,2)
-                    subdivide_x_2 = randint(1,2)
-                    subdivide_y_2 = randint(1,2)
+                    # subdivide_x_1 = randint(1,2)
+                    # subdivide_y_1 = randint(1,2)
+                    # subdivide_x_2 = randint(1,2)
+                    # subdivide_y_2 = randint(1,2)
                     rand_ = random.random()
                     obj1.update_surface(abs(obj1.rect.width - obj2.rect.width/random.randint(4,9)), abs(obj1.rect.height - obj2.rect.width/random.randint(4,9)))
                     obj2.update_surface(abs(obj2.rect.width - obj1.rect.width/random.randint(4,9)), abs(obj2.rect.height - obj1.rect.width/random.randint(4,9)))
@@ -188,8 +186,7 @@ class PygameHandler():
             
 
     def draw_path(self, path, agent):
-
-        for pos,qt_node in enumerate(path):
+        for pos, qt_node in enumerate(path):
             pos_x = qt_node.center_x
             pos_y = qt_node.center_y
 
@@ -277,16 +274,16 @@ class PygameHandler():
 
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
-                print(launchpad.closing_time)
-                print(launchpad.lambda_value)
-                print(launchpad.closing_time)
+                # print(launchpad.closing_time)
+                # print(launchpad.lambda_value)
+                # print(launchpad.closing_time)
                 # Modelo de dos servidores en serie para fabricación y despegue de cohetes para la posterior puesta en órbita de los satélites que están en los mismos
                 if launchpad.closing_time > round_off_wi_exceed(counter_time):
-                    print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
+                    # print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
                     launchpad.update(counter_time, self.orbits)
                         
                     if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
-                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
+                        # print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
                         satellite = launchpad.lauch_that_is_running.rocket.satellite
                         self.add_new_satellite(satellite)
                         launchpad.update_departure(counter_time)
@@ -305,7 +302,7 @@ class PygameHandler():
                         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
 
                 qTree.insert(self.earth)
-                
+
                 for object in self.objects:
                     object.is_colliding = False
                     qTree.insert(object)
@@ -326,6 +323,7 @@ class PygameHandler():
                             if child not in visited:
                                 visited.append(child)
                                 queue.append(child)
+
                 global  collisions
                 for leaf in leaves:
                     leaf.find_neighbors()
@@ -395,9 +393,10 @@ class PygameHandler():
 
                 for agent in self.agents:
                     agent.options()
-                    # print(agent.action_target.action)
+                    print(agent.action_target.action)
                     path = agent.path_to_target
-                    self.draw_path(path, agent)
+                    if path:
+                        self.draw_path(path, agent)
                     
                     # if path:
                     #     for qt_node in path:
@@ -427,11 +426,6 @@ class PygameHandler():
                 #     qTree.insert(object)
                 # for agent in self.agents:
                 #     qTree.insert(agent)
-              
-                
-
-
-                    
 
                 # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
                 # end = time.time()
@@ -442,6 +436,7 @@ class PygameHandler():
                 if self.show_orbits:
                     for orb in self.orbits:
                         orb.draw_elipse(self.screen, PLUM_COLOR)
+
                 self.space_debris_group.draw(self.screen)
                 self.satellite_group.draw(self.screen)
                 self.earth_group.draw(self.screen)
@@ -454,8 +449,10 @@ class PygameHandler():
                     obj.draw_selection(self.screen)
                 
                 leaves.clear()
+
                 if collisions:
                     self.on_collisions(collisions)
+
                 collisions.clear()
                 self.space_debris_group.update()
                 self.earth_group.update()

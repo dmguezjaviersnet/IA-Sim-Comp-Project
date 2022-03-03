@@ -26,7 +26,7 @@ class SpaceDebrisCollector(SpaceAgent):
 		self.fuel = fuel if fuel else random.randint(500, 1000) + random.random()
 		self.collected_debris = []
 		self.vel = vel
-		self.action_target: AgentActionData = AgentActionData(-1, None, None, IDLE)
+		self.action_target: AgentActionData = AgentActionData(-2, None, None, IDLE)
 		self.path_to_target: List = []
 		self.qt_node_target: QTNode = None
 		self.id = id(self)
@@ -67,12 +67,9 @@ class SpaceDebrisCollector(SpaceAgent):
 										if isinstance(object, SpaceDebris):
 											if object.area < self.capacity:
 												if self.fuel*5 >= distance:
-													heapq.heappush(self.desires, AgentActionData(distance, qt_node, object, 
+													heapq.heappush(self.desires, AgentActionData(distance, qt_node, object,
 																COLLECT_DEBRIS if at_range == 0 else MOVE_TOWARDS_DEBRIS))
 											
-										elif isinstance(object, Satellite):
-											heapq.heappush(self.desires, AgentActionData(distance, qt_node, object, MOVE_TO_SATELLITE))
-
 									else:
 										self_object = True 
 										perceived_env.append((qt_node, 0))
@@ -87,7 +84,7 @@ class SpaceDebrisCollector(SpaceAgent):
 			if not self.empty_fuel_tank and not self.unusable:
 				
 				# print(f'random_move to {random_move}')
-				heapq.heappush(self.desires, AgentActionData(-2, possible_random_moves[random_move], None, MOVE_RANDOMLY))
+				heapq.heappush(self.desires, AgentActionData(-3, possible_random_moves[random_move], None, MOVE_RANDOMLY))
 			
 			else:
 				heapq.heappush(self.desires, AgentActionData(-3, None, None, BECOME_DEBRIS))
@@ -106,16 +103,19 @@ class SpaceDebrisCollector(SpaceAgent):
 		if self.action_target.action == MOVE_RANDOMLY or self.action_target.action ==  MOVE_TOWARDS_DEBRIS:
 			if not any(isinstance(object, Sphere) for object in self.action_target.qt_node.objects):
 				self.path_to_target = a_star(self.beliefs, self, eucl_dist_qtnode, self.action_target.qt_node)
-				self.qt_node_target = self.path_to_target.pop(0)
-			
+				if self.path_to_target:
+					self.qt_node_target = self.path_to_target.pop(0)
+				
+				else: self.action_target = AgentActionData(-2, None, None, IDLE)
+
 		elif self.action_target.action == COLLECT_DEBRIS:
 			self.capacity -= self.action_target.object.area
 			self.fuel -= self.action_target.object.area/2
 			self.collected_debris.append(self.action_target.object)
-			self.action_target = AgentActionData(-1, None, None, IDLE)
+			self.action_target = AgentActionData(-2, None, None, IDLE)
 
 		elif self.action_target.action == BECOME_DEBRIS:
-			self.action_target = AgentActionData(-1, None, None, IDLE)
+			self.action_target = AgentActionData(-2, None, None, IDLE)
 			return self
 	
 	def update(self):
@@ -141,7 +141,7 @@ class SpaceDebrisCollector(SpaceAgent):
 				if self.path_to_target:
 					self.qt_node_target = self.path_to_target.pop(0)
 				
-				else: self.action_target = AgentActionData(-1, None, None, IDLE)
+				else: self.action_target = AgentActionData(-2, None, None, IDLE)
 					
 
 
