@@ -1,4 +1,6 @@
 import random
+
+from cv2 import RETR_EXTERNAL
 from orbsim_language.orbsim_ast.body_node import BodyNode
 import orbsim_language.visitor as visitor
 from orbsim_language.orbsim_ast.program_node import ProgramNode
@@ -57,6 +59,7 @@ from orbsim_language.orbsim_ast.orbit_node import OrbitNode
 from orbsim_language.orbsim_ast.satellite_node import SatelliteNode
 from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode
 from orbsim_language.orbsim_ast.show_orbits_node import ShowOrbitsNode
+from orbsim_language.orbsim_ast.agent import AgentNode
 from orbsim_language.orbsim_ast.tuple_creation_node import TupleCreationNode
 from simulation.generate_objects import *
 from orbsim_pygame import PygameHandler
@@ -435,6 +438,13 @@ class Executor:
             space_debris = generate_new_random_space_debris(self.handler.orbits)
             return Instance(SpaceDebrisType(), space_debris)
     
+    @visitor.when(AgentNode)
+    def execute(self, node: 'AgentNode', scope: 'Scope'):
+        agent =  self.handler.create_random_space_debris_collector()
+        return Instance(AgentType(), agent)
+
+
     @visitor.when(ShowOrbitsNode)
     def execute(self, node: 'ShowOrbitsNode', scope: 'Scope'):
         self.handler.show_orbits = not self.handler.show_orbits
+    

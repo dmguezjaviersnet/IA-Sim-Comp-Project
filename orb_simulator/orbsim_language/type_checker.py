@@ -49,6 +49,7 @@ from orbsim_language.orbsim_ast.orbit_node import OrbitNode
 from orbsim_language.orbsim_ast.satellite_node import SatelliteNode
 from orbsim_language.orbsim_ast.space_debris_node import SpaceDebrisNode        
 from orbsim_language.orbsim_ast.tuple_creation_node import TupleCreationNode
+from orbsim_language.orbsim_ast.agent import AgentNode
 
 from errors import OrbisimSemanticError
 class TypeChecker:
@@ -507,6 +508,9 @@ class TypeChecker:
     def check(self, node: SpaceDebrisNode, scope: 'Scope'):
         node.comp_type = SpaceDebrisType()
     
+    @visitor.when(AgentNode)
+    def check(self, node: SpaceDebrisNode, scope: 'Scope'):
+        node.comp_type = AgentType()
         
     @visitor.when(ListCreationNode)
     def check(self, node: ListCreationNode, scope: 'Scope'):

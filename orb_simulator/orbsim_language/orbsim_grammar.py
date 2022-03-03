@@ -22,7 +22,7 @@ from orbsim_language.orbsim_rules import not_expr_rule2, or_expr_rule1, or_expr_
 from orbsim_language.orbsim_rules import stmt_list_rule1, stmt_list_rule2, stmt_rule1, stmt_rule2, term_rule1, term_rule2
 from orbsim_language.orbsim_rules import term_rule3, term_rule4, list_creation_rule, pause_stmt_rule
 from orbsim_language.orbsim_rules import drawquadtree_stmt_rule, animate_earth_stmt_rule
-from orbsim_language.orbsim_rules import atom_rule7, atom_rule8, atom_rule9
+from orbsim_language.orbsim_rules import atom_rule7, atom_rule8, atom_rule9, atom_rule10
 from orbsim_language.orbsim_rules import show_orbits_stmt_rule, tuple_creation_rule
 
 # Gramática del DSL
@@ -193,6 +193,7 @@ string = Terminal('string_val', 'val')
 space_debris = Terminal('spacedebris', 'val')
 satellite = Terminal('satellite', 'val')
 orbit = Terminal('orbit', 'val')
+agent = Terminal('agent', 'val')
 id_orbsim = Terminal('id_orbsim', 'val')
 type_id = Terminal('type_id', 'val')
 
@@ -203,7 +204,7 @@ terminals = [class_keyword, let_keyword, func_keyword, loop_keyword, if_keyword,
             open_curly_braces, closed_curly_braces, open_parenthesis, closed_parenthesis, neg, logic_or, logic_and,
             not_equals, equals, greater_or_equal, less_equal, greater, less, addition, substraction, product, division,
             module, int, float, boolean, string, id_orbsim, eof, type_id, bitwise_or, bitwise_xor, bitwise_and, start_keyword, stop_keyword,
-            pause_keyword, drawquadtree_keyword, animate_earth_keyword, space_debris, satellite, orbit, show_orbits_keyword,tuple_terminal,
+            pause_keyword, drawquadtree_keyword, animate_earth_keyword, space_debris, satellite, orbit, agent, show_orbits_keyword,tuple_terminal,
             bitwise_shift_left, bitwise_shift_right, class_member_access_operator, open_sqr_brckt, closed_sqr_brckt,  epsilon]
 
 # No terminales
@@ -515,13 +516,13 @@ p35 = Production(factor,
                 )
 
 p36 = Production(atom,
-                [[int], [float], [boolean], [string], [id_orbsim], [orbit], [space_debris], [satellite], [func_call], 
+                [[int], [float], [boolean], [string], [id_orbsim], [orbit], [space_debris], [satellite], [agent], [func_call], 
                 [make_instance], [method_call], [attr_call], [list_creation], [tuple_creation]],
                 [[(atom_rule1, True)], [(atom_rule2, True)], [(atom_rule3, True)],
                  [(atom_rule4, True)], [(atom_rule5, True)], [(atom_rule7, True)],
-                 [(atom_rule8, True)],[(atom_rule9, True)],[(atom_rule6, True)],
-                 [(atom_rule6, True)], [(atom_rule6, True)], [(atom_rule6, True)],
-                 [(atom_rule6, True)], [(atom_rule6, True)]]
+                 [(atom_rule8, True)],[(atom_rule9, True)],[(atom_rule10, True)],
+                 [(atom_rule6, True)],[(atom_rule6, True)], [(atom_rule6, True)], 
+                 [(atom_rule6, True)], [(atom_rule6, True)], [(atom_rule6, True)]]
                 )
 
 p37 = Production(list_creation,
@@ -595,6 +596,7 @@ orbsim_token_string: Dict[Token_Type, str] = {
     Token_Type.orbit : 'orbit',
     Token_Type.space_debris: 'spacedebris',
     Token_Type.satellite: 'satellite',
+    Token_Type.agent: 'agent',
     Token_Type.tuple: 'tuple',
     Token_Type.plus : '+',
     Token_Type.minus : '-',
