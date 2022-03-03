@@ -121,6 +121,32 @@ def generate_new_rocket(orbits):
     rocket = Rocket(satellite)
     return rocket
 
+def generate_space_debris_subdivide(space_debris1: 'SpaceDebris', space_debris2: 'SpaceDebris'):
+    count_new_debris = random.randint(0,round(abs(space_debris1.area - space_debris2.area) % 5))
+    max_size = (min(space_debris1.rect.width, space_debris2.rect.width), min(space_debris1.rect.height, space_debris2.rect.height))
+    debris = []
+    for i in range(count_new_debris):
+        if random.randint(0,1):
+            point = space_debris1.orbit_center
+            angle = space_debris1.orbit_angle
+            a = space_debris1.a
+            b = space_debris1.b
+        else:
+            point = space_debris2.orbit_center
+            angle = space_debris2.orbit_angle
+            a = space_debris2.a
+            b = space_debris2.b
+
+        width =  random.randint(1, max_size[0]-1 if max_size[0] > 1 else 1)
+        height = random.randint(1, max_size[1]-1 if max_size[1] > 1 else 1)
+        vel =  random.random() * 2
+        next_point = next_point_moving_in_elipse(point,  a, b, angle)
+    
+        sp = SpaceDebris(next_point[0], next_point[1], a, b, point, (width, height), None, vel if vel > 0 else 0.1)
+        debris.append(sp)
+    
+    return debris
+
 def generate_space_debris_collector():
     pos_x = random.randint(1,800)
     pos_y = random.randint(1,800)

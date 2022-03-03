@@ -87,4 +87,10 @@ class SpaceDebris(OrbitObj):
         self.orbit_center = center
         self.rect.center =[new_x, new_y]
 
+    def update_surface(self, width, height):
+        self.image = pygame.Surface([width, height])
+        self.rect = self.image.get_rect()
+        self.rect.center = [self.pos_x, self.pos_y]
+        self.image.set_colorkey((255, 0, 255))
+        self.image.fill(self.default_color)
     

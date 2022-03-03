@@ -159,7 +159,8 @@ class QTNode:
 				
 					self.objects[i].is_colliding = True
 					self.objects[j].is_colliding = True
-					collisions.append((self.objects[i], self.objects[j]))
+					if isinstance(self.objects[i], SpaceDebris) and isinstance(self.objects[j], SpaceDebris):
+						collisions.append((self.objects[i], self.objects[j]))
 
 				j += 1
 	

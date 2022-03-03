@@ -17,6 +17,7 @@ import multiprocessing
 import sys
 import time
 from orbsim_threading import ThreadWithTrace
+import copy
 class PygameHandler():
 
     def __init__(self):
@@ -74,7 +75,10 @@ class PygameHandler():
     def add_new_space_debris(self, space_debris: 'SpaceDebris'):
         self.objects.append(space_debris)
         self.space_debris_group.add(space_debris)
-    
+    def remove_space_debris(self, space_debris: 'SpaceDebris'):
+        self.objects.remove(space_debris)
+        self.space_debris_group.remove(space_debris)
+
     def generate_orbits(self, number_of_orbits):
         orbits = generate_orbits(self.screen_center, number_of_orbits)
         for i in orbits:
@@ -109,16 +113,56 @@ class PygameHandler():
     def move_space_debris_to_orbit(self, orbit, space_debris):
         move_to_sp_other_orbit(orbit, space_debris)
 
+    def remove_satellite(self, satellite):
+        self.objects.remove(satellite)
+        self.satellite_group.remove(satellite)
+    
+    def check_life_time_satellites(self):
+        satellites_copy = self.satellite_group.sprites()
+        for satellite in satellites_copy:
+            if satellite.inusable:
+                new_debris = SpaceDebris(satellite.pos_x, satellite.pos_y, satellite.a, satellite.b, satellite.orbit_center, satellite.size, None)
+                self.add_new_space_debris(new_debris)
+                self.remove_satellite(satellite)
+        
+
     def on_collisions(self, collisions: List[Tuple['SpaceDebris', 'SpaceDebris']]):
+        visited = []
         for garbage1, garbage2 in collisions:
-            if abs(garbage1.area - garbage2.area) > 30:
+            if (garbage1, garbage2) in visited or (garbage2, garbage1) in visited:
+                continue
+            if abs(garbage1.area - garbage2.area) > 200:
+                # new_debris = generate_space_debris_subdivide(garbage1, garbage2)
+                # for d in new_debris:
+                #     self.add_new_space_debris(d)
                 if garbage1.area > garbage2.area:
-                    self.objects.remove(garbage1)
+                    if garbage2 in self.objects:
+                        self.remove_space_debris(garbage2)
+                    
+                #     subdivide_x = randint(2,4)
+                #     subdivide_y = randint(2,4)
+                #     garbage1.update_surface(garbage1.rect.width/subdivide_x, garbage1.rect.height/subdivide_y)
                 else:
-                    self.objects.remove(garbage2)
+                    if garbage1 in self.objects:
+                        self.remove_space_debris(garbage1)
+                #     subdivide_x = randint(2,4)
+                #     subdivide_y = randint(2,4)
+                #     garbage2.update_surface(garbage2.rect.width/subdivide_x, garbage2.rect.height/subdivide_y)
+                
+
                 
             else:
-                self.objects.remove(garbage2)
+                # new_debris = generate_space_debris_subdivide(garbage1, garbage2)
+                # for d in new_debris:
+                #     self.add_new_space_debris(d)
+                subdivide_x_1 = randint(1,2)
+                subdivide_y_1 = randint(1,2)
+                subdivide_x_2 = randint(1,2)
+                subdivide_y_2 = randint(1,2)
+                rand_ = random.random()
+                garbage1.update_surface(garbage1.rect.width/round(subdivide_x_1+rand_), garbage1.rect.height/round(subdivide_y_1 + rand_))
+                garbage2.update_surface(garbage2.rect.width/round(subdivide_x_2+rand_), garbage2.rect.height/round(subdivide_y_2 + rand_))
+                
 
     def draw_path(self, path, agent):
             
@@ -177,7 +221,7 @@ class PygameHandler():
         if self.launchpad_factory_closing_time and self.launchpad_factory_lambda:
             launchpad = Launchpad(self.launchpad_factory_closing_time, self.launchpad_factory_lambda)
         else:
-            launchpad = Launchpad(1000, 0.1)
+            launchpad = Launchpad(1000, 0.5)
         
         sys.stdout = sys.__stdout__
         if self.poisson_space_creation_closing_time and self.poisson_space_creation_lambda:
@@ -211,19 +255,19 @@ class PygameHandler():
 
             if not self.pause:
                 self.screen.blit(self.background, (0, 0))
-                # print(launchpad.closing_time)
-                # print(launchpad.lambda_value)
-                # print(launchpad.closing_time)
+                print(launchpad.closing_time)
+                print(launchpad.lambda_value)
+                print(launchpad.closing_time)
                 # Modelo de dos servidores en serie para fabricación y despegue de cohetes para la posterior puesta en órbita de los satélites que están en los mismos
-                # if launchpad.closing_time > round_off_wi_exceed(counter_time):
-                #     print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
-                #     launchpad.update(counter_time, self.orbits)
+                if launchpad.closing_time > round_off_wi_exceed(counter_time):
+                    print(f' {launchpad.rocket_manufacturing.next_arrival_time} {launchpad.next_departure_time} {launchpad.rocket_manufacturing.next_departure_time} {counter_time}')
+                    launchpad.update(counter_time, self.orbits)
                         
-                #     if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
-                #         print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
-                #         satellite = launchpad.lauch_that_is_running.rocket.satellite
-                #         self.add_new_satellite(satellite)
-                #         launchpad.update_departure(counter_time)
+                    if launchpad.lauch_that_is_running and round_off_wi_exceed(launchpad.next_departure_time)  == round_off_wi_exceed(counter_time):
+                        print(f'fSe lanzo el cohete {launchpad.lauch_that_is_running.rocket.rocket_id}')
+                        satellite = launchpad.lauch_that_is_running.rocket.satellite
+                        self.add_new_satellite(satellite)
+                        launchpad.update_departure(counter_time)
                             
                            
                         
@@ -266,8 +310,7 @@ class PygameHandler():
                 for leaf in leaves:
                     leaf.find_neighbors()
                     leaf.check_collisions()
-                    if collisions:
-                        print('\o/')
+
                 #     pygame.draw.rect(self.screen, (randint(0, 255), randint(0, 255), randint(0, 255)), 
                 #                                 [leaf.bounding_box_tl[0], leaf.bounding_box_tl[1], 
                 #                                 leaf.bounding_box_br[0] - leaf.bounding_box_tl[0], leaf.bounding_box_br[1] - leaf.bounding_box_tl[1]])
@@ -380,7 +423,7 @@ class PygameHandler():
                     for orb in self.orbits:
                         orb.draw_elipse(self.screen, PLUM_COLOR)
                 self.space_debris_group.draw(self.screen)
-                # self.satellite_group.draw(self.screen)
+                self.satellite_group.draw(self.screen)
                 self.earth_group.draw(self.screen)
                 self.space_debris_collector_group.draw(self.screen)
 
@@ -391,12 +434,14 @@ class PygameHandler():
                     obj.draw_selection(self.screen)
                 
                 leaves.clear()
-                
+                if collisions:
+                    self.on_collisions(collisions)
                 collisions.clear()
                 self.space_debris_group.update()
                 self.earth_group.update()
-                # self.satellite_group.update()
+                self.satellite_group.update()
                 self.space_debris_collector_group.update()
+                self.check_life_time_satellites()
                 counter_time += 0.01
                 self.clock.tick(60)
                 

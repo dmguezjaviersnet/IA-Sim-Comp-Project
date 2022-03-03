@@ -4,7 +4,7 @@ import random
 from tools import SOLID_BLUE_COLOR, LIGHT_GRAY, GREEN_COLOR, next_point_moving_in_elipse
 import math
 class Satellite(OrbitObj):
-    def __init__(self, pos_x, pos_y, a, b, orbit_center, vel: int = 0.5):
+    def __init__(self, pos_x, pos_y, a, b, orbit_center, life_time = None, vel: int = 0.5):
         super().__init__(a, b, orbit_center, vel)
         self.image = pygame.image.load('./images/satellite1.png').convert_alpha()
         self.rect = self.image.get_rect()
@@ -15,7 +15,12 @@ class Satellite(OrbitObj):
         self.circular_speed = math.sqrt(self.G*self.earth_mass/self.r)
         self.circular_speed = 1 - 1/self.circular_speed
         self.id = id(self)
-        self.life_time = None
+        self.inusable = False
+        if life_time:
+            self.life_time = life_time
+        else:
+            self.life_time = random.randint(1,5) * random.random()
+
         self.mass = None
 
     @property
@@ -50,7 +55,12 @@ class Satellite(OrbitObj):
         self.r = math.dist(self.rect.center, self.orbit_center)
         self.circular_speed = self.orbit_vel - 1/self.r
         # print(self.r)
-        
+        print(self.life_time)
+        if self.life_time:
+            self.life_time -= 0.01
+        if self.life_time <= 0:
+            self.inusable = True
+            print(f'Satelite{self.id} se quedó inutilizable y paso a convertirse en basura espacial')
         if self.clockwise:
             self.orbit_angle += self.circular_speed
         else:
