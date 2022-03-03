@@ -288,7 +288,8 @@ class PygameHandler():
                         satellite = launchpad.lauch_that_is_running.rocket.satellite
                         self.add_new_satellite(satellite)
                         launchpad.update_departure(counter_time)
-                        
+                if launchpad.any_enqueue_action:
+                    launchpad.update_out_of_time(counter_time) 
                 # Evente de Poisson para generar nuevos objetos
                 if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
                     print(f'current_time{counter_time} NextPoissonEvent: {sp_poisson.next_event_time}')
