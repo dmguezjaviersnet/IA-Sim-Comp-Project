@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from typing import Any, List
+
+
 from orbsim_language.orbsim_ast import ProgramNode, ClassDeclrNode
 from orbsim_language.context import Context
-from orbsim_language.orbsim_type import AnyType, ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType, OrbitType, SatelliteType, SpaceDebrisType, TupleType
+from orbsim_language.orbsim_type import AgentType, AnyType, ListType, OrbsimType, VoidType, StringType, BoolType, IntType, FloatType, OrbitType, SatelliteType, SpaceDebrisType, TupleType
 from orbsim_language.logger import  Logger
 from orbsim_language import visitor as visitor
 
@@ -31,6 +33,7 @@ class TypeCollector:
         self.context.define_fun('custom_space_debris', SpaceDebrisType(), ['size', 'color'], [TupleType(), TupleType()])
         self.context.define_fun('custom_launchpad', VoidType(), ['T', 'lambda'], [IntType(), FloatType()])
         self.context.define_fun('custom_create_space_debris_event', VoidType(), ['T', 'lambda'], [IntType(), FloatType()])
+        self.context.define_fun('custom_agent', AgentType(), ['lifetime', 'capacity', 'fuel', 'perception_range', 'vel'],[IntType(), IntType(), IntType(), IntType(), IntType()])
         string_type =  StringType()
         self.context.types['String']  = string_type
         string_type.define_method('concat', string_type, ['s1'], [string_type])
@@ -60,7 +63,9 @@ class TypeCollector:
         self.context.types['SpaceDebris'] = space_debris_type
         space_debris_type.define_method('add_to_simulation', VoidType(), [], [])
         space_debris_type.define_method('move_to_orbit', VoidType(), ['orbit'], [OrbitType()])
-
+        agent_type = AgentType()
+        self.context.types['Agent'] = agent_type
+        agent_type.define_method('add_to_simulation', VoidType(), [], [])
         
         
         for st in node.statements:

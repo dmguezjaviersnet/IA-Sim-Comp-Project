@@ -70,8 +70,20 @@ class PygameHandler():
         self.objects.append(satellite)
         self.satellite_group.add(satellite)
     
+    def add_new_agent(self, agent: 'SpaceDebrisCollector'):
+        self.agents.append(agent)
+        self.space_debris_collector_group.add(agent)
+    
+    def remove_agent(self, agent: 'SpaceDebrisCollector'):
+        self.agents.remove(agent)
+        self.space_debris_collector_group.remove(agent)
+    
     def add_new_orbit(self, orbit: 'ElipticOrbit'):
         self.orbits.append(orbit)
+
+    def create_custom_space_debris_collector(self, lifetime, capacity, fuel, perception_range, velocity):
+        space_debris_collector = generate_custom_space_debris_collector(lifetime, capacity, fuel, perception_range, velocity)
+        return space_debris_collector
 
     def add_new_space_debris(self, space_debris: 'SpaceDebris'):
         self.objects.append(space_debris)

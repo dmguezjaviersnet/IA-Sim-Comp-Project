@@ -35,6 +35,9 @@ def randfloat(inf: 'Instance', sup: 'Instance'):
 def create_custom_space_debris(size: 'Instance', color: 'Instance', handler:'PygameHandler'):
     return Instance(SpaceDebrisType(), handler.create_custom_space_debris(size.value, color.value))
 
+def create_custom_agent(lifetime: 'Instance', capacity: 'Instance', fuel: 'Instance', perception_range: 'Instance',  velocity: 'Instance', handler:'PygameHandler'):
+    return Instance(AgentType(), handler.create_custom_space_debris_collector(lifetime.value, capacity.value, fuel.value, perception_range.value,velocity))
+    
 def number_of_satellites(handler: 'PygameHandler'):
     return Instance(IntType(), handler.number_of_satellites)
 
@@ -62,6 +65,9 @@ def satellite_add_to_simulation(o1: 'Instance', handler: 'PygameHandler'):
 def space_debris_add_to_simulation(o1: 'Instance', handler: 'PygameHandler'):
     handler.add_new_space_debris(o1.value)
 
+def agent_add_to_simulation(a1: 'Instance', handler: 'PygameHandler'):
+    handler.add_new_agent(a1.value)
+
 def space_debris_move_to_orbit(sp: 'Instance', orbit: 'Instance', handler: 'PygameHandler'):
     handler.move_space_debris_to_orbit(orbit.value, sp.value)
 
@@ -75,7 +81,7 @@ def custom_sp_poisson(t:'Instance', lambda_val: 'Instance', handler: 'PygameHand
 
 simulation_names = ['add_to_simulation', 'number_objects', 'number_orbits', 
 'number_space_debris', 'number_satellites', 'custom_space_debris', 'move_to_orbit', 
-'custom_launchpad', 'custom_create_space_debris_event']
+'custom_launchpad', 'custom_create_space_debris_event', 'agent_add_to_simulation']
 
 def for_simulation(method_name: str):
     return method_name in simulation_names
@@ -90,6 +96,7 @@ builtins_methods={
     ('Satellite', 'add_to_simulation'): satellite_add_to_simulation,
     ('SpaceDebris', 'add_to_simulation'): space_debris_add_to_simulation,
     ('SpaceDebris', 'move_to_orbit'): space_debris_move_to_orbit,
+    ('Agent', 'add_to_simulation'): agent_add_to_simulation
     
     
     
@@ -105,5 +112,6 @@ builtins_functions = {
     'number_satellites': number_of_satellites,
     'custom_space_debris': create_custom_space_debris,
     'custom_launchpad' : custom_launchpad,
-    'custom_create_space_debris_event':  custom_sp_poisson
+    'custom_create_space_debris_event':  custom_sp_poisson,
+    'custom_create_agent':create_custom_agent
 }

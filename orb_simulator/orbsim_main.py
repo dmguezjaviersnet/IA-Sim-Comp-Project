@@ -53,16 +53,16 @@ def test_lexer():
     
 
 def debugging(handler: 'PygameHandler'):
-    handler.generate_orbits(random.randint(6,6))
+    handler.generate_orbits(random.randint(1,1))
     # handler.generate_objects_in_orbits(random.randint(2,2))
-    handler.generate_random_collector()
+    # handler.generate_random_collector()
     # handler.generate_orbits(random.randint(1,20))
 
     for i in range(10):
         handler.generate_new_random_space_debris()
     # handler.generate_objects_in_orbits(random.randint(1,1))
     # handler.generate_random_collector()
-    handler.start_pygame()
+    # handler.start_pygame()
 
 def main():
     
@@ -72,14 +72,15 @@ def main():
    
     pygame_handler = PygameHandler()
     debugging(pygame_handler)
-#     orbsim_compile_and_execute(
-#     '''
-#        let Int counter = 0;
-# loop (counter < randint(2, 30) ){
-#     counter = counter + 1;
-#     let Orbit o1 = orbit;o
-#     o1.add_to_simulation();
-# };
+    orbsim_compile_and_execute(
+    '''
+       let Int counter = 0;
+loop (counter < randint(2, 30) ){
+    counter = counter + 1;
+    let Orbit o1 = orbit;o
+    o1.add_to_simulation();
+};
+'''
 
 # let Tuple size1 = tuple(10,10);
 # let Tuple size2 = tuple(20,20);
