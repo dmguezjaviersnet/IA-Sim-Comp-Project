@@ -64,7 +64,7 @@ class AgentActionData:
 		if self.action == MOVE_TOWARDS_DEBRIS and other_action.action != MOVE_TOWARDS_DEBRIS and other_action.action != COLLECT_DEBRIS:
 			return True
 
-		if self.action == COLLECT_DEBRIS and other_action.action != COLLECT_DEBRIS :
+		if self.action == COLLECT_DEBRIS and other_action.action != COLLECT_DEBRIS:
 			return True
 			
 		return False

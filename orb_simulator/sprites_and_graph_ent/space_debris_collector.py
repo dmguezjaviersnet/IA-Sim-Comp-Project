@@ -19,14 +19,14 @@ IDLE = 'idle'
 
 class SpaceDebrisCollector(SpaceAgent):
 
-	def __init__(self, pos_x: int, pos_y: int, life_time: float, capacity: int, fuel: float, vel = 20):
+	def __init__(self, pos_x: int, pos_y: int, life_time: float, capacity: int, fuel: float, vel = 40):
 		super().__init__(pos_x, pos_y, 8)
 		self.life_time = life_time if life_time else random.randint(50, 80) + random.random()
 		self.capacity = capacity if capacity else random.randint(200, 300)
 		self.fuel = fuel if fuel else random.randint(500, 1000) + random.random()
 		self.collected_debris = []
 		self.vel = vel
-		self.action_target: AgentActionData = AgentActionData(-1, None, None, IDLE)
+		self.action_target: AgentActionData = AgentActionData(-2, None, None, IDLE)
 		self.path_to_target: List = []
 		self.qt_node_target: QTNode = None
 
@@ -62,12 +62,9 @@ class SpaceDebrisCollector(SpaceAgent):
 										if isinstance(object, SpaceDebris):
 											if object.area < self.capacity:
 												if self.fuel*5 >= distance:
-													heapq.heappush(self.desires, AgentActionData(distance, qt_node, object, 
+													heapq.heappush(self.desires, AgentActionData(distance, qt_node, object,
 																COLLECT_DEBRIS if at_range == 0 else MOVE_TOWARDS_DEBRIS))
 											
-										elif isinstance(object, Satellite):
-											heapq.heappush(self.desires, AgentActionData(distance, qt_node, object, MOVE_TO_SATELLITE))
-
 									else:
 										self_object = True 
 										perceived_env.append((qt_node, 0))
@@ -81,10 +78,10 @@ class SpaceDebrisCollector(SpaceAgent):
 			if not self.empty_fuel_tank and not self.unusable:
 				random_move = randint(0, len(possible_random_moves) - 1)
 				# print(f'random_move to {random_move}')
-				heapq.heappush(self.desires, AgentActionData(-2, possible_random_moves[random_move], None, MOVE_RANDOMLY))
+				heapq.heappush(self.desires, AgentActionData(-3, possible_random_moves[random_move], None, MOVE_RANDOMLY))
 			
 			else:
-				heapq.heappush(self.desires, AgentActionData(-3, self.beliefs.neighbors[random_move], None, BECOME_DEBRIS))
+				heapq.heappush(self.desires, AgentActionData(-4, self.beliefs.neighbors[random_move], None, BECOME_DEBRIS))
 		
 		top_priority_target: 'AgentActionData' = heapq.heappop(self.desires)
 
@@ -100,16 +97,19 @@ class SpaceDebrisCollector(SpaceAgent):
 		if self.action_target.action == MOVE_RANDOMLY or self.action_target.action ==  MOVE_TOWARDS_DEBRIS:
 			if not any(isinstance(object, Sphere) for object in self.action_target.qt_node.objects):
 				self.path_to_target = a_star(self.beliefs, self, eucl_dist_qtnode, self.action_target.qt_node)
-				self.qt_node_target = self.path_to_target.pop(0)
-			
+				if self.path_to_target:
+					self.qt_node_target = self.path_to_target.pop(0)
+				
+				else: self.action_target = AgentActionData(-2, None, None, IDLE)
+
 		elif self.action_target.action == COLLECT_DEBRIS:
 			self.capacity -= self.action_target.object.area
 			self.fuel -= self.action_target.object.area/2
 			self.collected_debris.append(self.action_target.object)
-			self.action_target = AgentActionData(-1, None, None, IDLE)
+			self.action_target = AgentActionData(-2, None, None, IDLE)
 
 		elif self.action_target.action == BECOME_DEBRIS:
-			self.action_target = AgentActionData(-1, None, None, IDLE)
+			self.action_target = AgentActionData(-2, None, None, IDLE)
 			return self
 	
 	def update(self):
@@ -135,7 +135,7 @@ class SpaceDebrisCollector(SpaceAgent):
 				if self.path_to_target:
 					self.qt_node_target = self.path_to_target.pop(0)
 				
-				else: self.action_target = AgentActionData(-1, None, None, IDLE)
+				else: self.action_target = AgentActionData(-2, None, None, IDLE)
 					
 
 
