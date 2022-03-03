@@ -153,11 +153,13 @@ def generate_custom_space_debris_collector(lifetime, capacity, fuel, perception_
     pos_y = random.randint(1,800)
     return SpaceDebrisCollector(pos_x, pos_y, lifetime, capacity, fuel, perception_range, vel)
 
-def generate_space_debris_collector():
+def generate_random_space_debris_collector():
     pos_x = random.randint(1,800)
     pos_y = random.randint(1,800)
-    span = 500
-    capacity = 3000000
-    fuel = 5000000
-    collector = SpaceDebrisCollector(pos_x, pos_y, span, capacity, fuel)
+    lifetime = random.randint(40, 1000)
+    capacity = random.randint(50, 2000)
+    fuel = random.randint(100,4000)
+    perception_range = random.randint(1, 10) 
+    vel = random.randint(5, 20)
+    collector = SpaceDebrisCollector(pos_x, pos_y, lifetime, capacity, fuel, perception_range, vel)
     return collector

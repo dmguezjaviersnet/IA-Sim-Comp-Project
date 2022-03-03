@@ -3,7 +3,7 @@ from operator import le
 from random import randint
 from typing import List
 import pygame
-from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector
+from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector, space_debris_collector
 from simulation.orbsim_simulation_entities import Point
 from simulation.orbsim_simulation_structs import QuadTree, collisions
 
@@ -85,6 +85,10 @@ class PygameHandler():
         space_debris_collector = generate_custom_space_debris_collector(lifetime, capacity, fuel, perception_range, velocity)
         return space_debris_collector
 
+    def create_random_space_debris_collector(self):
+        space_debris_collector = generate_random_space_debris_collector()
+        return space_debris_collector
+        
     def add_new_space_debris(self, space_debris: 'SpaceDebris'):
         self.objects.append(space_debris)
         self.space_debris_group.add(space_debris)
