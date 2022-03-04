@@ -28,25 +28,130 @@ La que utilizamos es la que se encuentra a la izquierda.
 
 ### Las entidades
 
-Las entidades que definimos por defecto para nuestra simulación son la basura espacial (`space debris`), los satélites y unos recolectores de basura espacial (agentes) que serán configurables desde el DSL (__Orbsim__) que diseñamos.
+Las entidades que definimos por defecto para nuestra simulación son la basura espacial (`space debris`), los satélites(`satellite`) y unos agentes que son recolectores de basura espacial (`space debris collector`)  que serán configurables desde el DSL (__Orbsim__) que diseñamos.
 
-La tierra siempre está localizada en el centro de la pantalla, la basura espacial está localizada en `órbitas`, que no son más que elipses que definen la trayectoria de esta basura alrededor de la tierra, y que también serán configurables.
+**Space Debris**
+La basura espacial tendrá una posición, velocidad, tamaño y color. La posición y velocidad se generan siempre de forma aleatoria.
+Cuando se crea la misma mantiene una trayectoria alrededor de la órbita sobre la que se encuentra.
+Esta puede ser definida desde el lenguaje orbsim de 2 formas:
+- `spacedebris` te crea una basura con tamaño aleatorio y color predefinido
+- `custom_space_debris(size, color)` te crea una basura con tamaño y color que se haya definido en el lenguaje.
 
-Los satélites tienen un tiempo de vida útil que se irá reduciendo con el paso del tiempo o debido a las colisiones que ocurran durante el transcurso de la simulación.
+Ejemplo:
+```
+let Tuple size1 = tuple(10,10);
+let Tuple rgb1 = tuple(randint(0,255), randint(0,255), randint(0,255));
+let SpaceDebris sp1 =  custom_space_debris(size1, rgb1);
+let SpaceDebris sat1 = spacedebris;
+```
+Una vez creado un space debris en el lenguaje para agregarlo a la simulación debes usar `add_to_simulation` 
+Ejemplo:
+```
+let SpaceDebris sat1 = spacedebris;
+sat1.add_to_simulation();
+```
+  
+En caso de no definir ningún space debris inicial desde el lenguaje se crea cierta cantidad aleatoria de los mismos.
 
-La basura espacial tendrá un tamaño definido(área) y una velocidad.
+
+**Orbit**:
+
+![orbita](./images/orbit_ejemplo1.png)
+
+Las órbitas que consideramos para la simulación son de forma elíptica. Son representadas mediante **ElipticOrbit** y las propiedades
+**semieje mayor**, **semieje menor** y **centro** son usadas para el movimiento de los objetos sobre la misma (satélites o basura espacial).
+Desde el lenguaje se puede crear una órbita aleatoria mediante
+`orbit`
+
+Ejemplo:
+
+![orbita2](./images/orbit_ej1.png)
+![orbita2](./images/orbit_ej2.png)
+
+
+**Satellite**
+
+![satellite](./images/satellite1.png)
+Los satélites tienen una posición, tamaño, tiempo de vida y velocidad. Estos se generan mayormente mediante un evento pero también
+desde el lenguaje  __orbsim__ se puede añadir un nuevo satélite con posición, tiempo de vida , velocidad  y órbita sobre la que circula aleatorios mediante `satellite` y luego para añádirlo a la simulación usar `add_to_simulation`. Los satélites tienen un tiempo de vida útil que se irá reduciendo con el paso del tiempo o debido a las colisiones que ocurran durante el transcurso de la simulación.
+
+Ejemplo de como crear satélites en el lenguaje orbsim:
+```
+let Int counter = 0;
+loop (counter < randint(2, 6) ){
+    counter = counter + 1;
+    let Orbit o1 = orbit;
+    o1.add_to_simulation();
+};
+
+counter = 0;
+loop (counter < randint(2, 10) ){
+    counter = counter + 1;
+    let Satellite sat1 = satellite;
+    sat1.add_to_simulation();
+};
+```
+
+
+
+
+
 
 ### Implicaciones y comportamiento del ambiente
 
-Generalmente hay más de una órbita por lo que inevitablemente ocurrirán `colisiones` entre distintos objetos ya sean basura espacial, agentes o satélites de distintas órbitas, o incluso en la misma órbita dependiendo de la velocidad y el sentido con el que se mueva ese objeto en su órbita. Estas colisiones tendrán ciertas consecuencias y efectos, fragmentación de la basura (reducción de su tamaño), desaparición de cierta basura (absorción por otra basura mucho más grande), reducción de la vida útil de los satélites, etc. Para poder encontar las colisiones simplemente analizamos cada hoja del Quadtree y analizamos si cualquier par de objetos en esa hoja se solapa parcialmente.
+Generalmente hay más de una órbita, y dentro de una misma órbita los objetos pueden ir a diferente velocidad y sentido por lo que inevitablemente ocurrirán `colisiones` entre distintos objetos ya sean basura espacial, agentes o satélites de distintas órbitas, o incluso en la misma órbita dependiendo de la velocidad y el sentido con el que se mueva ese objeto en su órbita. Estas colisiones tendrán ciertas consecuencias y efectos, fragmentación de la basura (reducción de su tamaño), desaparición de cierta basura (absorción por otra basura mucho más grande), reducción de la vida útil de los satélites, etc. Para poder encontar las colisiones simplemente analizamos cada hoja del Quadtree y analizamos si cualquier par de objetos en esa hoja se solapa parcialmente.
 
 ### Eventos
 
-En nuestra simulación también ocurrirán eventos configurables como la aparición de nueva basura espacial de forma ocasional, la puesta en órbita de nuevos satélites y la aparición de basura espacial como consecuencia de que un satélite haya agotado su vida útil.
+
+Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
+despegue de un  cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
+El tiempo de arribo del primer cohete que se va a fabricar se genera inicialmente, luego una vez que llega
+si no hay ningún cohete en fabricación se genera el tiempo de partida de este y se pone en fabricación, 
+en caso de que haya ya un cohete en fabricación se pone en cola. Una vez termina el proceso de fabricación
+de un cohete se pasa al proceso de despegue . Para despegar si no hay ningún cohete despegando se genera el tiempo
+de partida del nuevo cohete y se pone a despegar , en caso contrario se pone en cola. Una vez termina el proceso 
+de despegue de un cohete este suelta un satélite en  una órbita aleatoria de las existentes. Un cohete puede tener a lo sumo 1 satélite.
+El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
+
+
+
+Ejemplos:
+
+```
+custom_launchpad(5000, 0.001);
+```
+
+donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se va a usar en la generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo o para el tiempo de la próxima partida.
+
+![main](./images/launchpad1.png)
+![main](./images/launchpad2.png)
+
+
+Ejemplo donde se customiza el launchpad y se generan orbitas y objetos custom desde el lenguaje orbsim:
+
+![main](./images/img10.png)
+![main](./images/img11.png)
+
+
+En nuestra simulación  ocurre la aparición de nueva basura espacial de forma ocasional mediante un proceso de Poisson homogéneo. Tanto el T como el lambda del mismo son configurables desde el lenguaje orbsim usando `custom_create_space_debris_event`. Esta nueva basura que se genera tiene un tamaño,
+posición, órbita sobre la que circula y velocidad aleatoria.
+
+Ejemplo:
+```
+custom_create_space_debris_event(200, 0.8)
+start;
+```
+
+
+
+
+
+
 
 ### Los recolectores
 
-Los `recolectores de basura espacial`, son agentes que definimos y que van a operar en nuestro entorno con el objetivo de recolectar la mayor cantidad de basura posible. Estos agentes tienen definidas varias características que impondrán restricciones a su comportamient:
+Los `recolectores de basura espacial`, son agentes que definimos y que van a operar en nuestro entorno con el objetivo de recolectar la mayor cantidad de basura posible. Estos agentes tienen definidas varias características que impondrán restricciones a su comportamiento:
 
 - Tienen definida una capacidad límite que se reducirá cada vez que recojan algo de basura espacial, dependiendo del tamaño de la basura y que eventualmente les impedirá recolectar basura de gran tamaño.
   
@@ -75,20 +180,43 @@ Restricciones:
 
 El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
 
-Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y
-despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
-El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
+**Creando un agente recolector de basura espacial desde lenguaje orbsim:**
+Se puede crear de dos formas:
+- `agent` crea un agente recolector de basura con parámetros aleatorios
+- `custom_create_agent(lifetime, capacity,  fuel, perception_range, velocity)` crea un agente recolector de basura usando los parámetros de entrada definido en el lenguaje
 
-Ejemplos:
+
+Ejemplo:
 
 ```
-custom_launchpad(5000, 0.001);
+let Agent a1 = custom_create_agent(100, 5000, 500, 8, 50);
+a1.add_to_simulation();
+let Agent a2 = custom_create_agent(300, 4000, 40500, 8, 15);
+a2.add_to_simulation();
+let Agent a3 = custom_create_agent(500, 1000, 1500, 2, 5);
+a3.add_to_simulation();
+let Agent ar = agent;
+ar.add_to_simulation();
+start;
 ```
 
-donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se va a usar en la generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo o para el tiempo de la próxima partida.
+![main](./images/agent2.png)
+Cada vez que el agente se va a mover para un objetivo se muestra el camino parar llegar al mismo.
 
-![main](./images/launchpad1.png)
-![main](./images/launchpad2.png)
+Para mostrar el quadtree de forma visual se puede presionar la tecla `q` o desde el lenguaje orbsim escribir `drawquadtree`
+para que se ejecute con la visualización del quadtree. Por defecto esta visualización está desactivada.
+
+Para mostrar las órbitas de forma visual se puede presionar la tecla `o` o desde el lenguaje orbsim escribir  `show_orbits` para que se ejecute con la visualización de las órbitas. Por defecto esta visualización está desactivada.
+
+Para mostrar el movimiento de la tierra se puede presionar la tecla `K_UP` o desde el lenguaje escribir `animate_earth` para 
+que se ejecture con la visualización del movimiento. Por defecto esta visualización está desactvida.
+
+Si se selecciona con el mouse un objeto orbitando se muestra una recta desde su centro hasta el punto centro de la órbita sobre la que está.
+
+![main](./images/img12_select.png)
+
+
+
 
 ## El proceso de compilación
 
@@ -227,7 +355,7 @@ Algunas reglas semánticas que definimos en nuestro lenguaje:
 - 
 
 # Tipos Builtins:
-`Int`, `Float`, `String`, `List`(una lista de elementos del mismo tipo), `Bool`, `Vector3`
+`Int`, `Float`, `String`, `List`(una lista de elementos del mismo tipo), `Tuple`,  `Bool`, `Vector3`
 Declaración de variables en Orbsim:
 `let <Type> id '=' <Expr>`
 ```
@@ -304,6 +432,12 @@ Creando una instancia de una clase en Orbsim:
 
 Las clases tienen atributos cuyo valor se le asigna al crear una instancia de la misma siempre verificando que los tipos de las expresiones a evaluar coincidan con los tipos de los atributos.
 
+El lenguaje permite creación de números enteros aleatorios mediante `randint` y de números float aleatorios mediante
+`randfloat`
+
+![rand](./images/img13.png)
+![rand](./images/img14.png)
+
 ## Interfaz Gráfica:
 
 Para la interfaz gráfica se usó streamlit parar el editor de código junto con pygame para la parte de simulación e IA . 
@@ -323,6 +457,7 @@ Otros ejemplos:
 ![main](./images/img5.png)
 ![main](./images/img6.png)
 ![main](./images/img9.png)
+
 
 ## Referencias
 
