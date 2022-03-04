@@ -56,9 +56,24 @@ Los `recolectores de basura espacial`, son agentes que definimos y que van a ope
 
 - Tienen definido un rango de percepción, que le permitirá ver mayor o menor parte del entorno para tomar sus decisiones. Este rango de percepción lo definimos en términos del Quadtree.
 
-El comportamiento de los recolectores está definido por varias acciones y restricciones:
+El comportamiento de los recolectores está definido por varias acciones y restricciones.
 
--
+Acciones:
+
+- Recolectar basura (el agente necesita estar bien cerca del objeto para realizar esta acción).
+- Moverse hacia la basura si en su rango de percepción detectó basura.
+- Moverse de forma aleatoria por el mapa sino detectó basura en su rango de percepción.
+- No realizar nada (idle), para indicar que ya puede realizar una nueva acción la próxima vez.
+  
+Restricciones:
+
+- Solo puede realizar acciones si le queda tiempo de vida.
+- Siempre priorizará recolectar la basura de menor tamaño en su rango de percepción, aunque tenga que moverse para esto.
+- Si hay 2 basuras con el mismo tamaño, priorizará recolectar la que esté más cercana.
+- Solo puede moverse si le queda combustible.
+- Solo puede recolectar basura si le queda suficiente combustible o le queda suficiente capacidad para recolectar la basura.
+
+El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
 
 Para la simulación usamos del modelo de dos servidores en serie para la simulación del proceso de fabricación y despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
 
