@@ -208,6 +208,8 @@ para que se ejecute con la visualización del quadtree. Por defecto esta visuali
 
 Para mostrar las órbitas de forma visual se puede presionar la tecla `o` o desde el lenguaje orbsim escribir  `show_orbits` para que se ejecute con la visualización de las órbitas. Por defecto esta visualización está desactivada.
 
+Para pausar la simulación presione la tecla `p`.
+
 Para mostrar el movimiento de la tierra se puede presionar la tecla `K_UP` o desde el lenguaje escribir `animate_earth` para 
 que se ejecture con la visualización del movimiento. Por defecto esta visualización está desactvida.
 
