@@ -30,15 +30,47 @@ La que utilizamos es la que se encuentra a la izquierda.
 
 Las entidades que definimos por defecto para nuestra simulación son la basura espacial (`space debris`), los satélites(`satellite`) y unos agentes que son recolectores de basura espacial (`space debris collector`)  que serán configurables desde el DSL (__Orbsim__) que diseñamos.
 
-La basura espacial tendrá una posición, velocidad, tamaño configurable. 
+**Space Debris**
+La basura espacial tendrá una posición, velocidad, tamaño y color. La posición y velocidad se generan siempre de forma aleatoria.
+Cuando se crea la misma mantiene una trayectoria alrededor de la órbita sobre la que se encuentra.
 Esta puede ser definida desde el lenguaje orbsim de 2 formas:
-- ``
+- `spacedebris` te crea una basura con tamaño aleatorio y color predefinido
+- `custom_space_debris(size, color)` te crea una basura con tamaño y color que se haya definido en el lenguaje.
 
-La tierra siempre está localizada en el centro de la pantalla, la basura espacial está localizada en `órbitas`, que no son más que elipses que definen la trayectoria de esta basura alrededor de la tierra, y que también serán configurables.
+Ejemplo:
+```
+let Tuple size1 = tuple(10,10);
+let Tuple rgb1 = tuple(randint(0,255), randint(0,255), randint(0,255));
+let SpaceDebris sp1 =  custom_space_debris(size1, rgb1);
+let SpaceDebris sat1 = spacedebris;
+```
+Una vez creado un space debris en el lenguaje para agregarlo a la simulación debes usar `add_to_simulation` 
+Ejemplo:
+```
+let SpaceDebris sat1 = spacedebris;
+sat1.add_to_simulation();
+```
+  
+En caso de no definir ningún space debris inicial desde el lenguaje se crea cierta cantidad aleatoria de los mismos.
 
-Los satélites tienen un tiempo de vida útil que se irá reduciendo con el paso del tiempo o debido a las colisiones que ocurran durante el transcurso de la simulación.
 
-La basura espacial tendrá un tamaño definido(área) y una velocidad.
+**Orbit**:
+
+![orbita](./images/orbit_ejemplo1.png)
+
+Las órbitas que consideramos para la simulación son de forma elíptica. Son representadas mediante **ElipticOrbit** y las propiedades
+**semieje mayor**, **semieje menor** y **centro** son usadas para el movimiento de los objetos sobre la misma (satélites o basura espacial).
+
+**Satellite**
+
+![satellite](./images/satellite1.png)
+Los satélites tienen una posición, tamaño, tiempo de vida y velocidad. Estos se generan mayormente mediante un evento pero también
+desde el lenguaje  __orbsim__ se puede añadir un nuevo satélite con posición, tiempo de vida , velocidad  y órbita sobre la que circula aleatorios mediante `satellite` y luego para añádirlo a la simulación usar `add_to_simulation`. Los satélites tienen un tiempo de vida útil que se irá reduciendo con el paso del tiempo o debido a las colisiones que ocurran durante el transcurso de la simulación.
+
+
+
+
+
 
 ### Implicaciones y comportamiento del ambiente
 

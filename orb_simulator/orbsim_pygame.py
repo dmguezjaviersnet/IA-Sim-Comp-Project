@@ -235,7 +235,7 @@ class PygameHandler():
 
     def draw(self):
         if not self.orbits:
-            self.orbits = self.generate_orbits(random.randint(1, 8))
+            self.generate_orbits(random.randint(1, 8))
         if not self.objects:
             self.generate_objects_in_orbits(random.randint(1,1))
         counter_time = 0.00
@@ -243,7 +243,7 @@ class PygameHandler():
         if self.launchpad_factory_closing_time and self.launchpad_factory_lambda:
             launchpad = Launchpad(self.launchpad_factory_closing_time, self.launchpad_factory_lambda)
         else:
-            launchpad = Launchpad(1000, 0.5)
+            launchpad = Launchpad(1000, 0.1)
         
         sys.stdout = sys.__stdout__
         if self.poisson_space_creation_closing_time and self.poisson_space_creation_lambda:
@@ -401,16 +401,7 @@ class PygameHandler():
                     if path:
                         self.draw_path(path, agent)
                     
-                    # if path:
-                    #     for qt_node in path:
-                    #         pygame.draw.rect(self.screen, (0, 0, 255), 
-                    #                             [qt_node.bounding_box_tl[0], qt_node.bounding_box_tl[1], 
-                    #                             qt_node.bounding_box_br[0] - qt_node.bounding_box_tl[0], qt_node.bounding_box_br[1] - qt_node.bounding_box_tl[1]])
-                                                
-                            # pygame.draw.rect(self.screen, (0, 255, 0), 
-                            #                     [agent.action_target.qt_node.bounding_box_tl[0], agent.action_target.qt_node.bounding_box_tl[1], 
-                            #                     agent.action_target.qt_node.bounding_box_br[0] - agent.action_target.qt_node.bounding_box_tl[0], agent.action_target.qt_node.bounding_box_br[1] - agent.action_target.qt_node.bounding_box_tl[1]])
-                        
+                    
                 for agent in self.agents:
                     for collected in agent.collected_debris:
                         self.objects.remove(collected)
@@ -421,21 +412,6 @@ class PygameHandler():
                        
                     agent.collected_debris.clear()
 
-                # qTree = QuadTree(self.screen ,(Point(self.main_region_rect.topleft[0], self.main_region_rect.topleft[1]),
-                #         Point(self.main_region_rect.bottomright[0], self.main_region_rect.bottomright[1])), self.draw_qtree)
-                
-                # for object in self.objects:
-                #     object.is_colliding = False
-                #     qTree.insert(object)
-                # for agent in self.agents:
-                #     qTree.insert(agent)
-
-                # pygame.draw.rect(self.screen, BLUE, self.main_region_rect, 1)
-                # end = time.time()
-                # if end - start > max_time: 
-                #     max_time = end - start
-    
-                # print(max_time)
                 if self.show_orbits:
                     for orb in self.orbits:
                         orb.draw_elipse(self.screen, PLUM_COLOR)
@@ -447,8 +423,6 @@ class PygameHandler():
 
                 for obj in self.objects:
                     obj.draw_collision(self.screen)
-                    # pygame.draw.circle(self.screen, (255, 0, 0), obj.rect.center, 3, 1)
-                    # obj.draw_points(self.screen)
                     obj.draw_selection(self.screen)
                 
                 leaves.clear()
