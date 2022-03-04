@@ -102,8 +102,6 @@ class PygameHandler():
             self.orbits.append(i)
     
     def generate_objects_in_orbits(self, number_of_objects):
-        self.space_debris_group.empty()
-        self.objects.clear()
         for orb in self.orbits:
             orb_objs = generate_object_in_orbit(number_of_objects, orb)
             for obj in orb_objs:
@@ -238,7 +236,8 @@ class PygameHandler():
     def draw(self):
         if not self.orbits:
             self.orbits = self.generate_orbits(random.randint(1, 8))
-
+        if not self.objects:
+            self.generate_objects_in_orbits(random.randint(1,1))
         counter_time = 0.00
         self.screen.blit(self.background, (0,0))
         if self.launchpad_factory_closing_time and self.launchpad_factory_lambda:

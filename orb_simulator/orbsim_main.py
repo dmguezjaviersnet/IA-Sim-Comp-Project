@@ -73,9 +73,34 @@ def main():
     pygame_handler = PygameHandler()
     debugging(pygame_handler)
 #     orbsim_compile_and_execute(
-# '''
-#     let Agent a1 = agent;
-#     print(a1);
+#     '''
+#         show_orbits;
+#     let Int counter = 0;
+#     loop (counter < randint(2, 30) ){
+#         counter = counter + 1;
+#         let Orbit o1 = orbit;
+#         o1.add_to_simulation();
+#     };
+    
+#     counter = 0;
+#     loop (counter < randint(2, 4) ){
+#         counter = counter + 1;
+#         let Satellite sat1 = satellite;
+#         sat1.add_to_simulation();
+#     };
+    
+#     counter = 0;
+#     loop (counter < randint(2, 4) ){
+#         counter = counter + 1;
+#         let SpaceDebris sd1 = spacedebris;
+#         sd1.add_to_simulation();
+#     };
+#     print(number_orbits());
+#     print(number_satellites());
+#     print(number_objects());
+#     print(number_space_debris());
+    
+#     start;
 # '''
 # , pygame_handler)
 
