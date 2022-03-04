@@ -111,6 +111,7 @@ que se ejecture con la visualización del movimiento. Por defecto esta visualiza
 
 Si se selecciona con el mouse un objeto orbitando se muestra una recta desde su centro hasta el punto centro de la órbita sobre la que está.
 
+![main](./images/img12_select.png)
 
 
 
