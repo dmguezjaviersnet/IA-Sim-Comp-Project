@@ -116,10 +116,6 @@ class PygameHandler():
     def create_custom_space_debris(self, size, color):
         return generate_custom_space_debris(self.orbits, size, color)
 
-    # def generate_random_collector(self):
-    #     collector = generate_space_debris_collector()
-    #     self.space_debris_collector_group.add(collector)
-    #     self.agents.append(collector)
    
     def generate_new_random_satellite(self):
         satellite =  generate_new_random_satellite(self.orbits)
@@ -238,6 +234,8 @@ class PygameHandler():
             self.generate_orbits(random.randint(1, 8))
         if not self.objects:
             self.generate_objects_in_orbits(random.randint(1,1))
+        if not self.agents:
+            self.create_random_space_debris_collector()
         counter_time = 0.00
         self.screen.blit(self.background, (0,0))
         if self.launchpad_factory_closing_time and self.launchpad_factory_lambda:

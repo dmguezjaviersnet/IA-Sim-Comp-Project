@@ -149,6 +149,10 @@ Restricciones:
 
 El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
 
+**Creando un agente recolector de basura espacial desde lenguaje orbsim:**
+Se puede crear de dos formas:
+- `agent` crea un agente recolector de basura con parámetros aleatorios
+- `custom_create_agent(lifetime, capacity,  fuel, perception_range, velocity)` crea un agente recolector de basura usando los parámetros de entrada definido en el lenguaje
 
 
 Para mostrar el quadtree de forma visual se puede presionar la tecla `q` o desde el lenguaje orbsim escribir `drawquadtree`
