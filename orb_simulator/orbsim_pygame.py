@@ -235,7 +235,8 @@ class PygameHandler():
         if not self.objects:
             self.generate_objects_in_orbits(random.randint(1,1))
         if not self.agents:
-            self.create_random_space_debris_collector()
+            new_agent = self.create_random_space_debris_collector()
+            self.add_new_agent(new_agent)
         counter_time = 0.00
         self.screen.blit(self.background, (0,0))
         if self.launchpad_factory_closing_time and self.launchpad_factory_lambda:
