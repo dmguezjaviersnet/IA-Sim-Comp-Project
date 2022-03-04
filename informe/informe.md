@@ -155,6 +155,22 @@ Se puede crear de dos formas:
 - `custom_create_agent(lifetime, capacity,  fuel, perception_range, velocity)` crea un agente recolector de basura usando los parámetros de entrada definido en el lenguaje
 
 
+Ejemplo:
+
+```
+let Agent a1 = custom_create_agent(100, 5000, 500, 8, 50);
+a1.add_to_simulation();
+let Agent a2 = custom_create_agent(300, 4000, 40500, 8, 15);
+a2.add_to_simulation();
+let Agent a3 = custom_create_agent(500, 1000, 1500, 2, 5);
+a3.add_to_simulation();
+let Agent ar = agent;
+ar.add_to_simulation();
+start;
+```
+
+![main](./images/agent2.png)
+
 Para mostrar el quadtree de forma visual se puede presionar la tecla `q` o desde el lenguaje orbsim escribir `drawquadtree`
 para que se ejecute con la visualización del quadtree. Por defecto esta visualización está desactivada.
 
