@@ -1,6 +1,5 @@
 import random
 
-from cv2 import RETR_EXTERNAL
 from orbsim_language.orbsim_ast.body_node import BodyNode
 import orbsim_language.visitor as visitor
 from orbsim_language.orbsim_ast.program_node import ProgramNode

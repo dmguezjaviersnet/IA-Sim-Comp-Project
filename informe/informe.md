@@ -75,7 +75,7 @@ Restricciones:
 
 El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
 
-Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
+Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y
 despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
 El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
 

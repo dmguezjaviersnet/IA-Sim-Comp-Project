@@ -55,7 +55,7 @@ class Satellite(OrbitObj):
         self.r = math.dist(self.rect.center, self.orbit_center)
         self.circular_speed = self.orbit_vel - 1/self.r
         # print(self.r)
-        print(self.life_time)
+        # print(f'Satellite life time {self.life_time}')
         if self.life_time:
             self.life_time -= 0.01
         if self.life_time <= 0:
