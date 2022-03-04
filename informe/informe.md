@@ -44,7 +44,8 @@ let Tuple rgb1 = tuple(randint(0,255), randint(0,255), randint(0,255));
 let SpaceDebris sp1 =  custom_space_debris(size1, rgb1);
 let SpaceDebris sat1 = spacedebris;
 ```
-Una vez creado un space debris en el lenguaje para agregarlo a la simulación debes usar `add_to_simulation` 
+Una vez creado un space debris en el lenguaje para agregarlo a la simulación debes usar `add_to_simulation`. Si se quiere
+cambiar la basura desde el lenguaje a una órbita específica previamente declarada en el mismo se puede usar `move_to_orbit(orbit)`
 Ejemplo:
 ```
 let SpaceDebris sat1 = spacedebris;
