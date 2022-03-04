@@ -70,6 +70,14 @@ Ejemplo donde se customiza el launchpad y se generan orbitas y objetos custom de
 En nuestra simulación  ocurre la aparición de nueva basura espacial de forma ocasional mediante un proceso de Poisson homogéneo. Tanto el T como el lambda del mismo son configurables desde el lenguaje orbsim usando `custom_create_space_debris_event`. Esta nueva basura que se genera tiene un tamaño,
 posición, órbita sobre la que circula y velocidad aleatoria.
 
+Ejemplo:
+```
+custom_create_space_debris_event(200, 0.8)
+start;
+```
+
+
+
 
 
 
