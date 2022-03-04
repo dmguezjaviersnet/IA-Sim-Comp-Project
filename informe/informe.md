@@ -28,7 +28,11 @@ La que utilizamos es la que se encuentra a la izquierda.
 
 ### Las entidades
 
-Las entidades que definimos por defecto para nuestra simulación son la basura espacial (`space debris`), los satélites y unos recolectores de basura espacial (agentes) que serán configurables desde el DSL (__Orbsim__) que diseñamos.
+Las entidades que definimos por defecto para nuestra simulación son la basura espacial (`space debris`), los satélites(`satellite`) y unos agentes que son recolectores de basura espacial (`space debris collector`)  que serán configurables desde el DSL (__Orbsim__) que diseñamos.
+
+La basura espacial tendrá una posición, velocidad, tamaño configurable. 
+Esta puede ser definida desde el lenguaje orbsim de 2 formas:
+- ``
 
 La tierra siempre está localizada en el centro de la pantalla, la basura espacial está localizada en `órbitas`, que no son más que elipses que definen la trayectoria de esta basura alrededor de la tierra, y que también serán configurables.
 

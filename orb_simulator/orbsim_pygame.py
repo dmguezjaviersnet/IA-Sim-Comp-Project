@@ -136,7 +136,7 @@ class PygameHandler():
         self.satellite_group.remove(satellite)
     
     def check_life_time_satellites(self):
-        satellites_copy = copy.copy(self.satellite_group.sprites())
+        satellites_copy = self.satellite_group.sprites()
         for satellite in satellites_copy:
             if satellite.inusable:
                 new_debris = SpaceDebris(satellite.pos_x, satellite.pos_y, satellite.a, satellite.b, satellite.orbit_center, satellite.size, None)
