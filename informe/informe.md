@@ -60,12 +60,37 @@ En caso de no definir ningún space debris inicial desde el lenguaje se crea cie
 
 Las órbitas que consideramos para la simulación son de forma elíptica. Son representadas mediante **ElipticOrbit** y las propiedades
 **semieje mayor**, **semieje menor** y **centro** son usadas para el movimiento de los objetos sobre la misma (satélites o basura espacial).
+Desde el lenguaje se puede crear una órbita aleatoria mediante
+`orbit`
+
+Ejemplo:
+
+![orbita2](./images/orbit_ej1.png)
+![orbita2](./images/orbit_ej2.png)
+
 
 **Satellite**
 
 ![satellite](./images/satellite1.png)
 Los satélites tienen una posición, tamaño, tiempo de vida y velocidad. Estos se generan mayormente mediante un evento pero también
 desde el lenguaje  __orbsim__ se puede añadir un nuevo satélite con posición, tiempo de vida , velocidad  y órbita sobre la que circula aleatorios mediante `satellite` y luego para añádirlo a la simulación usar `add_to_simulation`. Los satélites tienen un tiempo de vida útil que se irá reduciendo con el paso del tiempo o debido a las colisiones que ocurran durante el transcurso de la simulación.
+
+Ejemplo de como crear satélites en el lenguaje orbsim:
+```
+let Int counter = 0;
+loop (counter < randint(2, 6) ){
+    counter = counter + 1;
+    let Orbit o1 = orbit;
+    o1.add_to_simulation();
+};
+
+counter = 0;
+loop (counter < randint(2, 10) ){
+    counter = counter + 1;
+    let Satellite sat1 = satellite;
+    sat1.add_to_simulation();
+};
+```
 
 
 
@@ -74,13 +99,19 @@ desde el lenguaje  __orbsim__ se puede añadir un nuevo satélite con posición,
 
 ### Implicaciones y comportamiento del ambiente
 
-Generalmente hay más de una órbita por lo que inevitablemente ocurrirán `colisiones` entre distintos objetos ya sean basura espacial, agentes o satélites de distintas órbitas, o incluso en la misma órbita dependiendo de la velocidad y el sentido con el que se mueva ese objeto en su órbita. Estas colisiones tendrán ciertas consecuencias y efectos, fragmentación de la basura (reducción de su tamaño), desaparición de cierta basura (absorción por otra basura mucho más grande), reducción de la vida útil de los satélites, etc. Para poder encontar las colisiones simplemente analizamos cada hoja del Quadtree y analizamos si cualquier par de objetos en esa hoja se solapa parcialmente.
+Generalmente hay más de una órbita, y dentro de una misma órbita los objetos pueden ir a diferente velocidad y sentido por lo que inevitablemente ocurrirán `colisiones` entre distintos objetos ya sean basura espacial, agentes o satélites de distintas órbitas, o incluso en la misma órbita dependiendo de la velocidad y el sentido con el que se mueva ese objeto en su órbita. Estas colisiones tendrán ciertas consecuencias y efectos, fragmentación de la basura (reducción de su tamaño), desaparición de cierta basura (absorción por otra basura mucho más grande), reducción de la vida útil de los satélites, etc. Para poder encontar las colisiones simplemente analizamos cada hoja del Quadtree y analizamos si cualquier par de objetos en esa hoja se solapa parcialmente.
 
 ### Eventos
 
 
 Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
 despegue de un  cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
+El tiempo de arribo del primer cohete que se va a fabricar se genera inicialmente, luego una vez que llega
+si no hay ningún cohete en fabricación se genera el tiempo de partida de este y se pone en fabricación, 
+en caso de que haya ya un cohete en fabricación se pone en cola. Una vez termina el proceso de fabricación
+de un cohete se pasa al proceso de despegue . Para despegar si no hay ningún cohete despegando se genera el tiempo
+de partida del nuevo cohete y se pone a despegar , en caso contrario se pone en cola. Una vez termina el proceso 
+de despegue de un cohete este suelta un satélite en  una órbita aleatoria de las existentes. Un cohete puede tener a lo sumo 1 satélite.
 El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
 
 
@@ -170,6 +201,7 @@ start;
 ```
 
 ![main](./images/agent2.png)
+Cada vez que el agente se va a mover para un objetivo se muestra el camino parar llegar al mismo.
 
 Para mostrar el quadtree de forma visual se puede presionar la tecla `q` o desde el lenguaje orbsim escribir `drawquadtree`
 para que se ejecute con la visualización del quadtree. Por defecto esta visualización está desactivada.
@@ -323,7 +355,7 @@ Algunas reglas semánticas que definimos en nuestro lenguaje:
 - 
 
 # Tipos Builtins:
-`Int`, `Float`, `String`, `List`(una lista de elementos del mismo tipo), `Bool`, `Vector3`
+`Int`, `Float`, `String`, `List`(una lista de elementos del mismo tipo), `Tuple`,  `Bool`, `Vector3`
 Declaración de variables en Orbsim:
 `let <Type> id '=' <Expr>`
 ```
@@ -400,6 +432,12 @@ Creando una instancia de una clase en Orbsim:
 
 Las clases tienen atributos cuyo valor se le asigna al crear una instancia de la misma siempre verificando que los tipos de las expresiones a evaluar coincidan con los tipos de los atributos.
 
+El lenguaje permite creación de números enteros aleatorios mediante `randint` y de números float aleatorios mediante
+`randfloat`
+
+![rand](./images/img13.png)
+![rand](./images/img14.png)
+
 ## Interfaz Gráfica:
 
 Para la interfaz gráfica se usó streamlit parar el editor de código junto con pygame para la parte de simulación e IA . 
@@ -419,6 +457,7 @@ Otros ejemplos:
 ![main](./images/img5.png)
 ![main](./images/img6.png)
 ![main](./images/img9.png)
+
 
 ## Referencias
 
