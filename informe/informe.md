@@ -5,26 +5,90 @@
 ![main](./images/photo_2021-10-25_12-23-48.jpg)
 
 ## Para ejecutar el proyecto
+
 ```
 streamlit run ./orbsim_main.py
 ```
 
 ![main](./images/orbsim1.png)
 
+## La simulación
 
-Uso del modelo de dos servidores en serie para la simulación del proceso de fabricación y 
+Para la simulación hicimos una pequeña aplicación de python utilizando Pygame (como se muestra en la imagen anterior), donde se podrá visualizar todas las interacciones y eventos que se definan en el entorno de la simulación.
+
+### El entorno
+
+El entorno de nuestra simulación será un tablero 2D para representar el espacio que rodea a la Tierra y las entidades existentes en este espacio. Para representar este entorno utilizamos un `Quadtree progresivo`, o sea, que solamente se modifica en las regiones donde es necesario por la presencia de algún objeto, con el objetivo de encerrarlo y definir la región que este ocupa en el mapa. A pesar de no ser una estructura de datos recomendada para entornos dinámicos como el nuestro, hemos podido comprobar que para una demostración simple como la nuestra, con una profundidad de 8 el programa se comporta de forma aceptable con una cantidad moderada de entidades insertadas en el Quadtree.
+
+Para poder realizar operaciones complejas en el Quadtree como el movimiento de objetos por el mapa, es necesario tener una representación en forma de grafo del mapa, y para esto es necesario computar para cada hoja del quadtree sus vecinos en el mapa. La representación de este grafo que utilizamos considera el centro de cada Quadtree como un nodo, y las aristas por lo tanto, van del centro de un Quadtree al centro de los Quadtrees vecinos. Acá mostramos 2 representaciones para los vecinos en un Quadtree que se mencionan en [1] por donde nos guiamos:
+
+![neigh_repr](./images/quadtree_neigh_repr.png)
+
+La que utilizamos es la que se encuentra a la izquierda.
+
+### Las entidades
+
+Las entidades que definimos por defecto para nuestra simulación son la basura espacial (`space debris`), los satélites y unos recolectores de basura espacial (agentes) que serán configurables desde el DSL (__Orbsim__) que diseñamos.
+
+La tierra siempre está localizada en el centro de la pantalla, la basura espacial está localizada en `órbitas`, que no son más que elipses que definen la trayectoria de esta basura alrededor de la tierra, y que también serán configurables.
+
+Los satélites tienen un tiempo de vida útil que se irá reduciendo con el paso del tiempo o debido a las colisiones que ocurran durante el transcurso de la simulación.
+
+La basura espacial tendrá un tamaño definido(área) y una velocidad.
+
+### Implicaciones y comportamiento del ambiente
+
+Generalmente hay más de una órbita por lo que inevitablemente ocurrirán `colisiones` entre distintos objetos ya sean basura espacial, agentes o satélites de distintas órbitas, o incluso en la misma órbita dependiendo de la velocidad y el sentido con el que se mueva ese objeto en su órbita. Estas colisiones tendrán ciertas consecuencias y efectos, fragmentación de la basura (reducción de su tamaño), desaparición de cierta basura (absorción por otra basura mucho más grande), reducción de la vida útil de los satélites, etc. Para poder encontar las colisiones simplemente analizamos cada hoja del Quadtree y analizamos si cualquier par de objetos en esa hoja se solapa parcialmente.
+
+### Eventos
+
+En nuestra simulación también ocurrirán eventos configurables como la aparición de nueva basura espacial de forma ocasional, la puesta en órbita de nuevos satélites y la aparición de basura espacial como consecuencia de que un satélite haya agotado su vida útil.
+
+### Los recolectores
+
+Los `recolectores de basura espacial`, son agentes que definimos y que van a operar en nuestro entorno con el objetivo de recolectar la mayor cantidad de basura posible. Estos agentes tienen definidas varias características que impondrán restricciones a su comportamient:
+
+- Tienen definida una capacidad límite que se reducirá cada vez que recojan algo de basura espacial, dependiendo del tamaño de la basura y que eventualmente les impedirá recolectar basura de gran tamaño.
+  
+- Tienen definida una cantidad de combustible que se irá reduciendo con cada acción que realicen en el entorno, ya sea recolectar basura o moverse, y que eventualmente los dejará sin combustible para realizar estas acciones por lo que quedarán inmóviles.
+
+- Tienen definido un tiempo de vida que se irá reduciendo con el paso del tiempo y que eventualmente los dejará inservibles.
+
+- Tienen definido un rango de percepción, que le permitirá ver mayor o menor parte del entorno para tomar sus decisiones. Este rango de percepción lo definimos en términos del Quadtree.
+
+El comportamiento de los recolectores está definido por varias acciones y restricciones.
+
+Acciones:
+
+- Recolectar basura (el agente necesita estar bien cerca del objeto para realizar esta acción).
+- Moverse hacia la basura si en su rango de percepción detectó basura.
+- Moverse de forma aleatoria por el mapa sino detectó basura en su rango de percepción.
+- No realizar nada (idle), para indicar que ya puede realizar una nueva acción la próxima vez.
+  
+Restricciones:
+
+- Solo puede realizar acciones si le queda tiempo de vida.
+- Siempre priorizará recolectar la basura de menor tamaño en su rango de percepción, aunque tenga que moverse para esto.
+- Si hay 2 basuras con el mismo tamaño, priorizará recolectar la que esté más cercana.
+- Solo puede moverse si le queda combustible.
+- Solo puede recolectar basura si le queda suficiente combustible o le queda suficiente capacidad para recolectar la basura.
+
+El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
+
+
+Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
 despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
 El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
 
 
 
 Ejemplos:
+
 ```
 custom_launchpad(5000, 0.001);
 ```
-donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se va a usar en la 
-generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo 
-o para el tiempo de la próxima partida.
+
+donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se va a usar en la generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo o para el tiempo de la próxima partida.
 
 ![main](./images/launchpad1.png)
 ![main](./images/launchpad2.png)
@@ -162,10 +226,6 @@ pueden ser builtin o declarados mediante clases en el código.
 *TypeBuilder*: Parar identificar los atributos y métodos definidos para los tipos.
 *TypeChecker*: Para identificar el cumplimiento de las reglas semántica definidas para Orbsim
 
-
-
-
-
 ### El DSL (OrbSim)
 
 Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como built-in.
@@ -283,3 +343,7 @@ Otros ejemplos:
 ![main](./images/img5.png)
 ![main](./images/img6.png)
 ![main](./images/img9.png)
+
+## Referencias
+
+- [1] PATHFINDING IN 3D SPACE - A*, THETA*, LAZY THETA* IN OCTREE STRUCTURE. March 8, 2016 Ruoqi He & Chia-Man Hung
