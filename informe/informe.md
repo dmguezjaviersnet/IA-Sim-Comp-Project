@@ -2,7 +2,7 @@
 
 # El peligro en la órbita
 
-![main](./images/photo_2021-10-25_12-23-48.jpg)
+![main](/photo_2021-10-25_12-23-48.jpg)
 
 ## Para ejecutar el proyecto
 
@@ -74,7 +74,6 @@ Restricciones:
 - Solo puede recolectar basura si le queda suficiente combustible o le queda suficiente capacidad para recolectar la basura.
 
 El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
-
 
 Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
 despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
