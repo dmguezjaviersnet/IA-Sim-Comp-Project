@@ -42,7 +42,37 @@ Generalmente hay más de una órbita por lo que inevitablemente ocurrirán `coli
 
 ### Eventos
 
-En nuestra simulación también ocurrirán eventos configurables como la aparición de nueva basura espacial de forma ocasional, la puesta en órbita de nuevos satélites y la aparición de basura espacial como consecuencia de que un satélite haya agotado su vida útil.
+
+Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
+despegue de un  cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
+El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
+
+
+
+Ejemplos:
+
+```
+custom_launchpad(5000, 0.001);
+```
+
+donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se va a usar en la generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo o para el tiempo de la próxima partida.
+
+![main](./images/launchpad1.png)
+![main](./images/launchpad2.png)
+
+
+Ejemplo donde se customiza el launchpad y se generan orbitas y objetos custom desde el lenguaje orbsim:
+
+![main](./images/img10.png)
+![main](./images/img11.png)
+
+
+En nuestra simulación  ocurre la aparición de nueva basura espacial de forma ocasional mediante un proceso de Poisson
+homogéneo. Tanto el T como el lambda del mismo son configurables desde el lenguaje orbsim usando ``.
+Esta nueva basura que se genera tiene un tamaño,
+posición, órbita sobre la que circula y velocidad aleatoria.
+
+
 
 ### Los recolectores
 
@@ -74,30 +104,6 @@ Restricciones:
 - Solo puede recolectar basura si le queda suficiente combustible o le queda suficiente capacidad para recolectar la basura.
 
 El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
-
-
-Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
-despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
-El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
-
-
-
-Ejemplos:
-
-```
-custom_launchpad(5000, 0.001);
-```
-
-donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se va a usar en la generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo o para el tiempo de la próxima partida.
-
-![main](./images/launchpad1.png)
-![main](./images/launchpad2.png)
-
-
-Ejemplo donde se customiza el launchpad y se generan orbitas y objetos custom desde el lenguaje orbsim:
-
-![main](./images/img10.png)
-![main](./images/img11.png)
 
 
 
