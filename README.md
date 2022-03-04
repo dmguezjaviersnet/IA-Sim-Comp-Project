@@ -7,6 +7,6 @@ Proyecto Integrador (Inteligencia Artifcial, Compilación y Simulación)
 - Javier E. Domínguez Hernández C-312
 - David Orlando De Quesada Oliva C-311
 
-En ./informe se encuentra el informe del proyecto y en ./orb_simulator el código.
+En `./informe` se encuentra el informe del proyecto y en `./orb_simulator` el código.
 
 
