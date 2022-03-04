@@ -37,7 +37,7 @@ class OrbisimUI:
                         st.write(err)
                 else:
                     all_output =str(capture_io_file.getvalue()).split('\n')
-                    st.success('✅The orbsim code compile and execute successed') 
+                    st.success('✅The orbsim code compile and execute succeded') 
                     for i in all_output:
                         if i:
                             st.write(i)
