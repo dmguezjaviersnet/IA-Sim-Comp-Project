@@ -17,7 +17,7 @@ despegue de cohete para la posterior puesta en órbita de los satélites que con
 El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
 
 
-![main](./images/orbsim1.png)
+
 Ejemplos:
 ```
 custom_launchpad(5000, 0.001);
@@ -29,6 +29,18 @@ o para el tiempo de la próxima partida.
 ![main](./images/launchpad1.png)
 ![main](./images/launchpad2.png)
 
+
+Ejemplo donde se customiza el launchpad y se generan orbitas y objetos custom desde el lenguaje orbsim:
+
+![main](./images/img10.png)
+![main](./images/img11.png)
+
+
+
+Para mostrar el quadtree de forma visual se puede presionar la tecla `q` o desde el lenguaje orbsim escribir `drawquadtree`
+para que se ejecute con la visualización del quadtree. Por defecto esta visualización está desactivada.
+
+Para mostrar las órbitas de forma visual se puede presionar la tecla `o` o desde e lenguaje orbsima escribir  `show_orbits` para que se ejecute con la visualización de las órbitas. Por defecto esta visualización está desactivada.
 
 
 
