@@ -2,7 +2,6 @@ from asyncio import subprocess
 from operator import le
 from random import randint
 from typing import List
-from more_itertools import random_combination
 import pygame
 from sprites_and_graph_ent import ElipticOrbit, SpaceDebris, Launchpad, Satellite, SpaceDebrisCollector, space_debris_collector
 from simulation.orbsim_simulation_entities import Point
@@ -17,7 +16,6 @@ from simulation.generate_objects import *
 import threading
 import multiprocessing
 import sys
-import time
 from orbsim_threading import ThreadWithTrace
 import copy
 class PygameHandler():
@@ -138,7 +136,7 @@ class PygameHandler():
         self.satellite_group.remove(satellite)
     
     def check_life_time_satellites(self):
-        satellites_copy = self.satellite_group.sprites()
+        satellites_copy = copy.copy(self.satellite_group.sprites())
         for satellite in satellites_copy:
             if satellite.inusable:
                 new_debris = SpaceDebris(satellite.pos_x, satellite.pos_y, satellite.a, satellite.b, satellite.orbit_center, satellite.size, None)

@@ -104,7 +104,12 @@ Ejemplo donde se customiza el launchpad y se generan orbitas y objetos custom de
 Para mostrar el quadtree de forma visual se puede presionar la tecla `q` o desde el lenguaje orbsim escribir `drawquadtree`
 para que se ejecute con la visualización del quadtree. Por defecto esta visualización está desactivada.
 
-Para mostrar las órbitas de forma visual se puede presionar la tecla `o` o desde e lenguaje orbsima escribir  `show_orbits` para que se ejecute con la visualización de las órbitas. Por defecto esta visualización está desactivada.
+Para mostrar las órbitas de forma visual se puede presionar la tecla `o` o desde el lenguaje orbsim escribir  `show_orbits` para que se ejecute con la visualización de las órbitas. Por defecto esta visualización está desactivada.
+
+Para mostrar el movimiento de la tierra se puede presionar la tecla `K_UP` o desde el lenguaje escribir `animate_earth` para 
+que se ejecture con la visualización del movimiento. Por defecto esta visualización está desactvida.
+
+Si se selecciona con el mouse un objeto orbitando se muestra una recta desde su centro hasta el punto centro de la órbita sobre la que está.
 
 
 
