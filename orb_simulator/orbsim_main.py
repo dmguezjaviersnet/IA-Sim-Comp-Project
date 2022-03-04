@@ -74,13 +74,7 @@ def main():
     debugging(pygame_handler)
 #     orbsim_compile_and_execute(
 # '''
-#     let Agent a1 = custom_create_agent(100, 5000, 500, 8, 50);
-#     a1.add_to_simulation();
-#     let Agent a2 = custom_create_agent(300, 4000, 40500, 8, 15);
-#     a2.add_to_simulation();
-#     let Agent a3 = custom_create_agent(500, 1000, 1500, 2, 5);
-#     a3.add_to_simulation();
-#     start;
+#     let Agent a1 = agent;
 #     print(a1);
 # '''
 # , pygame_handler)

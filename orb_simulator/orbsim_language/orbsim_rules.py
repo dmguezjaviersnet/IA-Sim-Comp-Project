@@ -12,7 +12,7 @@ from orbsim_language.orbsim_ast import BitwiseAndNode, BitwiseOrNode, BitwiseXor
 from orbsim_language.orbsim_ast import ClassDeclrNode, VariableNode, BodyNode, ClassMakeNode, MethodCallNode, AttributeCallNode
 from orbsim_language.orbsim_ast import DrawquadtreeNode
 from orbsim_language.orbsim_ast import AnimateEarthNode, ShowOrbitsNode
-from orbsim_language.orbsim_ast import SpaceDebrisNode, SatelliteNode, OrbitNode
+from orbsim_language.orbsim_ast import SpaceDebrisNode, SatelliteNode, OrbitNode, AgentNode
 from orbsim_language.orbsim_ast import TupleCreationNode
 
 def program_rule(head: Symbol, tail: List[Symbol]):
@@ -272,6 +272,9 @@ def atom_rule8(head: Symbol, tail: List[Symbol]):
 
 def atom_rule9(head: Symbol, tail: List[Symbol]):
     head.ast = SatelliteNode(tail[0].val)
+
+def atom_rule10(head: Symbol, tail: List[Symbol]):
+    head.ast = AgentNode(tail[0].val)
 
 def list_creation_rule(head: Symbol, tail: List[Symbol]):
     head.ast = ListCreationNode(tail[1].ast)

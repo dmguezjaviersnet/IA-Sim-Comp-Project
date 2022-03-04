@@ -75,7 +75,21 @@ Restricciones:
 
 El movimiento lo realiza entre nodos del `Quadtree`, siguiendo el camino más corto utilizando `A*` y la distancia euclideana al destino como heurística.
 
-Para la simulación usamos del modelo de dos servidores en serie para la simulación del proceso de fabricación y despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
+
+Usamos el modelo de dos servidores en serie para la simulación del proceso de fabricación y 
+despegue de cohete para la posterior puesta en órbita de los satélites que contiene el mismo.
+El lambda usado y el tiempo de duración es configurable desde el lenguaje usando `custom_launchpad`.
+
+Ejemplos:
+
+```
+custom_launchpad(5000, 0.001);
+```
+
+donde el primer parámetro es el tiempo de cierre y el segundo el lambda que se va a usar en la generación del tiempo de espera cada que vez que sea necesario para el próximo tiempo de arribo o para el tiempo de la próxima partida.
+
+![main](./images/launchpad1.png)
+![main](./images/launchpad2.png)
 
 ## El proceso de compilación
 
@@ -193,10 +207,6 @@ pueden ser builtin o declarados mediante clases en el código.
 *TypeBuilder*: Parar identificar los atributos y métodos definidos para los tipos.
 *TypeChecker*: Para identificar el cumplimiento de las reglas semántica definidas para Orbsim
 
-
-
-
-
 ### El DSL (OrbSim)
 
 Nuestra idea fue tener un lenguaje con algunas cosas de un lenguaje de propósito general, como ciclos, condicionales, variables, y decidimos agregar clases, pues consideramos que es una herramienta que facilitaría la incorporación de nuevos tipos al lenguaje que permitieran crear abstracciones para nuevos objetos, muchos de estos podrían estar como built-in.
@@ -297,7 +307,7 @@ Las clases tienen atributos cuyo valor se le asigna al crear una instancia de la
 
 ## Interfaz Gráfica:
 
-Para la interfaz gráfica se usó streamlit. Se tiene un editor 
+Para la interfaz gráfica se usó streamlit parar el editor de código junto con pygame para la parte de simulación e IA . 
 
 Si el código compila y ejecuta correctamente:
 

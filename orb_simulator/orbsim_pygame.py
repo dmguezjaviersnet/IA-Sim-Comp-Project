@@ -89,7 +89,7 @@ class PygameHandler():
     def create_random_space_debris_collector(self):
         space_debris_collector = generate_random_space_debris_collector()
         return space_debris_collector
-        
+
     def add_new_space_debris(self, space_debris: 'SpaceDebris'):
         self.objects.append(space_debris)
         self.space_debris_group.add(space_debris)
@@ -124,7 +124,7 @@ class PygameHandler():
     #     collector = generate_space_debris_collector()
     #     self.space_debris_collector_group.add(collector)
     #     self.agents.append(collector)
-
+   
     def generate_new_random_satellite(self):
         satellite =  generate_new_random_satellite(self.orbits)
         self.satellite_group.add(satellite)
@@ -184,10 +184,9 @@ class PygameHandler():
                     obj2.update_surface(abs(obj2.rect.width - obj1.rect.width/random.randint(4,9)), abs(obj2.rect.height - obj1.rect.width/random.randint(4,9)))
 
             elif isinstance(obj1, Satellite) and isinstance(obj2, SpaceDebris):
-                obj1.life_time -= obj2.area/6
-
+                obj1.life_time -= obj2.area/random.randint(6,20)
             elif isinstance(obj2, Satellite) and isinstance(obj1, SpaceDebris):
-                obj2.life_time -= obj1.area/6
+                obj2.life_time -= obj1.area/random.randint(6,20)
 
     def draw_path(self, path, agent):
         for pos, qt_node in enumerate(path):
@@ -293,7 +292,8 @@ class PygameHandler():
                         satellite = launchpad.lauch_that_is_running.rocket.satellite
                         self.add_new_satellite(satellite)
                         launchpad.update_departure(counter_time)
-                        
+                if launchpad.any_enqueue_action:
+                    launchpad.update_out_of_time(counter_time) 
                 # Evente de Poisson para generar nuevos objetos
                 if sp_poisson.closing_time > round_off_wi_exceed(counter_time):
                     print(f'current_time{counter_time} NextPoissonEvent: {sp_poisson.next_event_time}')

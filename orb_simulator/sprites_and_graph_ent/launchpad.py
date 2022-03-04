@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 from typing import List
+from click import launch
+
+from urllib3 import Retry
 from simulation.generate_objects import generate_waiting_time, generate_new_rocket
 from sprites_and_graph_ent.rocket import Rocket
 from tools import round_off_wi_exceed
@@ -34,12 +37,15 @@ class Launchpad:
         self.rocket_in_queue = []
         self.closing_time = closing_time
         self.lambda_value = lambda_value
-        self.rocket_manufacturing = RocketManufacturing(lambda_value)
+        self.rocket_manufacturing = RocketManufacturing(lambda_value, closing_time)
         self.next_departure_time = None
         self.number_of_arrivals = 0
         self.number_of_departure = 0
         self.forms: List['RocketForm'] = []
         
+    @property
+    def any_enqueue_action(self):
+        return self.lauch_that_is_running or self.rocket_manufacturing.rocket_being_manufactured
 
     @property 
     def next_arrival_to_manufacturing(self):
@@ -83,7 +89,12 @@ class Launchpad:
             self.add_rocket_form(rocket_form, current_time)
             self.next_arrival_time = current_time
         
-        
+    
+    def update_out_of_time(self, current_time):
+        self.rocket_manufacturing
+        rounded_current_time = round_off_wi_exceed(current_time)
+        if self.next_departure_time and round_off_wi_exceed(self.next_departure_time) == rounded_current_time:
+            self.update_departure(current_time)
 
     
     def add_rocket_form(self, rocket_form: 'RocketForm', time: float):
@@ -106,9 +117,10 @@ class Launchpad:
 
     
 class RocketManufacturing:
-    def __init__(self, lambda_value):
+    def __init__(self, lambda_value, closing_time):
         self.rocket_being_manufactured = None
         self.lambda_value = lambda_value
+        self.closing_time = closing_time
         self.pending_rockets_to_be_manufactured = []
         self.next_arrival_time = generate_waiting_time()
         self.next_departure_time = None
@@ -127,16 +139,24 @@ class RocketManufacturing:
             self.generate_next_departure(current_time)
             rocket_form.set_departure_time_manufacturing(self.next_departure_time)
             self.rocket_being_manufactured = rocket_form
-            print('Aqui')
+            
         else:
             self.pending_rockets_to_be_manufactured.append(rocket_form)
-        self.generate_next_arrival(current_time)
+        if current_time < self.closing_time:
+            self.generate_next_arrival(current_time)
+        else:
+            self.next_arrival_time = None 
 
     def generate_next_arrival(self, current_time: float):
         self.next_arrival_time = generate_waiting_time(self.lambda_value) +  current_time
     
     def generate_next_departure(self, current_time: float):
         self.next_departure_time = generate_waiting_time(self.lambda_value) + current_time
+
+    def update_out_of_time(self, current_time):
+        rounded_current_time = round_off_wi_exceed(current_time)
+        if self.next_departure_time and round_off_wi_exceed(self.next_departure_time) == rounded_current_time:
+            self.update_departure(current_time)
 
     def update_departure(self, time):
         self.rocket_being_manufactured = None

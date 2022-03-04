@@ -19,7 +19,7 @@ class Satellite(OrbitObj):
         if life_time:
             self.life_time = life_time
         else:
-            self.life_time = random.randint(1,5) * random.random()
+            self.life_time = random.randint(100,1000)  + random.random()
 
         self.mass = None
 

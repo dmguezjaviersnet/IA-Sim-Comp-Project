@@ -87,6 +87,7 @@ class Token_Type(Enum):
     orbit = 61
     show_orbits = 62
     tuple = 63
+    agent = 64
     
     eof = 100
     space = 101
